@@ -267,6 +267,46 @@
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
   }
+
+  /* interactive element cursors */
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="radio"],
+  [role="menuitem"],
+  [role="option"],
+  a[href],
+  summary,
+  label[for],
+  select,
+  [data-slot="select-trigger"],
+  [data-slot="trigger"] {
+    cursor: pointer;
+  }
+
+  /* text-entry fields get the text caret */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  /* sliders / range */
+  input[type="range"],
+  [role="slider"] {
+    cursor: ew-resize;
+  }
+
+  /* disabled controls override everything above */
+  button:disabled,
+  [aria-disabled="true"],
+  [data-disabled],
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
 }
 
 @layer utilities {

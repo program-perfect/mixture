@@ -3,7 +3,18 @@ import { fetchLibrary } from "@/lib/screenkit/library.server"
 
 export const dynamic = "force-dynamic"
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ insert?: string }>
+}) {
   const { inserts, categories } = await fetchLibrary()
-  return <AppShell initialInserts={inserts} initialCategories={categories} />
+  const { insert } = await searchParams
+  return (
+    <AppShell
+      initialInserts={inserts}
+      initialCategories={categories}
+      initialSelectedId={insert}
+    />
+  )
 }

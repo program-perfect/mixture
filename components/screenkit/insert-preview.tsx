@@ -11,10 +11,13 @@ export function InsertPreview({
   insert,
   settings,
   className,
+  bare,
 }: {
   insert: ResolvedInsert
   settings: PreviewSettings
   className?: string
+  /** when true, render the raw screen with no device bezel and no rounding */
+  bare?: boolean
 }) {
   const { mode, brightness, noise, reflections, scanlines, timestamp } = settings
 
@@ -28,8 +31,8 @@ export function InsertPreview({
 
   const blur = mode === "filmed" ? "blur(0.4px)" : mode === "dirty" ? "blur(0.2px)" : "none"
 
-  return (
-    <DeviceFrame device={settings.device} aspect={settings.aspect} className={className}>
+  const layers = (
+    <>
       {/* base scene with color/brightness grade */}
       <div
         className={cn(
@@ -104,6 +107,23 @@ export function InsertPreview({
           {insert.date.replaceAll("-", ".")} 23:4{insert.id.slice(-1)}:0{insert.id.slice(-1)}
         </div>
       )}
+    </>
+  )
+
+  // bare = raw screen, no bezel, no rounding (used by the fullscreen viewer)
+  if (bare) {
+    return (
+      <div
+        className={cn("relative h-full w-full overflow-hidden bg-black", className)}
+      >
+        {layers}
+      </div>
+    )
+  }
+
+  return (
+    <DeviceFrame device={settings.device} aspect={settings.aspect} className={className}>
+      {layers}
     </DeviceFrame>
   )
 }

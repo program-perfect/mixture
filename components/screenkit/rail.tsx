@@ -5,7 +5,6 @@ import {
   Eye,
   GanttChartSquare,
   FileText,
-  Download,
   Palette,
   Info,
   type LucideIcon,
@@ -20,7 +19,6 @@ const RAIL_ITEMS: RailItem[] = [
   { id: "preview", icon: Eye },
   { id: "timeline", icon: GanttChartSquare },
   { id: "prompts", icon: FileText },
-  { id: "export", icon: Download },
   { id: "style", icon: Palette },
 ]
 

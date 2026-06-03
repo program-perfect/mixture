@@ -34,7 +34,6 @@ export type Section =
   | "preview"
   | "timeline"
   | "prompts"
-  | "export"
   | "style"
   | "about"
 
@@ -56,12 +55,7 @@ export type Filters = {
   status: InsertStatus | "all"
 }
 
-export type NewCategoryInput = {
-  labelRu: string
-  labelEn?: string
-  accent?: string
-  tint?: string
-}
+export type NewCategoryInput = Parameters<typeof addCategoryAction>[0]
 
 export type NewInsertInput = Parameters<typeof addInsertAction>[0]
 
@@ -112,10 +106,13 @@ export function ScreenkitProvider({
   children,
   initialInserts,
   initialCategories,
+  initialSelectedId,
 }: {
   children: React.ReactNode
   initialInserts?: Insert[]
   initialCategories?: CategoryDef[]
+  /** when provided, open straight into this insert's preview (deep link) */
+  initialSelectedId?: string
 }) {
   const [inserts, setInserts] = React.useState<Insert[]>(
     initialInserts ?? INSERTS,
@@ -125,9 +122,16 @@ export function ScreenkitProvider({
   )
   const [libraryBusy, setLibraryBusy] = React.useState(false)
 
-  const [section, setSection] = React.useState<Section>("overview")
+  const allInserts = initialInserts ?? INSERTS
+  const deepLinked =
+    initialSelectedId && allInserts.some((i) => i.id === initialSelectedId)
+      ? initialSelectedId
+      : null
+  const [section, setSection] = React.useState<Section>(
+    deepLinked ? "preview" : "overview",
+  )
   const [selectedId, setSelectedId] = React.useState<string>(
-    (initialInserts ?? INSERTS)[0]?.id ?? "",
+    deepLinked ?? allInserts[0]?.id ?? "",
   )
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false)
   const [locale, setLocaleState] = React.useState<Locale>(DEFAULT_LOCALE)
@@ -141,16 +145,18 @@ export function ScreenkitProvider({
     device: "all",
     status: "all",
   })
-  const first = (initialInserts ?? INSERTS)[0]
+  const first =
+    (deepLinked ? allInserts.find((i) => i.id === deepLinked) : null) ??
+    allInserts[0]
   const [preview, setPreview] = React.useState<PreviewSettings>({
     device: first?.device ?? "phone",
-    mode: "filmed",
+    mode: "clean",
     aspect: first?.aspect ?? "9:16",
     brightness: 70,
-    noise: 35,
-    reflections: true,
-    scanlines: true,
-    timestamp: true,
+    noise: 0,
+    reflections: false,
+    scanlines: false,
+    timestamp: false,
   })
 
   // hydrate site locale from storage

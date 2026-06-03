@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "licenses": "node scripts/collect-licenses.mjs",
+    "predev": "node scripts/collect-licenses.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/collect-licenses.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."

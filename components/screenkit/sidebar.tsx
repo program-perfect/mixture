@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { FileBox, Download, Bug, type LucideIcon } from "lucide-react"
+import { FileBox, Bug, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
@@ -63,15 +63,6 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       tint: "rgba(34,197,94,0.14)",
       onClick: nav(() => setSection("prompts")),
       active: section === "prompts",
-    },
-    {
-      id: "export",
-      label: t("nav.export"),
-      icon: Download,
-      accent: "var(--accent-grey)",
-      tint: "rgba(255,255,255,0.06)",
-      onClick: nav(() => setSection("export")),
-      active: section === "export",
     },
     {
       id: "nerds",

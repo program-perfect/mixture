@@ -7,7 +7,6 @@ import { LibrarySection } from "./sections/library"
 import { PreviewSection } from "./sections/preview"
 import { TimelineSection } from "./sections/timeline"
 import { PromptsSection } from "./sections/prompts"
-import { ExportSection } from "./sections/export"
 import { StyleSection } from "./sections/style"
 import { AboutSection } from "./sections/about"
 
@@ -22,7 +21,6 @@ export function Content() {
         {section === "preview" && <PreviewSection />}
         {section === "timeline" && <TimelineSection />}
         {section === "prompts" && <PromptsSection />}
-        {section === "export" && <ExportSection />}
         {section === "style" && <StyleSection />}
         {section === "about" && <AboutSection />}
       </div>
