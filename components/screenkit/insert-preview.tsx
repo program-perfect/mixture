@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import type { Insert } from "@/lib/screenkit/types"
+import type { ResolvedInsert } from "@/lib/screenkit/types"
 import type { PreviewSettings } from "./store"
 import { DeviceFrame } from "./device-frame"
 import { InsertCanvas } from "./insert-canvas"
@@ -12,7 +12,7 @@ export function InsertPreview({
   settings,
   className,
 }: {
-  insert: Insert
+  insert: ResolvedInsert
   settings: PreviewSettings
   className?: string
 }) {

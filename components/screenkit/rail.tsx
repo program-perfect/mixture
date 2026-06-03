@@ -13,19 +13,19 @@ import {
 import { cn } from "@/lib/utils"
 import { useScreenkit, type Section } from "./store"
 
-type RailItem = { id: Section; label: string; icon: LucideIcon }
+type RailItem = { id: Section; icon: LucideIcon }
 
 const RAIL_ITEMS: RailItem[] = [
-  { id: "library", label: "library", icon: Library },
-  { id: "preview", label: "preview", icon: Eye },
-  { id: "timeline", label: "timeline", icon: GanttChartSquare },
-  { id: "prompts", label: "prompts", icon: FileText },
-  { id: "export", label: "export", icon: Download },
-  { id: "style", label: "style", icon: Palette },
+  { id: "library", icon: Library },
+  { id: "preview", icon: Eye },
+  { id: "timeline", icon: GanttChartSquare },
+  { id: "prompts", icon: FileText },
+  { id: "export", icon: Download },
+  { id: "style", icon: Palette },
 ]
 
 export function Rail({ onNavigate }: { onNavigate?: () => void }) {
-  const { section, setSection } = useScreenkit()
+  const { section, setSection, t } = useScreenkit()
 
   const go = (s: Section) => {
     setSection(s)
@@ -68,7 +68,9 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
               )}
             >
               <Icon className="size-5" strokeWidth={1.6} />
-              <span className="font-mono text-[10px] lowercase">{item.label}</span>
+              <span className="font-mono text-[10px] lowercase">
+                {t(`section.${item.id}`)}
+              </span>
             </button>
           )
         })}
@@ -84,7 +86,7 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
         )}
       >
         <Info className="size-5" strokeWidth={1.6} />
-        <span className="font-mono text-[10px] lowercase">about</span>
+        <span className="font-mono text-[10px] lowercase">{t("nav.about")}</span>
       </button>
     </nav>
   )
