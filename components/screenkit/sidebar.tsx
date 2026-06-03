@@ -85,7 +85,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   ]
 
   return (
-    <aside className="flex h-full w-full flex-col bg-background md:w-[320px] md:shrink-0">
+    <aside className="flex h-full w-full flex-col bg-sidebar md:w-[320px] md:shrink-0">
       <div className="px-5 pt-5">
         <p className="font-mono text-xs lowercase text-text-faint">
           {PROJECT_VERSION}

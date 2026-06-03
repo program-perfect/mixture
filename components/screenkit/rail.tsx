@@ -35,7 +35,7 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav
       aria-label="primary"
-      className="flex h-full w-[88px] shrink-0 flex-col items-center gap-1 border-r border-sidebar-border bg-sidebar py-4"
+      className="flex h-full w-[88px] shrink-0 flex-col items-center gap-1 bg-sidebar py-4"
     >
       {/* project glyph -> overview */}
       <button

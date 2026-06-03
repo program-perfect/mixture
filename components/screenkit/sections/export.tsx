@@ -23,7 +23,7 @@ const FORMATS: { id: Format; labelKey: string; noteKey: string }[] = [
 ]
 
 export function ExportSection() {
-  const { locale, t } = useScreenkit()
+  const { locale, t, inserts } = useScreenkit()
   const [format, setFormat] = React.useState<Format>("prores")
   const [mode, setMode] = React.useState<PlaybackMode>("filmed")
   const [burnIn, setBurnIn] = React.useState(true)
@@ -93,7 +93,7 @@ export function ExportSection() {
       </div>
 
       <div className="grid gap-2 rounded-2xl border border-panel-border bg-panel-soft px-4 py-3">
-        <KeyVal label={t("export.queued")} value={INSERTS.length} />
+        <KeyVal label={t("export.queued")} value={inserts.length} />
         <KeyVal
           label={t("export.format")}
           value={t(FORMATS.find((f) => f.id === format)!.labelKey)}
@@ -111,7 +111,7 @@ export function ExportSection() {
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <button className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-control-active px-4 py-3 font-mono text-sm lowercase text-control-active-foreground transition-opacity hover:opacity-90">
-          <Download className="size-4" /> {t("export.renderQueue")} ({INSERTS.length})
+          <Download className="size-4" /> {t("export.renderQueue")} ({inserts.length})
         </button>
         <button className="inline-flex items-center justify-center gap-2 rounded-2xl border border-panel-border bg-control px-4 py-3 font-mono text-sm lowercase text-foreground transition-colors hover:bg-panel-hover">
           <FileJson className="size-4" /> {t("export.json")}

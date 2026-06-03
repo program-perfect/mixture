@@ -5,9 +5,17 @@
 
 /*
   screen inserts — гремучая смесь / prop playback system
-  cobalt.tools-inspired technical tool. dark-first, monospace, sparse.
+  cobalt.tools-inspired technical tool. monospace, sparse.
+
+  theming model:
+    • base surfaces come in two schemes — .dark and .light (cobalt.tools style)
+    • accent colors come from a swappable palette via [data-palette="…"]
+  surfaces + accents are independent, so any palette works in either scheme.
 */
-:root {
+
+/* ---- base scheme: DARK (default) ---- */
+:root,
+.dark {
   --background: #000000;
   --foreground: #f4f4f5;
 
@@ -59,6 +67,70 @@
   --text-muted: #737984;
   --text-faint: #50545d;
 
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+}
+
+/* ---- base scheme: LIGHT (cobalt.tools light) ---- */
+.light {
+  --background: #f4f5f7;
+  --foreground: #16181c;
+
+  --card: #ffffff;
+  --card-foreground: #16181c;
+  --popover: #ffffff;
+  --popover-foreground: #16181c;
+
+  --primary: #16181c;
+  --primary-foreground: #f8f9fb;
+  --secondary: #e7e9ee;
+  --secondary-foreground: #16181c;
+  --muted: #eceef2;
+  --muted-foreground: #5b616e;
+  --accent: #e7e9ee;
+  --accent-foreground: #16181c;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+
+  --border: #dcdfe6;
+  --input: #e7e9ee;
+  --ring: #c2c6cf;
+
+  --sidebar: #e9ebef;
+  --sidebar-foreground: #2b2e35;
+  --sidebar-primary: #16181c;
+  --sidebar-primary-foreground: #f8f9fb;
+  --sidebar-accent: #dfe2e8;
+  --sidebar-accent-foreground: #16181c;
+  --sidebar-border: #d4d8e0;
+  --sidebar-ring: #c2c6cf;
+  --sidebar-muted: #6b7280;
+
+  --panel: #ffffff;
+  --panel-soft: #f7f8fa;
+  --panel-hover: #eef0f4;
+  --panel-border: #e2e5eb;
+
+  --control: #eceef2;
+  --control-hover: #e2e5eb;
+  --control-active: #16181c;
+  --control-active-foreground: #f8f9fb;
+
+  --text-primary: #16181c;
+  --text-secondary: #41454f;
+  --text-muted: #6b7280;
+  --text-faint: #969ba6;
+
+  --danger: #e5484d;
+  --warning: #d97706;
+  --success: #15a34a;
+}
+
+/* ---- accent palettes (independent of light / dark) ---- */
+/* cobalt (default) */
+:root,
+[data-palette="cobalt"] {
   --accent-blue: #2f80ed;
   --accent-cyan: #4cc9f0;
   --accent-purple: #6c63ff;
@@ -66,21 +138,48 @@
   --accent-orange: #ff9f1c;
   --accent-green: #22c55e;
   --accent-grey: #777777;
-
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --success: #22c55e;
-
-  --chart-1: #2f80ed;
-  --chart-2: #4cc9f0;
-  --chart-3: #6c63ff;
-  --chart-4: #ff9f1c;
-  --chart-5: #22c55e;
 }
 
-.dark {
-  --background: #000000;
-  --foreground: #f4f4f5;
+/* sunset — warm */
+[data-palette="sunset"] {
+  --accent-blue: #ff6b35;
+  --accent-cyan: #ffb703;
+  --accent-purple: #f72585;
+  --accent-red: #e5383b;
+  --accent-orange: #fb8500;
+  --accent-green: #ef9f1c;
+  --accent-grey: #8a7f7a;
+}
+
+/* forest — cool greens / teals */
+[data-palette="forest"] {
+  --accent-blue: #2a9d8f;
+  --accent-cyan: #43cea2;
+  --accent-purple: #5e807f;
+  --accent-red: #e76f51;
+  --accent-orange: #e9c46a;
+  --accent-green: #2d6a4f;
+  --accent-grey: #6b7d72;
+}
+
+/* mono — desaturated */
+[data-palette="mono"] {
+  --accent-blue: #8b8f99;
+  --accent-cyan: #a7abb4;
+  --accent-purple: #6f7480;
+  --accent-red: #b06a6a;
+  --accent-orange: #b09a6a;
+  --accent-green: #7a8a7a;
+  --accent-grey: #777777;
+}
+
+/* charts follow the active accent palette */
+:root {
+  --chart-1: var(--accent-blue);
+  --chart-2: var(--accent-cyan);
+  --chart-3: var(--accent-purple);
+  --chart-4: var(--accent-orange);
+  --chart-5: var(--accent-green);
 }
 
 @theme inline {
@@ -174,14 +273,14 @@
   /* subtle technical scrollbars */
   .sk-scroll {
     scrollbar-width: thin;
-    scrollbar-color: #2a2a2a transparent;
+    scrollbar-color: var(--panel-border) transparent;
   }
   .sk-scroll::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   .sk-scroll::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
+    background: var(--panel-border);
     border-radius: 999px;
   }
 

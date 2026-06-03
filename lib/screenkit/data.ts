@@ -76,6 +76,8 @@ export const DEVICES: { id: DeviceType; aspect: AspectRatio }[] = [
   { id: "cctv", aspect: "4:3" },
 ]
 
+export const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
+
 export const PLAYBACK_MODES: { id: PlaybackMode }[] = [
   { id: "clean" },
   { id: "filmed" },
@@ -839,7 +841,7 @@ export const INSERTS: Insert[] = [
     status: "needs review",
     title: { ru: "футбол на умирающем телефоне", en: "dying battery football video" },
     description: {
-      ru: "просмотр футбольного клипа на телефоне, пока садится батарея, предупреждение 1%, экран гаснет.",
+      ru: "просмотр футбольного клипа на теле��оне, пока садится батарея, предупреждение 1%, экран гаснет.",
       en: "watching a football clip on a phone as the battery dies, 1% warning, screen dims.",
     },
     prompt: {
