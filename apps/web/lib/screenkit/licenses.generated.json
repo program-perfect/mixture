@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T19:23:29.921Z",
+  "generatedAt": "2026-06-03T21:28:47.913Z",
   "count": 61,
   "packages": [
     {
@@ -312,7 +312,7 @@
     },
     {
       "name": "@tailwindcss/postcss",
-      "version": "4.2.0",
+      "version": "4.3.0",
       "declared": "^4.2.0",
       "license": "MIT",
       "author": null,
@@ -323,7 +323,7 @@
     },
     {
       "name": "@types/node",
-      "version": "24.10.4",
+      "version": "24.12.4",
       "declared": "^24",
       "license": "MIT",
       "author": null,
@@ -345,7 +345,7 @@
     },
     {
       "name": "@types/react",
-      "version": "19.2.14",
+      "version": "19.2.16",
       "declared": "^19",
       "license": "MIT",
       "author": null,
@@ -378,10 +378,10 @@
     },
     {
       "name": "autoprefixer",
-      "version": "10.4.24",
+      "version": "10.5.0",
       "declared": "^10.4.20",
       "license": "MIT",
-      "author": "Andrey Sitnik <andrey@sitnik.ru>",
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
       "repository": "postcss/autoprefixer",
       "homepage": null,
       "licenseFile": "autoprefixer.txt",
@@ -510,10 +510,10 @@
     },
     {
       "name": "postcss",
-      "version": "8.5.6",
+      "version": "8.5.15",
       "declared": "^8.5",
       "license": "MIT",
-      "author": "Andrey Sitnik <andrey@sitnik.ru>",
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
       "repository": "postcss/postcss",
       "homepage": "https://postcss.org/",
       "licenseFile": "postcss.txt",
@@ -521,7 +521,7 @@
     },
     {
       "name": "react",
-      "version": "19.2.4",
+      "version": "19.2.7",
       "declared": "^19",
       "license": "MIT",
       "author": null,
@@ -543,7 +543,7 @@
     },
     {
       "name": "react-dom",
-      "version": "19.2.4",
+      "version": "19.2.7",
       "declared": "^19",
       "license": "MIT",
       "author": null,
@@ -554,7 +554,7 @@
     },
     {
       "name": "react-hook-form",
-      "version": "7.71.1",
+      "version": "7.77.0",
       "declared": "^7.54.1",
       "license": "MIT",
       "author": "Beier(Bill) Luo <bluebill1049@hotmail.com>",
@@ -609,7 +609,7 @@
     },
     {
       "name": "tailwind-merge",
-      "version": "3.4.0",
+      "version": "3.6.0",
       "declared": "^3.3.1",
       "license": "MIT",
       "author": "Dany Castillo",
@@ -620,7 +620,7 @@
     },
     {
       "name": "tailwindcss",
-      "version": "4.2.0",
+      "version": "4.3.0",
       "declared": "^4.2.0",
       "license": "MIT",
       "author": null,

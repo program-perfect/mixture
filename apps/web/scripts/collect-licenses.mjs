@@ -129,7 +129,7 @@ async function main() {
 
   const records = []
   for (const name of names) {
-    const pkgDir = path.join(NODE_MODULES, ...name.split("/"))
+    const pkgDir = await resolvePkgDir(name)
     const pkg = await readJSON(path.join(pkgDir, "package.json"))
     const license = readLicenseField(pkg)
     const { file, text } = (await findLicenseText(pkgDir)) ?? {}
