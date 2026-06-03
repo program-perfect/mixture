@@ -6,6 +6,7 @@ export const screenkitCategories = pgTable("screenkit_categories", {
   id: text("id").primaryKey(),
   accentVar: text("accent_var").notNull(),
   tint: text("tint").notNull(),
+  icon: text("icon"),
   labelRu: text("label_ru").notNull(),
   labelEn: text("label_en"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

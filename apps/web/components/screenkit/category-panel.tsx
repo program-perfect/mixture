@@ -56,7 +56,7 @@ export function CategoryPanel({
   return (
     <aside
       className={cn(
-        "flex h-full w-full flex-col border-r border-panel-border bg-background md:w-[236px] md:shrink-0",
+        "sk-resize flex h-full w-full flex-col border-r border-panel-border bg-background md:w-[236px] md:shrink-0",
         className,
       )}
     >

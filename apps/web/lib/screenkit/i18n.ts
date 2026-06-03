@@ -119,7 +119,7 @@ const RU: Dict = {
     "визуальный язык каждой экранной вставки — терминальный интерфейс в духе cobalt со сдержанностью уровня vercel.",
   "style.language": "язык",
   "style.languageDesc":
-    "язык интерфейса всего сайта. русский — основной. язык внутри отдельных вставок переключается независимо.",
+    "язык интерфейса всего сайта. русский — основной. язык внутри отдельных вставок п��реключается независимо.",
   "style.palette": "палитра",
   "style.typography": "типографика",
   "style.principles": "принципы",
@@ -506,6 +506,15 @@ const EN: Dict = {
   "motion.autoNoteOff": "auto: animations on, following the system preference.",
   "motion.manualOn": "motion reduced manually.",
   "motion.manualOff": "animations enabled manually.",
+
+  // scale / zoom
+  "scale.title": "scale",
+  "scale.desc":
+    "size of text, padding and elements across the site. pick a comfortable scale — it is remembered.",
+  "scale.compact": "compact",
+  "scale.normal": "normal",
+  "scale.large": "large",
+  "scale.huge": "huge",
 }
 
 const DICT: Record<Locale, Dict> = { ru: RU, en: EN }

@@ -55,6 +55,7 @@ const categorySchema = z.object({
   slug: optional,
   accent: z.string().trim().optional(),
   tint: z.string().trim().optional(),
+  icon: z.string().trim().optional(),
 })
 
 const insertSchema = z.object({
@@ -117,6 +118,7 @@ export async function addCategoryAction(
     id,
     accentVar: accent,
     tint: data.tint && data.tint.length ? data.tint : "rgba(255,255,255,0.06)",
+    icon: data.icon ?? null,
     labelRu: data.labelRu,
     labelEn: data.labelEn,
   })

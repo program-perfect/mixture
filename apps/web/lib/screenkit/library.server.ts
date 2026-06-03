@@ -32,6 +32,7 @@ export async function fetchCustomCategories(): Promise<CategoryDef[]> {
     id: r.id as CategoryId,
     accent: r.accentVar,
     tint: r.tint,
+    icon: r.icon ?? undefined,
     label: text(r.labelRu, r.labelEn),
     custom: true,
   }))

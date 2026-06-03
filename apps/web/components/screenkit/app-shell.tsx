@@ -51,14 +51,15 @@ function ShellInner() {
     <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
       <MobileTopBar />
       <MobileNav />
-      <div className="flex min-h-0 flex-1">
-        {/* desktop icon rail */}
+      <div className="flex min-h-0 flex-1 bg-sidebar">
+        {/* desktop icon rail — sits behind the main area; the rounded left
+            corners of main reveal the rail color so it appears to tuck under */}
         <div className="hidden md:block">
           <Rail />
         </div>
-        {/* main area — flush to the rail on the left, no surrounding margins.
-            categories now live inside it (see Content). */}
-        <main className="min-w-0 flex-1 overflow-hidden border-l border-panel-border bg-background">
+        {/* main area — no top/bottom/right margins. only the left edge is
+            rounded and pulled over the rail so the rail tucks beneath it. */}
+        <main className="relative z-10 min-w-0 flex-1 overflow-hidden bg-background shadow-[-8px_0_24px_-12px_rgba(0,0,0,0.45)] md:-ml-3 md:rounded-l-[1.5rem]">
           <Content />
         </main>
       </div>

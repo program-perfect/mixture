@@ -35,6 +35,8 @@ export type CategoryDef = {
   accent: string
   tint: string
   label: LocalizedText
+  /** optional chosen icon name from the shared icon library */
+  icon?: string
   custom?: boolean
 }
 

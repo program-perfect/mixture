@@ -39,7 +39,21 @@ import type {
   DeviceType,
   InsertStatus,
 } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
+import { ICON_LIBRARY, ICON_NAMES } from "./icons"
 import { useScreenkit } from "./store"
+
+/* accent colors offered when creating a category — inserts placed in the
+   category inherit this color on their tiles */
+const ACCENT_OPTIONS = [
+  "var(--accent-blue)",
+  "var(--accent-cyan)",
+  "var(--accent-green)",
+  "var(--accent-orange)",
+  "var(--accent-red)",
+  "var(--accent-purple)",
+  "var(--accent-grey)",
+]
 
 /* ---------- shared field shell ---------- */
 
