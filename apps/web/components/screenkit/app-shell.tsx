@@ -6,7 +6,7 @@ import { PROJECT_VERSION } from "@/lib/screenkit/data"
 import type { CategoryDef, Insert } from "@/lib/screenkit/types"
 import { ScreenkitProvider, useScreenkit } from "./store"
 import { Rail } from "./rail"
-import { Sidebar } from "./sidebar"
+import { CategoryPanel } from "./category-panel"
 import { Content } from "./content"
 
 function MobileTopBar() {
@@ -39,7 +39,7 @@ function MobileNav() {
         <SheetTitle className="sr-only">{t("nav.navigation")}</SheetTitle>
         <div className="flex h-full">
           <Rail onNavigate={() => setMobileNavOpen(false)} />
-          <Sidebar onNavigate={() => setMobileNavOpen(false)} />
+          <CategoryPanel onNavigate={() => setMobileNavOpen(false)} />
         </div>
       </SheetContent>
     </Sheet>
@@ -52,18 +52,14 @@ function ShellInner() {
       <MobileTopBar />
       <MobileNav />
       <div className="flex min-h-0 flex-1">
-        {/* desktop two-level nav — sits underneath the floating content panel */}
+        {/* desktop icon rail */}
         <div className="hidden md:block">
           <Rail />
         </div>
-        <div className="hidden md:block">
-          <Sidebar />
-        </div>
-        {/* floating rounded main area */}
-        <main className="min-w-0 flex-1 md:py-3 md:pr-3">
-          <div className="h-full overflow-hidden border-panel-border bg-background md:rounded-3xl md:border md:shadow-[0_2px_40px_-12px_rgba(0,0,0,0.55)]">
-            <Content />
-          </div>
+        {/* main area — flush to the rail on the left, no surrounding margins.
+            categories now live inside it (see Content). */}
+        <main className="min-w-0 flex-1 overflow-hidden border-l border-panel-border bg-background">
+          <Content />
         </main>
       </div>
     </div>

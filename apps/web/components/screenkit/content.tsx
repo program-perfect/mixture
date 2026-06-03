@@ -4,6 +4,7 @@ import * as React from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useScreenkit, type Section } from "./store"
 import { useReveal } from "./motion"
+import { CategoryPanel, CategoryChips } from "./category-panel"
 import { OverviewSection } from "./sections/overview"
 import { LibrarySection } from "./sections/library"
 import { PreviewSection } from "./sections/preview"
@@ -45,13 +46,21 @@ export function Content() {
   const { section } = useScreenkit()
 
   return (
-    <ScrollArea className="h-full flex-1 sk-scroll">
-      <div className="mx-auto w-full max-w-[820px] px-5 py-8 sm:px-8 lg:py-12 2xl:max-w-[960px] 2xl:px-12 2xl:py-16">
-        {/* keyed by section so each navigation remounts -> instant transition,
-            a brief skeleton, then a smooth enter animation of the real content */}
-        <SectionView key={section} section={section} />
-      </div>
-    </ScrollArea>
+    <div className="flex h-full min-h-0">
+      {/* category navigation lives inside the main area — list on md+ */}
+      <CategoryPanel className="hidden md:flex" />
+
+      <ScrollArea className="h-full min-w-0 flex-1 sk-scroll">
+        <div className="mx-auto w-full max-w-[820px] px-5 py-6 sm:px-8 lg:py-10 2xl:max-w-[980px] 2xl:px-12 2xl:py-14">
+          {/* mobile / pre-tablet: categories as a horizontal chip strip */}
+          <CategoryChips className="mb-6 md:hidden" />
+
+          {/* keyed by section so each navigation remounts -> instant transition,
+              a brief skeleton, then a smooth enter animation of the real content */}
+          <SectionView key={section} section={section} />
+        </div>
+      </ScrollArea>
+    </div>
   )
 }
 

@@ -6,7 +6,14 @@ import type { Locale } from "@/lib/screenkit/types"
 import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
 import { SectionHeading, Explain, SegmentedControl } from "../primitives"
 import { useScreenkit } from "../store"
-import { usePalette, useThemeMode, type Palette } from "../theme"
+import {
+  accentSurface,
+  usePalette,
+  useThemeMode,
+  useThemeTransition,
+  type GradientLevel,
+  type Palette,
+} from "../theme"
 import { useMotion } from "../motion"
 
 type Mode = "light" | "dark" | "system"
@@ -35,9 +42,16 @@ const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
 function ThemeControls() {
   const { t } = useScreenkit()
   const { theme, setTheme } = useThemeMode()
-  const { palette, setPalette } = usePalette()
+  const { palette, setPalette, gradients, setGradients } = usePalette()
+  const transition = useThemeTransition()
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
+
+  const gradientOptions: { value: GradientLevel; label: string }[] = [
+    { value: "off", label: t("theme.gradOff") },
+    { value: "soft", label: t("theme.gradSoft") },
+    { value: "vivid", label: t("theme.gradVivid") },
+  ]
 
   const mode = (mounted ? (theme as Mode) : "dark") ?? "dark"
 
@@ -57,7 +71,7 @@ function ThemeControls() {
             return (
               <button
                 key={o.value}
-                onClick={() => setTheme(o.value)}
+                onClick={() => transition(() => setTheme(o.value))}
                 aria-pressed={active}
                 className={`flex items-center justify-center gap-2 rounded-2xl border px-3 py-3 font-mono text-sm lowercase transition-colors ${
                   active
@@ -112,6 +126,28 @@ function ThemeControls() {
           })}
         </div>
         <Explain>{t("theme.paletteDesc")}</Explain>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("theme.gradients")} />
+        <SegmentedControl<GradientLevel>
+          options={gradientOptions}
+          value={gradients}
+          onChange={setGradients}
+        />
+        {/* live preview of the gradient choice on accent tiles */}
+        <div className="flex items-center gap-2">
+          {["var(--accent-blue)", "var(--accent-green)", "var(--accent-orange)", "var(--accent-purple)"].map(
+            (accent, i) => (
+              <span
+                key={i}
+                className="size-10 rounded-[10px] border border-panel-border"
+                style={{ background: accentSurface(accent, gradients, true) }}
+              />
+            ),
+          )}
+        </div>
+        <Explain>{t("theme.gradientsDesc")}</Explain>
       </div>
     </>
   )

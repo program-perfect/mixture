@@ -5,6 +5,7 @@ import { Link2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { InsertStatus } from "@/lib/screenkit/types"
 import { statusAccent } from "@/lib/screenkit/data"
+import { accentSurface, useGradients } from "./theme"
 
 /* ----------------------------- icon tile ----------------------------- */
 
@@ -23,11 +24,16 @@ export function IconTile({
   className?: string
   size?: number
 }) {
-  // derive the inactive tile background from the accent so it tracks the
-  // active palette. the literal `tint` is only a fallback for non-accent uses.
-  const inactiveBg = accent
-    ? `color-mix(in srgb, ${accent} 16%, transparent)`
-    : tint ?? "rgba(255,255,255,0.04)"
+  // resolve the tile background through the gradient helper so it tracks both
+  // the active palette and the user's gradient preference. a single-hue
+  // gradient keeps it minimal; `tint` stays a fallback for non-accent uses.
+  const gradients = useGradients()
+  const baseAccent = accent || "var(--accent-grey)"
+  const background = accent
+    ? accentSurface(baseAccent, gradients, !!active)
+    : active
+      ? baseAccent
+      : tint ?? "rgba(255,255,255,0.04)"
   return (
     <span
       className={cn(
@@ -37,7 +43,7 @@ export function IconTile({
       style={{
         width: size,
         height: size,
-        background: active ? accent : inactiveBg,
+        background,
         borderColor: active ? "transparent" : "var(--panel-border)",
       }}
     >
