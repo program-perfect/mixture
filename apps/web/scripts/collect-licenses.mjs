@@ -15,7 +15,28 @@ import { fileURLToPath } from "node:url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, "..")
-const NODE_MODULES = path.join(ROOT, "node_modules")
+// In the monorepo, Bun hoists most dependencies to the repo-root node_modules.
+// Resolve packages by checking the app-local node_modules first, then walking
+// up to the workspace root, so license collection works either way.
+const NODE_MODULES_CANDIDATES = [
+  path.join(ROOT, "node_modules"),
+  path.resolve(ROOT, "..", "..", "node_modules"),
+]
+
+async function resolvePkgDir(name) {
+  const segs = name.split("/")
+  for (const nm of NODE_MODULES_CANDIDATES) {
+    const dir = path.join(nm, ...segs)
+    try {
+      await fs.access(path.join(dir, "package.json"))
+      return dir
+    } catch {
+      // try next candidate
+    }
+  }
+  // default to app-local path so downstream reads fail gracefully
+  return path.join(NODE_MODULES_CANDIDATES[0], ...segs)
+}
 // license texts are written to public/ so they can be served + linked directly
 const OUT_DIR = path.join(ROOT, "public", "licenses")
 const MANIFEST = path.join(ROOT, "lib", "screenkit", "licenses.generated.json")
@@ -96,7 +117,11 @@ async function main() {
     ...(rootPkg.dependencies ?? {}),
     ...(rootPkg.devDependencies ?? {}),
   }
-  const names = Object.keys(direct).sort((a, b) => a.localeCompare(b))
+  const names = Object.keys(direct)
+    // internal workspace packages are first-party, not third-party licenses
+    .filter((n) => !(direct[n] ?? "").startsWith("workspace:"))
+    .filter((n) => !n.startsWith("@screenkit/"))
+    .sort((a, b) => a.localeCompare(b))
 
   // reset output folder
   await fs.rm(OUT_DIR, { recursive: true, force: true })
