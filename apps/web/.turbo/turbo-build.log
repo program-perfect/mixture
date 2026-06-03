@@ -1,0 +1,35 @@
+
+> web@0.1.0 prebuild /vercel/share/v0-project/apps/web
+> node scripts/collect-licenses.mjs
+
+[licenses] failed: ReferenceError: NODE_MODULES is not defined
+    at main (file:///vercel/share/v0-project/apps/web/scripts/collect-licenses.mjs:132:30)
+
+> web@0.1.0 build /vercel/share/v0-project/apps/web
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.8s
+  Skipping validation of types
+  Finished TypeScript config validation in 9ms ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/2) ...
+✓ Generating static pages using 3 workers (2/2) in 110ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+└ ƒ /insert/[id]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

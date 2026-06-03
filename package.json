@@ -2,11 +2,7 @@
   "name": "mixture",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "packages/inserts/*"
-  ],
+  "packageManager": "pnpm@10.34.1",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
