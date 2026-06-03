@@ -8,6 +8,7 @@ import {
 } from "@/lib/screenkit/data"
 import { categoryLabel } from "@/lib/screenkit/i18n"
 import { SectionHeading, Explain, KeyVal } from "../primitives"
+import { LicensesList } from "../licenses-list"
 import { useScreenkit } from "../store"
 
 export function AboutSection() {
@@ -65,6 +66,8 @@ export function AboutSection() {
           })}
         </div>
       </div>
+
+      <LicensesList />
     </div>
   )
 }

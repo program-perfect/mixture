@@ -55,12 +55,7 @@ export type Filters = {
   status: InsertStatus | "all"
 }
 
-export type NewCategoryInput = {
-  labelRu: string
-  labelEn?: string
-  accent?: string
-  tint?: string
-}
+export type NewCategoryInput = Parameters<typeof addCategoryAction>[0]
 
 export type NewInsertInput = Parameters<typeof addInsertAction>[0]
 

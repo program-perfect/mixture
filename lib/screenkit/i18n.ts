@@ -133,7 +133,7 @@ const RU: Dict = {
   "style.sw.accentGreen": "акцент зелёный",
   "style.sw.accentBlue": "акцент синий",
   "style.rule.1":
-    "везде моноширинный шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
+    "везде моноширинн��й шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
   "style.rule.2":
     "обобщённый, небрендированный корпус устройства. никогда не воспроизводите реальный продукт или логотип.",
   "style.rule.3":
@@ -162,6 +162,17 @@ const RU: Dict = {
   "about.formfactorsValue": "мобильный → тв",
   "about.catalogue": "каталог",
   "about.insertsSuffix": "вставок",
+
+  // licenses
+  "licenses.title": "лицензии и права",
+  "licenses.desc":
+    "полный список прямых зависимостей проекта с их лицензиями. список и тексты лицензий собираются автоматически из node_modules при запуске и сборке — при установке новых модулей он обновляется сам.",
+  "licenses.search": "поиск по названию или лицензии…",
+  "licenses.packages": "пакетов",
+  "licenses.directDeps": "прямые зависимости",
+  "licenses.loading": "загрузка текста лицензии…",
+  "licenses.unavailable": "текст лицензии недоступен.",
+  "licenses.empty": "ничего не найдено.",
 
   // floating menu
   "fm.back": "на главную",
@@ -197,6 +208,9 @@ const RU: Dict = {
   "editor.titleEn": "заголовок (en)",
   "editor.titleRuPh": "напр. экран блокировки телефона",
   "editor.titleEnPh": "напр. phone lock screen",
+  "editor.slug": "слаг (адрес)",
+  "editor.slugHint": "необязательно, латиница",
+  "editor.slugPh": "напр. phone-lock-screen",
   "editor.aspect": "формат кадра",
   "editor.episode": "серия",
   "editor.scene": "сцена",
@@ -357,6 +371,16 @@ const EN: Dict = {
   "about.catalogue": "catalogue",
   "about.insertsSuffix": "inserts",
 
+  "licenses.title": "licenses & rights",
+  "licenses.desc":
+    "the full list of the project's direct dependencies with their licenses. the list and license texts are collected automatically from node_modules on dev start and build — installing new modules refreshes it on its own.",
+  "licenses.search": "search by name or license…",
+  "licenses.packages": "packages",
+  "licenses.directDeps": "direct dependencies",
+  "licenses.loading": "loading license text…",
+  "licenses.unavailable": "license text unavailable.",
+  "licenses.empty": "nothing found.",
+
   "fm.back": "back to home",
   "fm.fullscreen": "fullscreen",
   "fm.exitFullscreen": "exit fullscreen",
@@ -389,6 +413,9 @@ const EN: Dict = {
   "editor.titleEn": "title (en)",
   "editor.titleRuPh": "e.g. экран блокировки телефона",
   "editor.titleEnPh": "e.g. phone lock screen",
+  "editor.slug": "slug (url)",
+  "editor.slugHint": "optional, latin only",
+  "editor.slugPh": "e.g. phone-lock-screen",
   "editor.aspect": "aspect ratio",
   "editor.episode": "episode",
   "editor.scene": "scene",

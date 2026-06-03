@@ -79,6 +79,7 @@ function AddCategoryDialog() {
   const [open, setOpen] = React.useState(false)
   const [labelRu, setLabelRu] = React.useState("")
   const [labelEn, setLabelEn] = React.useState("")
+  const [slug, setSlug] = React.useState("")
   const [error, setError] = React.useState<string | null>(null)
 
   async function submit() {
@@ -87,9 +88,14 @@ function AddCategoryDialog() {
       return
     }
     setError(null)
-    await addCategory({ labelRu, labelEn: labelEn || undefined })
+    await addCategory({
+      labelRu,
+      labelEn: labelEn || undefined,
+      slug: slug || undefined,
+    })
     setLabelRu("")
     setLabelEn("")
+    setSlug("")
     setOpen(false)
   }
 
@@ -126,6 +132,14 @@ function AddCategoryDialog() {
               className={inputCls}
             />
           </Fld>
+          <Fld label={t("editor.slug")} hint={t("editor.slugHint")}>
+            <Input
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder={t("editor.slugPh")}
+              className={inputCls}
+            />
+          </Fld>
           {error ? (
             <p className="font-mono text-xs text-accent-red">{error}</p>
           ) : null}
@@ -154,6 +168,7 @@ function AddCategoryDialog() {
 const emptyInsert = {
   titleRu: "",
   titleEn: "",
+  slug: "",
   descriptionRu: "",
   descriptionEn: "",
   episode: "ep-01",
@@ -184,6 +199,7 @@ function AddInsertDialog() {
     }
     setError(null)
     await addInsert({
+      slug: f.slug || undefined,
       category: String(category),
       device,
       aspect,
@@ -239,6 +255,15 @@ function AddInsertDialog() {
               />
             </Fld>
           </div>
+
+          <Fld label={t("editor.slug")} hint={t("editor.slugHint")}>
+            <Input
+              value={f.slug}
+              onChange={(e) => set("slug")(e.target.value)}
+              placeholder={t("editor.slugPh")}
+              className={inputCls}
+            />
+          </Fld>
 
           <div className="grid gap-4 sm:grid-cols-4">
             <Fld label={t("library.category")}>
