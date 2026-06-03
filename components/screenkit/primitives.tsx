@@ -148,7 +148,13 @@ export function FormRow({
 
 /* ----------------------------- status badge ----------------------------- */
 
-export function StatusBadge({ status }: { status: InsertStatus }) {
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: InsertStatus
+  label?: string
+}) {
   const accent = statusAccent(status)
   return (
     <span
@@ -159,7 +165,35 @@ export function StatusBadge({ status }: { status: InsertStatus }) {
         className="size-1.5 rounded-full"
         style={{ background: accent }}
       />
-      {status}
+      {label ?? status}
+    </span>
+  )
+}
+
+/* badge shown on inserts that have no english translation */
+export function RuOnlyBadge({
+  label,
+  title,
+  className,
+}: {
+  label: string
+  title?: string
+  className?: string
+}) {
+  return (
+    <span
+      title={title}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border border-dashed px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide",
+        className,
+      )}
+      style={{
+        color: "var(--accent-purple)",
+        borderColor: "var(--accent-purple)",
+        background: "rgba(108,99,255,0.08)",
+      }}
+    >
+      {label}
     </span>
   )
 }

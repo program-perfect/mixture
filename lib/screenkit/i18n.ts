@@ -71,6 +71,11 @@ const RU: Dict = {
   "library.countOne": "вставка",
   "library.countMany": "вставок",
 
+  // timeline
+  "timeline.title": "производственный таймлайн",
+  "timeline.desc":
+    "все вставки сгруппированы по сериям и сценам в порядке съёмки. нажмите строку, чтобы загрузить её в превью устройства.",
+
   // preview
   "preview.title": "превью на устройстве",
   "preview.desc":
@@ -124,6 +129,14 @@ const RU: Dict = {
   "export.renderQueue": "очередь рендера",
   "export.json": "экспорт json",
   "export.promptSheet": "лист промптов",
+  "export.fmt.mp4": "mp4 h.264",
+  "export.fmt.mp4.note": "универсальная доставка, маленькие файлы.",
+  "export.fmt.prores": "prores 422",
+  "export.fmt.prores.note": "мастер для монтажа, большие файлы.",
+  "export.fmt.pngSeq": "секвенция png",
+  "export.fmt.pngSeq.note": "покадровый источник для композа.",
+  "export.fmt.webm": "webm vp9",
+  "export.fmt.webm.note": "веб-превью, поддержка альфы.",
 
   // style / appearance
   "style.title": "оформление",
@@ -139,6 +152,22 @@ const RU: Dict = {
   "style.typeMono": "geist mono · съешь ещё этих мягких булок 0123456789",
   "style.typeBody":
     "основной текст остаётся в моноширинном начертании при комфортном размере с расслабленным межстрочным интервалом.",
+  "style.sw.background": "фон",
+  "style.sw.panel": "панель",
+  "style.sw.controlActive": "активный контрол",
+  "style.sw.accentOrange": "акцент оранжевый",
+  "style.sw.accentGreen": "акцент зелёный",
+  "style.sw.accentBlue": "акцент синий",
+  "style.rule.1":
+    "везде моноширинный шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
+  "style.rule.2":
+    "обобщённый, небрендированный корпус устройства. никогда не воспроизводите реальный продукт или логотип.",
+  "style.rule.3":
+    "каждая вставка грейдится под кадр: чистая, съёмка с экрана или грязная.",
+  "style.rule.4":
+    "минимум интерфейса на площадке — только тихая плавающая кнопка, без хедера и футера.",
+  "style.rule.5":
+    "полноэкранный режим по умолчанию. скрин-стейт — это весь кадр.",
 
   // about
   "about.title": "о проекте",
@@ -220,6 +249,10 @@ const EN: Dict = {
   "library.countOne": "insert",
   "library.countMany": "inserts",
 
+  "timeline.title": "production timeline",
+  "timeline.desc":
+    "every insert grouped by episode and scene, in shooting order. tap a row to load it into the device preview.",
+
   "preview.title": "device preview",
   "preview.desc":
     "load an insert onto a device frame and grade it for the shot. clean source, filmed-from-screen, or dirty playback.",
@@ -270,6 +303,14 @@ const EN: Dict = {
   "export.renderQueue": "render queue",
   "export.json": "export json",
   "export.promptSheet": "prompt sheet",
+  "export.fmt.mp4": "mp4 h.264",
+  "export.fmt.mp4.note": "universal delivery, small files.",
+  "export.fmt.prores": "prores 422",
+  "export.fmt.prores.note": "editorial master, large files.",
+  "export.fmt.pngSeq": "png sequence",
+  "export.fmt.pngSeq.note": "per-frame compositing source.",
+  "export.fmt.webm": "webm vp9",
+  "export.fmt.webm.note": "web preview, alpha support.",
 
   "style.title": "appearance",
   "style.desc":
@@ -284,6 +325,22 @@ const EN: Dict = {
   "style.typeMono": "geist mono · the quick brown fox 0123456789",
   "style.typeBody":
     "body copy stays in mono at a comfortable reading size with relaxed line-height.",
+  "style.sw.background": "background",
+  "style.sw.panel": "panel",
+  "style.sw.controlActive": "control active",
+  "style.sw.accentOrange": "accent orange",
+  "style.sw.accentGreen": "accent green",
+  "style.sw.accentBlue": "accent blue",
+  "style.rule.1":
+    "monospace everywhere, lowercase labels. interface reads like a terminal, not a brochure.",
+  "style.rule.2":
+    "generic, unbranded device chrome. never reproduce a real product or logo.",
+  "style.rule.3":
+    "every insert is graded for the shot: clean, filmed-from-screen, or dirty playback.",
+  "style.rule.4":
+    "minimal chrome on set — only a quiet floating control, never a header or footer.",
+  "style.rule.5":
+    "fullscreen by default. the screen-state is the whole frame.",
 
   "about.title": "about",
   "about.desc":

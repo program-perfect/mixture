@@ -13,11 +13,14 @@ import {
   X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { Locale } from "@/lib/screenkit/types"
+import { DEFAULT_LOCALE, translate } from "@/lib/screenkit/i18n"
 
 type Orientation = "landscape" | "portrait"
 
-export function FloatingMenu() {
+export function FloatingMenu({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
   const router = useRouter()
+  const t = (key: string) => translate(locale, key)
   const [open, setOpen] = React.useState(false)
   const [isFullscreen, setIsFullscreen] = React.useState(false)
   const [orientation, setOrientation] = React.useState<Orientation>("landscape")
@@ -66,23 +69,25 @@ export function FloatingMenu() {
         )}
       >
         <MenuButton
-          label="back to home"
+          label={t("fm.back")}
           onClick={() => router.push("/")}
           icon={ArrowLeft}
         />
         <MenuButton
-          label={isFullscreen ? "exit fullscreen" : "fullscreen"}
+          label={isFullscreen ? t("fm.exitFullscreen") : t("fm.fullscreen")}
           onClick={toggleFullscreen}
           icon={isFullscreen ? Minimize : Maximize}
         />
         <MenuButton
-          label={`rotate (${orientation})`}
+          label={`${t("fm.rotate")} (${
+            orientation === "landscape" ? t("fm.landscape") : t("fm.portrait")
+          })`}
           onClick={toggleOrientation}
           icon={RotateCw}
           disabled={locked}
         />
         <MenuButton
-          label={locked ? "orientation locked" : "lock orientation"}
+          label={locked ? t("fm.locked") : t("fm.lock")}
           onClick={() => setLocked((l) => !l)}
           icon={locked ? Lock : LockOpen}
           active={locked}
@@ -91,7 +96,7 @@ export function FloatingMenu() {
 
       {/* toggle */}
       <button
-        aria-label={open ? "close menu" : "open menu"}
+        aria-label={open ? t("nav.closeMenu") : t("nav.openMenu")}
         onClick={() => setOpen((o) => !o)}
         className={cn(
           "flex size-11 items-center justify-center rounded-full border backdrop-blur-md transition-all",
