@@ -1,4 +1,5 @@
 import type {
+  BuiltInCategoryId,
   CategoryId,
   DeviceType,
   InsertStatus,
@@ -204,6 +205,54 @@ const RU: Dict = {
   "common.copied": "скопировано",
   "common.ruOnly": "только ru",
   "common.ruOnlyHint": "английский перевод не добавлен",
+
+  // library editor
+  "editor.addInsert": "добавить вставку",
+  "editor.addCategory": "добавить категорию",
+  "editor.reset": "сбросить библиотеку",
+  "editor.newInsert": "новая вставка",
+  "editor.newInsertDesc":
+    "сохраняется на сайте и видна всем. поля на английском необязательны.",
+  "editor.newCategory": "новая категория",
+  "editor.newCategoryDesc":
+    "категории общие для всей библиотеки и сохраняются на сайте.",
+  "editor.labelRu": "название (ru)",
+  "editor.labelEn": "название (en)",
+  "editor.labelRuPh": "напр. дроны",
+  "editor.labelEnPh": "напр. drones",
+  "editor.titleRu": "заголовок (ru)",
+  "editor.titleEn": "заголовок (en)",
+  "editor.titleRuPh": "напр. экран блокировки телефона",
+  "editor.titleEnPh": "напр. phone lock screen",
+  "editor.aspect": "формат кадра",
+  "editor.episode": "серия",
+  "editor.scene": "сцена",
+  "editor.date": "дата",
+  "editor.description": "описание",
+  "editor.prompt": "промпт",
+  "editor.shortPrompt": "короткий промпт",
+  "editor.negativePrompt": "негативный промпт",
+  "editor.optional": "необязательно",
+  "editor.required": "заполните обязательные поля",
+  "editor.save": "сохранить",
+  "editor.cancel": "отмена",
+  "editor.resetTitle": "сбросить библиотеку?",
+  "editor.resetDesc":
+    "все добавленные вставки и категории будут удалены. встроенный список вернётся к исходному состоянию.",
+  "editor.resetConfirm": "сбросить",
+
+  // appearance / theme
+  "theme.mode": "режим",
+  "theme.dark": "тёмная",
+  "theme.light": "светлая",
+  "theme.system": "системная",
+  "theme.palette": "палитра",
+  "theme.paletteDesc": "набор акцентных цветов интерфейса.",
+  "theme.modeDesc": "светлая и тёмная схемы в стиле cobalt.tools.",
+  "palette.cobalt": "кобальт",
+  "palette.sunset": "закат",
+  "palette.forest": "лес",
+  "palette.mono": "моно",
 }
 
 const EN: Dict = {
@@ -374,6 +423,54 @@ const EN: Dict = {
   "common.copied": "copied",
   "common.ruOnly": "ru only",
   "common.ruOnlyHint": "english translation not added",
+
+  // library editor
+  "editor.addInsert": "add insert",
+  "editor.addCategory": "add category",
+  "editor.reset": "reset library",
+  "editor.newInsert": "new insert",
+  "editor.newInsertDesc":
+    "saved on the site and visible to everyone. english fields are optional.",
+  "editor.newCategory": "new category",
+  "editor.newCategoryDesc":
+    "categories are shared across the whole library and saved on the site.",
+  "editor.labelRu": "label (ru)",
+  "editor.labelEn": "label (en)",
+  "editor.labelRuPh": "e.g. дроны",
+  "editor.labelEnPh": "e.g. drones",
+  "editor.titleRu": "title (ru)",
+  "editor.titleEn": "title (en)",
+  "editor.titleRuPh": "e.g. экран блокировки телефона",
+  "editor.titleEnPh": "e.g. phone lock screen",
+  "editor.aspect": "aspect ratio",
+  "editor.episode": "episode",
+  "editor.scene": "scene",
+  "editor.date": "date",
+  "editor.description": "description",
+  "editor.prompt": "prompt",
+  "editor.shortPrompt": "short prompt",
+  "editor.negativePrompt": "negative prompt",
+  "editor.optional": "optional",
+  "editor.required": "fill in the required fields",
+  "editor.save": "save",
+  "editor.cancel": "cancel",
+  "editor.resetTitle": "reset library?",
+  "editor.resetDesc":
+    "all added inserts and categories will be removed. the built-in list returns to its original state.",
+  "editor.resetConfirm": "reset",
+
+  // appearance / theme
+  "theme.mode": "mode",
+  "theme.dark": "dark",
+  "theme.light": "light",
+  "theme.system": "system",
+  "theme.palette": "palette",
+  "theme.paletteDesc": "the set of interface accent colors.",
+  "theme.modeDesc": "light and dark schemes in the cobalt.tools style.",
+  "palette.cobalt": "cobalt",
+  "palette.sunset": "sunset",
+  "palette.forest": "forest",
+  "palette.mono": "mono",
 }
 
 const DICT: Record<Locale, Dict> = { ru: RU, en: EN }
@@ -384,7 +481,10 @@ export function translate(locale: Locale, key: string): string {
 
 /* ----------------------- localized entity labels ----------------------- */
 
-export const CATEGORY_LABELS: Record<Locale, Record<CategoryId, string>> = {
+export const CATEGORY_LABELS: Record<
+  Locale,
+  Record<BuiltInCategoryId, string>
+> = {
   ru: {
     phones: "телефоны",
     cctv: "видеонаблюдение",
@@ -456,7 +556,9 @@ export const MODE_NOTES: Record<Locale, Record<PlaybackMode, string>> = {
 }
 
 export const categoryLabel = (id: CategoryId, locale: Locale) =>
-  CATEGORY_LABELS[locale][id]
+  CATEGORY_LABELS[locale][id as BuiltInCategoryId] ??
+  CATEGORY_LABELS.ru[id as BuiltInCategoryId] ??
+  id
 export const deviceLabel = (id: DeviceType, locale: Locale) =>
   DEVICE_LABELS[locale][id]
 export const statusLabel = (id: InsertStatus, locale: Locale) =>

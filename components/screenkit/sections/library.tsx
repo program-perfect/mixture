@@ -3,20 +3,9 @@
 import * as React from "react"
 import { Search, ArrowUpRight, Eye } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import {
-  CATEGORIES,
-  DEVICES,
-  STATUSES,
-  INSERTS,
-  categoryMeta,
-  resolveInsert,
-} from "@/lib/screenkit/data"
-import {
-  categoryLabel,
-  deviceLabel,
-  statusLabel,
-} from "@/lib/screenkit/i18n"
-import { categoryIcon } from "../icons"
+import { DEVICES, STATUSES, resolveInsert } from "@/lib/screenkit/data"
+import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
+import { iconForCategory } from "../icons"
 import {
   IconTile,
   StatusBadge,
@@ -25,12 +14,23 @@ import {
   SectionHeading,
   Explain,
 } from "../primitives"
+import { LibraryEditor } from "../library-editor"
 import { useScreenkit } from "../store"
 
 export function LibrarySection() {
-  const { filters, setFilters, openInPreview, locale, t } = useScreenkit()
+  const {
+    filters,
+    setFilters,
+    openInPreview,
+    locale,
+    t,
+    inserts,
+    categories,
+    catDef,
+    catLabel,
+  } = useScreenkit()
 
-  const filtered = INSERTS.filter((i) => {
+  const filtered = inserts.filter((i) => {
     if (filters.category !== "all" && i.category !== filters.category) return false
     if (filters.device !== "all" && i.device !== filters.device) return false
     if (filters.status !== "all" && i.status !== filters.status) return false
@@ -46,9 +46,10 @@ export function LibrarySection() {
 
   return (
     <div className="flex flex-col gap-7">
-      <header className="flex flex-col gap-2">
+      <header className="flex flex-col gap-3">
         <SectionHeading title={t("library.title")} />
         <Explain>{t("library.desc")}</Explain>
+        <LibraryEditor />
       </header>
 
       {/* search */}
@@ -68,14 +69,14 @@ export function LibrarySection() {
           <Pill active={filters.category === "all"} onClick={() => setFilters((f) => ({ ...f, category: "all" }))}>
             {t("library.all")}
           </Pill>
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <Pill
               key={c.id}
               accent={c.accent}
               active={filters.category === c.id}
               onClick={() => setFilters((f) => ({ ...f, category: c.id }))}
             >
-              {categoryLabel(c.id, locale)}
+              {catLabel(c.id)}
             </Pill>
           ))}
         </FilterRow>
@@ -127,15 +128,20 @@ export function LibrarySection() {
       <ul className="flex flex-col gap-2">
         {filtered.map((raw) => {
           const insert = resolveInsert(raw, locale)
-          const cat = categoryMeta(insert.category)
-          const Icon = categoryIcon[insert.category]
+          const cat = catDef(insert.category)
+          const Icon = iconForCategory(insert.category)
           return (
             <li key={insert.id}>
               <button
                 onClick={() => openInPreview(insert.id)}
                 className="group flex w-full items-start gap-3 rounded-2xl border border-panel-border bg-panel-soft p-3 text-left transition-colors hover:border-ring hover:bg-panel-hover"
               >
-                <IconTile icon={Icon} accent={cat.accent} tint={cat.tint} size={40} />
+                <IconTile
+                  icon={Icon}
+                  accent={cat?.accent ?? "var(--accent-grey)"}
+                  tint={cat?.tint ?? "rgba(255,255,255,0.06)"}
+                  size={40}
+                />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="truncate font-mono text-sm lowercase text-foreground">
@@ -160,7 +166,7 @@ export function LibrarySection() {
                     <span>· {insert.episode}</span>
                     <span>· {insert.scene}</span>
                     <span>· {deviceLabel(insert.device, locale)}</span>
-                    <span>· {categoryLabel(insert.category, locale)}</span>
+                    <span>· {catLabel(insert.category)}</span>
                     <span>· {insert.aspect}</span>
                   </div>
                 </div>

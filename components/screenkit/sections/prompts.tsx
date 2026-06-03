@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Copy, Check } from "lucide-react"
-import { INSERTS, getInsert, resolveInsert } from "@/lib/screenkit/data"
+import { resolveInsert } from "@/lib/screenkit/data"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
 import {
   Select,
@@ -51,8 +51,9 @@ function CopyBlock({
 }
 
 export function PromptsSection() {
-  const { selectedId, setSelectedId, locale, insertLocaleFor, t } = useScreenkit()
-  const raw = getInsert(selectedId) ?? INSERTS[0]
+  const { selectedId, setSelectedId, locale, insertLocaleFor, t, inserts, getInsert } =
+    useScreenkit()
+  const raw = getInsert(selectedId) ?? inserts[0]
   const insertLocale = insertLocaleFor(raw.id)
   const insert = resolveInsert(raw, insertLocale)
 
@@ -71,7 +72,7 @@ export function PromptsSection() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="max-h-80 border-panel-border bg-popover font-mono">
-              {INSERTS.map((i) => (
+              {inserts.map((i) => (
                 <SelectItem key={i.id} value={i.id} className="lowercase">
                   {resolveInsert(i, locale).title}
                 </SelectItem>

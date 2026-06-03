@@ -14,8 +14,6 @@ import {
 import {
   DEVICES,
   PLAYBACK_MODES,
-  INSERTS,
-  getInsert,
   resolveInsert,
 } from "@/lib/screenkit/data"
 import type { AspectRatio, DeviceType, PlaybackMode } from "@/lib/screenkit/types"
@@ -46,8 +44,10 @@ export function PreviewSection() {
     locale,
     insertLocaleFor,
     t,
+    inserts,
+    getInsert,
   } = useScreenkit()
-  const raw = getInsert(selectedId) ?? INSERTS[0]
+  const raw = getInsert(selectedId) ?? inserts[0]
   // the device content uses the per-insert language; the chrome uses the site language
   const insertLocale = insertLocaleFor(raw.id)
   const insert = resolveInsert(raw, insertLocale)
@@ -64,7 +64,7 @@ export function PreviewSection() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="max-h-80 border-panel-border bg-popover font-mono">
-              {INSERTS.map((i) => (
+              {inserts.map((i) => (
                 <SelectItem key={i.id} value={i.id} className="lowercase">
                   {resolveInsert(i, locale).title}
                 </SelectItem>

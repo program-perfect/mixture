@@ -4,9 +4,8 @@ import * as React from "react"
 import { FileBox, Download, Bug, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { CATEGORIES, PROJECT_VERSION, INSERTS } from "@/lib/screenkit/data"
-import { categoryLabel } from "@/lib/screenkit/i18n"
-import { categoryIcon, appearanceIcon } from "./icons"
+import { PROJECT_VERSION } from "@/lib/screenkit/data"
+import { iconForCategory, appearanceIcon } from "./icons"
 import { IconTile } from "./primitives"
 import { useScreenkit } from "./store"
 import type { CategoryId } from "@/lib/screenkit/types"
@@ -22,7 +21,16 @@ type ExtraItem = {
 }
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
-  const { section, setSection, filters, setFilters, locale, t } = useScreenkit()
+  const {
+    section,
+    setSection,
+    filters,
+    setFilters,
+    t,
+    inserts,
+    categories,
+    catLabel,
+  } = useScreenkit()
 
   const nav = (fn: () => void) => () => {
     fn()
@@ -77,7 +85,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   ]
 
   return (
-    <aside className="flex h-full w-full flex-col bg-background md:w-[320px] md:shrink-0">
+    <aside className="flex h-full w-full flex-col bg-sidebar md:w-[320px] md:shrink-0">
       <div className="px-5 pt-5">
         <p className="font-mono text-xs lowercase text-text-faint">
           {PROJECT_VERSION}
@@ -113,7 +121,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               className="flex size-9 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs"
               style={{ color: "var(--text-secondary)" }}
             >
-              {INSERTS.length}
+              {inserts.length}
             </span>
             <span className="font-mono text-sm lowercase">
               {t("nav.allInserts")}
@@ -121,10 +129,10 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </button>
 
           {/* device categories */}
-          {CATEGORIES.map((cat) => {
-            const Icon = categoryIcon[cat.id]
+          {categories.map((cat) => {
+            const Icon = iconForCategory(cat.id)
             const active = section === "library" && filters.category === cat.id
-            const count = INSERTS.filter((i) => i.category === cat.id).length
+            const count = inserts.filter((i) => i.category === cat.id).length
             return (
               <button
                 key={cat.id}
@@ -138,7 +146,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   active={active}
                 />
                 <span className="flex-1 text-left font-mono text-sm lowercase">
-                  {categoryLabel(cat.id, locale)}
+                  {catLabel(cat.id)}
                 </span>
                 <span className="font-mono text-xs text-text-faint">
                   {count}

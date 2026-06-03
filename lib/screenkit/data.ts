@@ -1,5 +1,6 @@
 import type {
   AspectRatio,
+  CategoryDef,
   CategoryId,
   DeviceType,
   Insert,
@@ -10,6 +11,7 @@ import type {
   PlaybackMode,
   ResolvedInsert,
 } from "./types"
+import { CATEGORY_LABELS } from "./i18n"
 
 export const PROJECT_VERSION = "v0.9-gs-screenkit"
 export const PROJECT_SUBTITLE = "гремучая смесь / prop playback system"
@@ -32,6 +34,39 @@ export const CATEGORIES: CategoryMeta[] = [
 export const categoryMeta = (id: CategoryId): CategoryMeta =>
   CATEGORIES.find((c) => c.id === id) ?? CATEGORIES[0]
 
+/* built-in categories as fully self-describing defs (meta + localized label) */
+export const DEFAULT_CATEGORY_DEFS: CategoryDef[] = CATEGORIES.map((c) => ({
+  id: c.id,
+  accent: c.accent,
+  tint: c.tint,
+  label: {
+    ru: CATEGORY_LABELS.ru[c.id as keyof (typeof CATEGORY_LABELS)["ru"]],
+    en: CATEGORY_LABELS.en[c.id as keyof (typeof CATEGORY_LABELS)["en"]],
+  },
+}))
+
+/* merge built-in defaults with custom (server-stored) rows */
+export const buildCategoryDefs = (custom: CategoryDef[] = []): CategoryDef[] => {
+  const ids = new Set(DEFAULT_CATEGORY_DEFS.map((c) => c.id))
+  return [...DEFAULT_CATEGORY_DEFS, ...custom.filter((c) => !ids.has(c.id))]
+}
+
+export const mergeInserts = (custom: Insert[] = []): Insert[] => {
+  const ids = new Set(INSERTS.map((i) => i.id))
+  return [...INSERTS, ...custom.filter((i) => !ids.has(i.id))]
+}
+
+export const findInsert = (list: Insert[], id: string): Insert | undefined =>
+  list.find((i) => i.id === id)
+
+export const findCategoryDef = (
+  list: CategoryDef[],
+  id: CategoryId,
+): CategoryDef | undefined => list.find((c) => c.id === id)
+
+export const categoryLabelFromDef = (def: CategoryDef, locale: Locale): string =>
+  locale === "en" ? def.label.en ?? def.label.ru : def.label.ru
+
 export const DEVICES: { id: DeviceType; aspect: AspectRatio }[] = [
   { id: "phone", aspect: "9:16" },
   { id: "monitor", aspect: "16:9" },
@@ -40,6 +75,8 @@ export const DEVICES: { id: DeviceType; aspect: AspectRatio }[] = [
   { id: "projector", aspect: "16:9" },
   { id: "cctv", aspect: "4:3" },
 ]
+
+export const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
 
 export const PLAYBACK_MODES: { id: PlaybackMode }[] = [
   { id: "clean" },
@@ -541,7 +578,7 @@ export const INSERTS: Insert[] = [
       en: "tea-house surveillance, warm interior, patrons at low tables, fixed corner angle.",
     },
     prompt: {
-      ru: "cctv интерьера среднеазиатской чайханы, тёплый тусклый свет, посетители за низкими столиками, фиксированный высокий угол, 4:3, таймстамп поверх, лёгкая компрессия, выпавшие кадры, грязная вставка наблюдения",
+      ru: "cctv интерьера среднеазиатской чайханы, тёплый тусклый свет, посетители за низкими столиками, фиксированный высокий угол, 4:3, таймстамп поверх, лёгкая компрессия, выпавшие кадры, гря��ная вставка наблюдения",
       en: "cctv of a central asian tea-house interior, warm dim lighting, patrons at low tables, fixed high corner angle, 4:3, timestamp overlay, mild compression, dropped frames, gritty surveillance insert",
     },
     shortPrompt: {
@@ -549,7 +586,7 @@ export const INSERTS: Insert[] = [
       en: "tea-house cctv, warm interior, corner angle, 4:3",
     },
     negativePrompt: {
-      ru: "кинематографичный долли, цветокоррекция, резкий 4k",
+      ru: "кинематогра��ичный долли, цветокоррекция, резкий 4k",
       en: "cinematic dolly, color graded, crisp 4k",
     },
     technicalNotes: {
@@ -804,7 +841,7 @@ export const INSERTS: Insert[] = [
     status: "needs review",
     title: { ru: "футбол на умирающем телефоне", en: "dying battery football video" },
     description: {
-      ru: "просмотр футбольного клипа на телефоне, пока садится батарея, предупреждение 1%, экран гаснет.",
+      ru: "просмотр футбольного клипа на теле��оне, пока садится батарея, предупреждение 1%, экран гаснет.",
       en: "watching a football clip on a phone as the battery dies, 1% warning, screen dims.",
     },
     prompt: {

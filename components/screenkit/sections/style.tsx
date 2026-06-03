@@ -1,9 +1,118 @@
 "use client"
 
+import * as React from "react"
+import { Check, Moon, Sun, Monitor } from "lucide-react"
 import type { Locale } from "@/lib/screenkit/types"
 import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
 import { SectionHeading, Explain, SegmentedControl } from "../primitives"
 import { useScreenkit } from "../store"
+import { usePalette, useThemeMode, type Palette } from "../theme"
+
+type Mode = "light" | "dark" | "system"
+
+const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
+  {
+    id: "cobalt",
+    tokens: ["var(--accent-blue)", "var(--accent-cyan)", "var(--accent-green)", "var(--accent-orange)"],
+  },
+  {
+    id: "sunset",
+    tokens: ["var(--accent-orange)", "var(--accent-red)", "var(--accent-purple)", "var(--accent-cyan)"],
+  },
+  {
+    id: "forest",
+    tokens: ["var(--accent-green)", "var(--accent-cyan)", "var(--accent-blue)", "var(--accent-orange)"],
+  },
+  {
+    id: "mono",
+    tokens: ["var(--accent-grey)", "var(--accent-blue)", "var(--accent-cyan)", "var(--accent-red)"],
+  },
+]
+
+function ThemeControls() {
+  const { t } = useScreenkit()
+  const { theme, setTheme } = useThemeMode()
+  const { palette, setPalette } = usePalette()
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+
+  const mode = (mounted ? (theme as Mode) : "dark") ?? "dark"
+
+  const modeOptions: { value: Mode; label: string; icon: React.ReactNode }[] = [
+    { value: "dark", label: t("theme.dark"), icon: <Moon className="size-3.5" /> },
+    { value: "light", label: t("theme.light"), icon: <Sun className="size-3.5" /> },
+    { value: "system", label: t("theme.system"), icon: <Monitor className="size-3.5" /> },
+  ]
+
+  return (
+    <>
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("theme.mode")} />
+        <div className="grid grid-cols-3 gap-2">
+          {modeOptions.map((o) => {
+            const active = mode === o.value
+            return (
+              <button
+                key={o.value}
+                onClick={() => setTheme(o.value)}
+                aria-pressed={active}
+                className={`flex items-center justify-center gap-2 rounded-2xl border px-3 py-3 font-mono text-sm lowercase transition-colors ${
+                  active
+                    ? "border-transparent bg-control-active text-control-active-foreground"
+                    : "border-panel-border bg-control text-text-secondary hover:bg-panel-hover hover:text-foreground"
+                }`}
+              >
+                {o.icon}
+                {o.label}
+              </button>
+            )
+          })}
+        </div>
+        <Explain>{t("theme.modeDesc")}</Explain>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("theme.palette")} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {PALETTE_PREVIEW.map((p) => {
+            const active = palette === p.id
+            return (
+              <button
+                key={p.id}
+                onClick={() => setPalette(p.id)}
+                aria-pressed={active}
+                className={`flex flex-col gap-3 rounded-2xl border p-3 text-left transition-colors ${
+                  active
+                    ? "border-ring bg-panel-hover"
+                    : "border-panel-border bg-control hover:bg-panel-hover"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  {p.tokens.map((tk, i) => (
+                    <span
+                      key={i}
+                      className="size-5 rounded-full border border-panel-border"
+                      style={{ background: tk }}
+                    />
+                  ))}
+                </span>
+                <span className="flex items-center justify-between">
+                  <span className="font-mono text-[12px] lowercase text-text-secondary">
+                    {t(`palette.${p.id}`)}
+                  </span>
+                  {active ? (
+                    <Check className="size-3.5 text-foreground" />
+                  ) : null}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+        <Explain>{t("theme.paletteDesc")}</Explain>
+      </div>
+    </>
+  )
+}
 
 const SWATCHES: { key: string; token: string }[] = [
   { key: "style.sw.background", token: "var(--background)" },
@@ -42,6 +151,8 @@ export function StyleSection() {
         />
         <Explain>{t("style.languageDesc")}</Explain>
       </div>
+
+      <ThemeControls />
 
       <div className="flex flex-col gap-4">
         <SectionHeading title={t("style.palette")} />

@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
+import type { CategoryDef, Insert } from "@/lib/screenkit/types"
 import { ScreenkitProvider, useScreenkit } from "./store"
 import { Rail } from "./rail"
 import { Sidebar } from "./sidebar"
@@ -47,28 +48,40 @@ function MobileNav() {
 
 function ShellInner() {
   return (
-    <div className="flex h-[100dvh] flex-col bg-background text-foreground">
+    <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
       <MobileTopBar />
       <MobileNav />
       <div className="flex min-h-0 flex-1">
-        {/* desktop two-level nav */}
+        {/* desktop two-level nav — sits underneath the floating content panel */}
         <div className="hidden md:block">
           <Rail />
         </div>
-        <div className="hidden border-r border-sidebar-border md:block">
+        <div className="hidden md:block">
           <Sidebar />
         </div>
-        <main className="min-w-0 flex-1">
-          <Content />
+        {/* floating rounded main area */}
+        <main className="min-w-0 flex-1 md:py-3 md:pr-3">
+          <div className="h-full overflow-hidden border-panel-border bg-background md:rounded-3xl md:border md:shadow-[0_2px_40px_-12px_rgba(0,0,0,0.55)]">
+            <Content />
+          </div>
         </main>
       </div>
     </div>
   )
 }
 
-export function AppShell() {
+export function AppShell({
+  initialInserts,
+  initialCategories,
+}: {
+  initialInserts?: Insert[]
+  initialCategories?: CategoryDef[]
+}) {
   return (
-    <ScreenkitProvider>
+    <ScreenkitProvider
+      initialInserts={initialInserts}
+      initialCategories={initialCategories}
+    >
       <ShellInner />
     </ScreenkitProvider>
   )
