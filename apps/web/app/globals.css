@@ -1,0 +1,560 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  screen inserts — гремучая смесь / prop playback system
+  cobalt.tools-inspired technical tool. monospace, sparse.
+
+  theming model:
+    • base surfaces come in two schemes — .dark and .light (cobalt.tools style)
+    • accent colors come from a swappable palette via [data-palette="…"]
+  surfaces + accents are independent, so any palette works in either scheme.
+*/
+
+/* ---- base scheme: DARK (default) ---- */
+:root,
+.dark {
+  --background: #000000;
+  --foreground: #f4f4f5;
+
+  --card: #101011;
+  --card-foreground: #f4f4f5;
+  --popover: #0b0b0c;
+  --popover-foreground: #f4f4f5;
+
+  --primary: #e7e7e7;
+  --primary-foreground: #050505;
+  --secondary: #1c1c1d;
+  --secondary-foreground: #f4f4f5;
+  --muted: #19191b;
+  --muted-foreground: #8b8b8b;
+  --accent: #19191b;
+  --accent-foreground: #f4f4f5;
+  --destructive: #ef4444;
+  --destructive-foreground: #f4f4f5;
+
+  --border: #262626;
+  --input: #1c1c1d;
+  --ring: #3a3a3a;
+
+  --radius: 0.875rem;
+
+  /* screenkit surfaces */
+  --sidebar: #151515;
+  --sidebar-foreground: #d7d7d7;
+  --sidebar-primary: #e7e7e7;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: #1c1c1d;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: #232323;
+  --sidebar-ring: #3a3a3a;
+  --sidebar-muted: #8b8b8b;
+
+  --panel: #0b0b0c;
+  --panel-soft: #111112;
+  --panel-hover: #19191b;
+  --panel-border: #262626;
+
+  --control: #1c1c1d;
+  --control-hover: #242426;
+  --control-active: #e7e7e7;
+  --control-active-foreground: #050505;
+
+  --text-primary: #f5f5f5;
+  --text-secondary: #a5adb8;
+  --text-muted: #737984;
+  --text-faint: #50545d;
+
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+}
+
+/* ---- base scheme: LIGHT (cobalt.tools light) ---- */
+.light {
+  --background: #f4f5f7;
+  --foreground: #16181c;
+
+  --card: #ffffff;
+  --card-foreground: #16181c;
+  --popover: #ffffff;
+  --popover-foreground: #16181c;
+
+  --primary: #16181c;
+  --primary-foreground: #f8f9fb;
+  --secondary: #e7e9ee;
+  --secondary-foreground: #16181c;
+  --muted: #eceef2;
+  --muted-foreground: #5b616e;
+  --accent: #e7e9ee;
+  --accent-foreground: #16181c;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+
+  --border: #dcdfe6;
+  --input: #e7e9ee;
+  --ring: #c2c6cf;
+
+  --sidebar: #e9ebef;
+  --sidebar-foreground: #2b2e35;
+  --sidebar-primary: #16181c;
+  --sidebar-primary-foreground: #f8f9fb;
+  --sidebar-accent: #dfe2e8;
+  --sidebar-accent-foreground: #16181c;
+  --sidebar-border: #d4d8e0;
+  --sidebar-ring: #c2c6cf;
+  --sidebar-muted: #6b7280;
+
+  --panel: #ffffff;
+  --panel-soft: #f7f8fa;
+  --panel-hover: #eef0f4;
+  --panel-border: #e2e5eb;
+
+  --control: #eceef2;
+  --control-hover: #e2e5eb;
+  --control-active: #16181c;
+  --control-active-foreground: #f8f9fb;
+
+  --text-primary: #16181c;
+  --text-secondary: #41454f;
+  --text-muted: #6b7280;
+  --text-faint: #969ba6;
+
+  --danger: #e5484d;
+  --warning: #d97706;
+  --success: #15a34a;
+}
+
+/* ---- accent palettes (independent of light / dark) ---- */
+/* cobalt (default) */
+:root,
+[data-palette="cobalt"] {
+  --accent-blue: #2f80ed;
+  --accent-cyan: #4cc9f0;
+  --accent-purple: #6c63ff;
+  --accent-red: #ef476f;
+  --accent-orange: #ff9f1c;
+  --accent-green: #22c55e;
+  --accent-grey: #777777;
+}
+
+/* sunset — warm */
+[data-palette="sunset"] {
+  --accent-blue: #ff6b35;
+  --accent-cyan: #ffb703;
+  --accent-purple: #f72585;
+  --accent-red: #e5383b;
+  --accent-orange: #fb8500;
+  --accent-green: #ef9f1c;
+  --accent-grey: #8a7f7a;
+}
+
+/* forest — cool greens / teals */
+[data-palette="forest"] {
+  --accent-blue: #2a9d8f;
+  --accent-cyan: #43cea2;
+  --accent-purple: #5e807f;
+  --accent-red: #e76f51;
+  --accent-orange: #e9c46a;
+  --accent-green: #2d6a4f;
+  --accent-grey: #6b7d72;
+}
+
+/* mono — desaturated */
+[data-palette="mono"] {
+  --accent-blue: #8b8f99;
+  --accent-cyan: #a7abb4;
+  --accent-purple: #6f7480;
+  --accent-red: #b06a6a;
+  --accent-orange: #b09a6a;
+  --accent-green: #7a8a7a;
+  --accent-grey: #777777;
+}
+
+/* charts follow the active accent palette */
+:root {
+  --chart-1: var(--accent-blue);
+  --chart-2: var(--accent-cyan);
+  --chart-3: var(--accent-purple);
+  --chart-4: var(--accent-orange);
+  --chart-5: var(--accent-green);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-muted: var(--sidebar-muted);
+
+  /* screenkit semantic tokens */
+  --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
+  --color-panel-hover: var(--panel-hover);
+  --color-panel-border: var(--panel-border);
+
+  --color-control: var(--control);
+  --color-control-hover: var(--control-hover);
+  --color-control-active: var(--control-active);
+  --color-control-active-foreground: var(--control-active-foreground);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-green: var(--accent-green);
+  --color-accent-grey: var(--accent-grey);
+
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply bg-background;
+    /* site zoom — driven by the appearance setting (see theme.tsx). scaling the
+       root font-size scales every rem-based size + spacing token together. */
+    font-size: calc(100% * var(--app-scale, 1));
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* smooth scrolling everywhere (neutralised by the reduce-motion block) */
+  html,
+  [data-radix-scroll-area-viewport],
+  .sk-scroll {
+    scroll-behavior: smooth;
+  }
+
+  /* interactive element cursors */
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="radio"],
+  [role="menuitem"],
+  [role="option"],
+  a[href],
+  summary,
+  label[for],
+  select,
+  [data-slot="select-trigger"],
+  [data-slot="trigger"] {
+    cursor: pointer;
+  }
+
+  /* text-entry fields get the text caret */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  /* sliders / range */
+  input[type="range"],
+  [role="slider"] {
+    cursor: ew-resize;
+  }
+
+  /* disabled controls override everything above */
+  button:disabled,
+  [aria-disabled="true"],
+  [data-disabled],
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  /* ---- smooth size/layout changes ----
+     any element that can change its dimensions (the device preview frame, the
+     side panels, etc.) eases between sizes instead of snapping. automatically
+     disabled when motion is reduced via the global override below. */
+  .sk-resize {
+    transition-property: width, height, max-width, max-height, min-width,
+      min-height, aspect-ratio, flex-basis, padding, margin;
+    transition-duration: 0.45s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* subtle technical scrollbars */
+  .sk-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--panel-border) transparent;
+  }
+  .sk-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .sk-scroll::-webkit-scrollbar-thumb {
+    background: var(--panel-border);
+    border-radius: 999px;
+  }
+
+  /* ---- gritty playback effects (insert previews only) ---- */
+  .fx-scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.28) 3px,
+      rgba(0, 0, 0, 0.28) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+  .fx-moire::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      48deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 2px,
+      transparent 5px
+    );
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+  .fx-bloom {
+    box-shadow: inset 0 0 90px rgba(255, 255, 255, 0.16);
+  }
+  .fx-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 120% at 50% 40%,
+      transparent 45%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+  .fx-glitch {
+    animation: fx-glitch 2.4s steps(1) infinite;
+  }
+  @keyframes fx-glitch {
+    0%, 92%, 100% { transform: translateX(0); filter: none; }
+    93% { transform: translateX(-2px); filter: hue-rotate(8deg); }
+    95% { transform: translateX(3px); }
+    97% { transform: translateX(-1px); filter: contrast(1.2); }
+  }
+  .fx-flicker {
+    animation: fx-flicker 3.5s ease-in-out infinite;
+  }
+  @keyframes fx-flicker {
+    0%, 100% { opacity: 1; }
+    47% { opacity: 0.97; }
+    48% { opacity: 0.8; }
+    49% { opacity: 0.98; }
+    72% { opacity: 0.9; }
+  }
+  .pulse-dot {
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239,71,111,0.5); }
+    70% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 14px rgba(239,71,111,0); }
+  }
+
+  /* ---- ui motion: section / block enter animations ---- */
+  @keyframes sk-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes sk-fade-in-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes sk-fade-in-scale {
+    from { opacity: 0; transform: scale(0.985); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* whole-section enter — keyed remount triggers this on every navigation */
+  .sk-section-enter {
+    animation: sk-fade-in-up 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* individual block / list-item enter, with optional per-item stagger via
+     the --sk-delay custom property */
+  .sk-animate-in {
+    animation: sk-fade-in-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+  .sk-animate-fade {
+    animation: sk-fade-in 0.5s ease both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+  .sk-animate-scale {
+    animation: sk-fade-in-scale 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+
+  /* ---- skeleton placeholders ---- */
+  .sk-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--panel-hover) 70%, var(--panel-soft));
+    border-radius: var(--radius-md);
+  }
+  .sk-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--foreground) 8%, transparent) 50%,
+      transparent 100%
+    );
+    animation: sk-shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes sk-shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  /* the skeleton container itself fades/crossfades smoothly */
+  .sk-skeleton-wrap {
+    animation: sk-fade-in 0.2s ease both;
+  }
+
+  /* horizontal category chip strip (mobile) — hide the scrollbar */
+  .sk-chips {
+    scrollbar-width: none;
+  }
+  .sk-chips::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * theme / palette switch animation
+ *
+ * palette + light/dark changes are wrapped in the View Transitions API, which
+ * crossfades the whole document root between the old and new colors. kept short
+ * and soft to stay minimal. disabled entirely when motion is reduced.
+ * ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.38s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  animation-name: sk-fade-out;
+}
+::view-transition-new(root) {
+  animation-name: sk-fade-in;
+}
+@keyframes sk-fade-out {
+  to { opacity: 0; }
+}
+
+html[data-motion="reduced"]::view-transition-old(root),
+html[data-motion="reduced"]::view-transition-new(root) {
+  animation: none !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * reduce motion
+ *
+ * one switch that neutralises every animation + transition. driven either by
+ * the explicit setting (<html data-motion="reduced">) or, before js resolves /
+ * while still on auto, by the native browser preference. an explicit "full"
+ * choice opts out of the native baseline.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html[data-motion="reduced"],
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* skeleton shimmer is pure decoration — hide it entirely when motion is off */
+html[data-motion="reduced"] .sk-skeleton::after {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) .sk-skeleton::after {
+    display: none;
+  }
+}
