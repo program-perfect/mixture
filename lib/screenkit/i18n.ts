@@ -1,4 +1,5 @@
 import type {
+  BuiltInCategoryId,
   CategoryId,
   DeviceType,
   InsertStatus,
@@ -384,7 +385,10 @@ export function translate(locale: Locale, key: string): string {
 
 /* ----------------------- localized entity labels ----------------------- */
 
-export const CATEGORY_LABELS: Record<Locale, Record<CategoryId, string>> = {
+export const CATEGORY_LABELS: Record<
+  Locale,
+  Record<BuiltInCategoryId, string>
+> = {
   ru: {
     phones: "телефоны",
     cctv: "видеонаблюдение",
@@ -456,7 +460,9 @@ export const MODE_NOTES: Record<Locale, Record<PlaybackMode, string>> = {
 }
 
 export const categoryLabel = (id: CategoryId, locale: Locale) =>
-  CATEGORY_LABELS[locale][id]
+  CATEGORY_LABELS[locale][id as BuiltInCategoryId] ??
+  CATEGORY_LABELS.ru[id as BuiltInCategoryId] ??
+  id
 export const deviceLabel = (id: DeviceType, locale: Locale) =>
   DEVICE_LABELS[locale][id]
 export const statusLabel = (id: InsertStatus, locale: Locale) =>

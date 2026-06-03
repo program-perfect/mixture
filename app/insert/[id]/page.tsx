@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
-import { INSERTS, getInsert } from "@/lib/screenkit/data"
+import { fetchLibrary } from "@/lib/screenkit/library.server"
 import { ScreenState } from "@/components/screenkit/screen-state"
 
-export function generateStaticParams() {
-  return INSERTS.map((i) => ({ id: i.id }))
-}
+export const dynamic = "force-dynamic"
 
 export default async function InsertScreenStatePage({
   params,
@@ -12,7 +10,8 @@ export default async function InsertScreenStatePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const insert = getInsert(id)
+  const { inserts } = await fetchLibrary()
+  const insert = inserts.find((i) => i.id === id)
   if (!insert) notFound()
   return <ScreenState insert={insert} />
 }

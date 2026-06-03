@@ -1,14 +1,15 @@
 "use client"
 
-import { INSERTS, resolveInsert } from "@/lib/screenkit/data"
+import { resolveInsert } from "@/lib/screenkit/data"
+import type { Insert } from "@/lib/screenkit/types"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
 import { SectionHeading, Explain, StatusBadge, RuOnlyBadge } from "../primitives"
 import { useScreenkit } from "../store"
 
 export function TimelineSection() {
-  const { openInPreview, locale, t } = useScreenkit()
+  const { openInPreview, locale, t, inserts } = useScreenkit()
 
-  const byEpisode = INSERTS.reduce<Record<string, typeof INSERTS>>((acc, ins) => {
+  const byEpisode = inserts.reduce<Record<string, Insert[]>>((acc, ins) => {
     ;(acc[ins.episode] ??= []).push(ins)
     return acc
   }, {})

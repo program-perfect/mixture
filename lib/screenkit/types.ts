@@ -17,13 +17,26 @@ export type AspectRatio = "9:16" | "16:9" | "4:3" | "16:10"
 
 export type PlaybackMode = "clean" | "filmed" | "dirty"
 
-export type CategoryId =
+/* built-in category ids; custom categories add their own string ids */
+export type BuiltInCategoryId =
   | "phones"
   | "cctv"
   | "trackers"
   | "tv-news"
   | "bank"
   | "hq-monitors"
+
+export type CategoryId = BuiltInCategoryId | (string & {})
+
+/* a category definition carries its own localized label + colors so that
+   custom, user-added categories are fully self-describing */
+export type CategoryDef = {
+  id: CategoryId
+  accent: string
+  tint: string
+  label: LocalizedText
+  custom?: boolean
+}
 
 export type Insert = {
   id: string

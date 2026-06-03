@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Download, FileJson, FileText } from "lucide-react"
-import { INSERTS, PLAYBACK_MODES } from "@/lib/screenkit/data"
+import { PLAYBACK_MODES } from "@/lib/screenkit/data"
 import type { PlaybackMode } from "@/lib/screenkit/types"
 import { modeLabel, modeNote } from "@/lib/screenkit/i18n"
 import { Switch } from "@/components/ui/switch"

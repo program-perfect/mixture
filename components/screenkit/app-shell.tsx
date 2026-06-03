@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
+import type { CategoryDef, Insert } from "@/lib/screenkit/types"
 import { ScreenkitProvider, useScreenkit } from "./store"
 import { Rail } from "./rail"
 import { Sidebar } from "./sidebar"
@@ -66,9 +67,18 @@ function ShellInner() {
   )
 }
 
-export function AppShell() {
+export function AppShell({
+  initialInserts,
+  initialCategories,
+}: {
+  initialInserts?: Insert[]
+  initialCategories?: CategoryDef[]
+}) {
   return (
-    <ScreenkitProvider>
+    <ScreenkitProvider
+      initialInserts={initialInserts}
+      initialCategories={initialCategories}
+    >
       <ShellInner />
     </ScreenkitProvider>
   )

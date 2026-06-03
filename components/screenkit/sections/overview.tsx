@@ -2,22 +2,32 @@
 
 import { ArrowRight } from "lucide-react"
 import {
-  CATEGORIES,
-  INSERTS,
   PROJECT_SUBTITLE,
   PROJECT_VERSION,
   resolveInsert,
 } from "@/lib/screenkit/data"
-import { categoryLabel } from "@/lib/screenkit/i18n"
 import { Pill } from "../primitives"
 import { InsertPreview } from "../insert-preview"
 import { useScreenkit } from "../store"
 
 export function OverviewSection() {
-  const { setSection, setFilters, openInPreview, locale, t, insertLocaleFor } =
-    useScreenkit()
+  const {
+    setSection,
+    setFilters,
+    openInPreview,
+    t,
+    insertLocaleFor,
+    inserts,
+    categories,
+    catLabel,
+  } = useScreenkit()
 
-  const featuredIds = ["gs-011", "gs-001", "gs-008"]
+  const preferred = ["gs-011", "gs-001", "gs-008"]
+  const featuredIds = preferred
+    .filter((id) => inserts.some((i) => i.id === id))
+    .concat(inserts.map((i) => i.id))
+    .filter((id, idx, arr) => arr.indexOf(id) === idx)
+    .slice(0, 3)
 
   return (
     <div className="flex flex-col gap-10">
@@ -34,7 +44,7 @@ export function OverviewSection() {
         </p>
 
         <div className="mt-1 flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <Pill
               key={c.id}
               accent={c.accent}
@@ -43,7 +53,7 @@ export function OverviewSection() {
                 setSection("library")
               }}
             >
-              {categoryLabel(c.id, locale)}
+              {catLabel(c.id)}
             </Pill>
           ))}
         </div>
@@ -70,12 +80,12 @@ export function OverviewSection() {
             {t("overview.recentInserts")}
           </h2>
           <span className="font-mono text-xs text-text-faint">
-            {INSERTS.length} {t("overview.total")}
+            {inserts.length} {t("overview.total")}
           </span>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {featuredIds.map((id) => {
-            const base = INSERTS.find((i) => i.id === id)!
+            const base = inserts.find((i) => i.id === id)!
             const insert = resolveInsert(base, insertLocaleFor(id))
             return (
               <button
