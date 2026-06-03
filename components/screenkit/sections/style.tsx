@@ -1,41 +1,54 @@
 "use client"
 
-import { SectionHeading, Explain } from "../primitives"
+import type { Locale } from "@/lib/screenkit/types"
+import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
+import { SectionHeading, Explain, SegmentedControl } from "../primitives"
+import { useScreenkit } from "../store"
 
-const SWATCHES: { name: string; token: string }[] = [
-  { name: "background", token: "var(--background)" },
-  { name: "panel", token: "var(--panel-soft)" },
-  { name: "control active", token: "var(--control-active)" },
-  { name: "accent orange", token: "var(--accent-orange)" },
-  { name: "accent green", token: "var(--accent-green)" },
-  { name: "accent blue", token: "var(--accent-blue)" },
+const SWATCHES: { key: string; token: string }[] = [
+  { key: "style.sw.background", token: "var(--background)" },
+  { key: "style.sw.panel", token: "var(--panel-soft)" },
+  { key: "style.sw.controlActive", token: "var(--control-active)" },
+  { key: "style.sw.accentOrange", token: "var(--accent-orange)" },
+  { key: "style.sw.accentGreen", token: "var(--accent-green)" },
+  { key: "style.sw.accentBlue", token: "var(--accent-blue)" },
 ]
 
-const RULES: string[] = [
-  "monospace everywhere, lowercase labels. interface reads like a terminal, not a brochure.",
-  "generic, unbranded device chrome. never reproduce a real product or logo.",
-  "every insert is graded for the shot: clean, filmed-from-screen, or dirty playback.",
-  "minimal chrome on set — only a quiet floating control, never a header or footer.",
-  "fullscreen by default. the screen-state is the whole frame.",
+const RULE_KEYS = [
+  "style.rule.1",
+  "style.rule.2",
+  "style.rule.3",
+  "style.rule.4",
+  "style.rule.5",
 ]
 
 export function StyleSection() {
+  const { locale, setLocale, t } = useScreenkit()
+
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <SectionHeading title="style guide" link />
-        <Explain>
-          the visual language behind every screen insert — a cobalt-style
-          terminal interface with vercel-grade restraint.
-        </Explain>
+        <SectionHeading title={t("style.title")} link />
+        <Explain>{t("style.desc")}</Explain>
       </header>
 
+      {/* site language */}
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("style.language")} />
+        <SegmentedControl<Locale>
+          options={LOCALES.map((l) => ({ value: l, label: LANG_LABEL[l] }))}
+          value={locale}
+          onChange={setLocale}
+        />
+        <Explain>{t("style.languageDesc")}</Explain>
+      </div>
+
       <div className="flex flex-col gap-4">
-        <SectionHeading title="palette" />
+        <SectionHeading title={t("style.palette")} />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {SWATCHES.map((s) => (
             <div
-              key={s.name}
+              key={s.key}
               className="flex flex-col gap-2 rounded-2xl border border-panel-border bg-control p-3"
             >
               <span
@@ -43,7 +56,7 @@ export function StyleSection() {
                 style={{ background: s.token }}
               />
               <span className="font-mono text-[12px] lowercase text-text-secondary">
-                {s.name}
+                {t(s.key)}
               </span>
             </div>
           ))}
@@ -51,25 +64,24 @@ export function StyleSection() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <SectionHeading title="typography" />
+        <SectionHeading title={t("style.typography")} />
         <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-control px-5 py-5">
           <span className="font-mono text-2xl font-bold lowercase text-foreground">
-            screen inserts
+            {t("style.typeSample")}
           </span>
           <span className="font-mono text-base text-text-secondary">
-            geist mono · the quick brown fox 0123456789
+            {t("style.typeMono")}
           </span>
           <span className="font-mono text-[13px] text-text-muted">
-            body copy stays in mono at a comfortable reading size with relaxed
-            line-height.
+            {t("style.typeBody")}
           </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-4">
-        <SectionHeading title="principles" />
+        <SectionHeading title={t("style.principles")} />
         <ul className="flex flex-col gap-2">
-          {RULES.map((r) => (
+          {RULE_KEYS.map((r) => (
             <li
               key={r}
               className="flex items-start gap-3 rounded-xl border border-panel-border bg-control px-4 py-3"
@@ -79,7 +91,7 @@ export function StyleSection() {
                 style={{ background: "var(--accent-orange)" }}
               />
               <span className="font-mono text-[13px] lowercase text-text-secondary">
-                {r}
+                {t(r)}
               </span>
             </li>
           ))}

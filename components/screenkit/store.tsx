@@ -6,9 +6,11 @@ import type {
   CategoryId,
   DeviceType,
   InsertStatus,
+  Locale,
   PlaybackMode,
 } from "@/lib/screenkit/types"
-import { INSERTS } from "@/lib/screenkit/data"
+import { INSERTS, getInsert, hasEnglish } from "@/lib/screenkit/data"
+import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY, translate } from "@/lib/screenkit/i18n"
 
 export type Section =
   | "overview"
@@ -55,6 +57,16 @@ type Ctx = {
   setMobileNavOpen: (v: boolean) => void
 
   openInPreview: (id: string) => void
+
+  // site language (persisted)
+  locale: Locale
+  setLocale: (l: Locale) => void
+  t: (key: string) => string
+
+  // per-insert language override, independent of the site language
+  insertLocaleOverrides: Record<string, Locale>
+  setInsertLocale: (id: string, l: Locale) => void
+  insertLocaleFor: (id: string) => Locale
 }
 
 const ScreenkitContext = React.createContext<Ctx | null>(null)
@@ -63,6 +75,11 @@ export function ScreenkitProvider({ children }: { children: React.ReactNode }) {
   const [section, setSection] = React.useState<Section>("overview")
   const [selectedId, setSelectedId] = React.useState<string>(INSERTS[0].id)
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false)
+  const [locale, setLocaleState] = React.useState<Locale>(DEFAULT_LOCALE)
+  const [insertLocaleOverrides, setInsertLocaleOverrides] = React.useState<
+    Record<string, Locale>
+  >({})
+
   const [filters, setFilters] = React.useState<Filters>({
     search: "",
     category: "all",
@@ -80,8 +97,46 @@ export function ScreenkitProvider({ children }: { children: React.ReactNode }) {
     timestamp: true,
   })
 
+  // hydrate site locale from storage
+  React.useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY)
+      if (stored === "ru" || stored === "en") setLocaleState(stored)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const setLocale = React.useCallback((l: Locale) => {
+    setLocaleState(l)
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, l)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const t = React.useCallback((key: string) => translate(locale, key), [locale])
+
+  const setInsertLocale = React.useCallback((id: string, l: Locale) => {
+    setInsertLocaleOverrides((prev) => ({ ...prev, [id]: l }))
+  }, [])
+
+  // resolve the language to use for a given insert's content:
+  // explicit override wins, otherwise follow the site language,
+  // but never request english on an insert that has no translation.
+  const insertLocaleFor = React.useCallback(
+    (id: string): Locale => {
+      const insert = getInsert(id)
+      const english = insert ? hasEnglish(insert) : false
+      const wanted = insertLocaleOverrides[id] ?? locale
+      return wanted === "en" && !english ? "ru" : wanted
+    },
+    [insertLocaleOverrides, locale],
+  )
+
   const openInPreview = React.useCallback((id: string) => {
-    const insert = INSERTS.find((i) => i.id === id)
+    const insert = getInsert(id)
     setSelectedId(id)
     if (insert) {
       setPreview((p) => ({
@@ -106,6 +161,12 @@ export function ScreenkitProvider({ children }: { children: React.ReactNode }) {
     mobileNavOpen,
     setMobileNavOpen,
     openInPreview,
+    locale,
+    setLocale,
+    t,
+    insertLocaleOverrides,
+    setInsertLocale,
+    insertLocaleFor,
   }
 
   return (

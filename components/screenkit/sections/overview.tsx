@@ -4,22 +4,20 @@ import { ArrowRight } from "lucide-react"
 import {
   CATEGORIES,
   INSERTS,
-  PROJECT_NAME,
   PROJECT_SUBTITLE,
   PROJECT_VERSION,
+  resolveInsert,
 } from "@/lib/screenkit/data"
+import { categoryLabel } from "@/lib/screenkit/i18n"
 import { Pill } from "../primitives"
 import { InsertPreview } from "../insert-preview"
 import { useScreenkit } from "../store"
 
 export function OverviewSection() {
-  const { setSection, setFilters, openInPreview } = useScreenkit()
+  const { setSection, setFilters, openInPreview, locale, t, insertLocaleFor } =
+    useScreenkit()
 
-  const featured = [
-    INSERTS.find((i) => i.id === "gs-011")!, // tracker
-    INSERTS.find((i) => i.id === "gs-001")!, // mannequin cctv
-    INSERTS.find((i) => i.id === "gs-008")!, // phone call
-  ]
+  const featuredIds = ["gs-011", "gs-001", "gs-008"]
 
   return (
     <div className="flex flex-col gap-10">
@@ -28,13 +26,11 @@ export function OverviewSection() {
           {PROJECT_VERSION}
         </p>
         <h1 className="text-balance font-mono text-4xl font-bold lowercase text-foreground sm:text-5xl">
-          {PROJECT_NAME}
+          {t("project.name")}
         </h1>
         <p className="font-mono text-sm text-text-secondary">{PROJECT_SUBTITLE}</p>
         <p className="max-w-xl text-pretty font-mono text-[13px] leading-relaxed text-text-muted">
-          a private art-department tool to design, preview, organize and export
-          the screen inserts seen on phones, monitors, cctv feeds and tv sets
-          across the series. not a downloader. not a converter. just props.
+          {t("overview.lead")}
         </p>
 
         <div className="mt-1 flex flex-wrap gap-2">
@@ -47,7 +43,7 @@ export function OverviewSection() {
                 setSection("library")
               }}
             >
-              {c.label}
+              {categoryLabel(c.id, locale)}
             </Pill>
           ))}
         </div>
@@ -57,13 +53,13 @@ export function OverviewSection() {
             onClick={() => setSection("library")}
             className="inline-flex items-center gap-2 rounded-full bg-control-active px-4 py-2 font-mono text-sm lowercase text-control-active-foreground transition-colors hover:opacity-90"
           >
-            open library <ArrowRight className="size-4" />
+            {t("overview.openLibrary")} <ArrowRight className="size-4" />
           </button>
           <button
             onClick={() => setSection("preview")}
             className="inline-flex items-center gap-2 rounded-full border border-panel-border bg-panel-soft px-4 py-2 font-mono text-sm lowercase text-foreground transition-colors hover:bg-panel-hover"
           >
-            device preview
+            {t("overview.devicePreview")}
           </button>
         </div>
       </header>
@@ -71,42 +67,46 @@ export function OverviewSection() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="font-mono text-sm lowercase text-text-secondary">
-            recent inserts
+            {t("overview.recentInserts")}
           </h2>
           <span className="font-mono text-xs text-text-faint">
-            {INSERTS.length} total
+            {INSERTS.length} {t("overview.total")}
           </span>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {featured.map((insert) => (
-            <button
-              key={insert.id}
-              onClick={() => openInPreview(insert.id)}
-              className="group flex flex-col gap-3 text-left"
-            >
-              <InsertPreview
-                insert={insert}
-                settings={{
-                  device: insert.device,
-                  aspect: insert.aspect,
-                  mode: "filmed",
-                  brightness: 72,
-                  noise: 30,
-                  reflections: true,
-                  scanlines: true,
-                  timestamp: true,
-                }}
-              />
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs lowercase text-text-secondary group-hover:text-foreground">
-                  {insert.title}
-                </span>
-                <span className="font-mono text-[10px] text-text-faint">
-                  {insert.episode}
-                </span>
-              </div>
-            </button>
-          ))}
+          {featuredIds.map((id) => {
+            const base = INSERTS.find((i) => i.id === id)!
+            const insert = resolveInsert(base, insertLocaleFor(id))
+            return (
+              <button
+                key={id}
+                onClick={() => openInPreview(id)}
+                className="group flex flex-col gap-3 text-left"
+              >
+                <InsertPreview
+                  insert={insert}
+                  settings={{
+                    device: insert.device,
+                    aspect: insert.aspect,
+                    mode: "filmed",
+                    brightness: 72,
+                    noise: 30,
+                    reflections: true,
+                    scanlines: true,
+                    timestamp: true,
+                  }}
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-xs lowercase text-text-secondary group-hover:text-foreground">
+                    {insert.title}
+                  </span>
+                  <span className="font-mono text-[10px] text-text-faint">
+                    {insert.episode}
+                  </span>
+                </div>
+              </button>
+            )
+          })}
         </div>
       </section>
     </div>

@@ -2,31 +2,39 @@
 
 import * as React from "react"
 import { Phone, PhoneOff, Video, Battery, Radar, Wifi } from "lucide-react"
-import type { Insert } from "@/lib/screenkit/types"
+import type { ResolvedInsert } from "@/lib/screenkit/types"
 
 /* The "screen content" of a prop insert. Intentionally gritty / diegetic. */
 
-export function InsertCanvas({ insert }: { insert: Insert }) {
-  const t = insert.title.toLowerCase()
+/* scene routing is keyed off the stable insert id so it works in any language */
+const MESSENGER_IDS = new Set(["gs-009"])
+const LOCATION_IDS = new Set(["gs-027"])
+const AUDIO_CALL_IDS = new Set(["gs-008"])
+const DYING_VIDEO_IDS = new Set(["gs-023"])
+const COUNTDOWN_IDS = new Set(["gs-002"])
+const TEXTFILE_IDS = new Set(["gs-024"])
+const REMOTE_IDS = new Set(["gs-007"])
+const WANTED_IDS = new Set(["gs-012"])
 
+export function InsertCanvas({ insert }: { insert: ResolvedInsert }) {
   if (insert.category === "trackers") return <TrackerScene insert={insert} />
   if (insert.category === "tv-news") return <TvNewsScene insert={insert} />
   if (insert.category === "bank") return <BankScene />
   if (insert.category === "cctv") return <CctvScene insert={insert} />
   if (insert.category === "phones") {
-    if (t.includes("messenger") || t.includes("sms")) return <MessengerScene />
-    if (t.includes("location") || t.includes("geolocation"))
+    if (MESSENGER_IDS.has(insert.id)) return <MessengerScene />
+    if (LOCATION_IDS.has(insert.id))
       return <TrackerScene insert={insert} compact />
-    if (t.includes("call")) return <CallScene video={t.includes("video")} insert={insert} />
-    if (t.includes("battery") || t.includes("football"))
-      return <DyingVideoScene />
+    if (DYING_VIDEO_IDS.has(insert.id)) return <DyingVideoScene />
+    if (AUDIO_CALL_IDS.has(insert.id))
+      return <CallScene video={false} insert={insert} />
     return <CallScene video insert={insert} />
   }
   // hq monitors
-  if (t.includes("timer")) return <CountdownScene />
-  if (t.includes("text file") || t.includes("karaev")) return <TextFileScene />
-  if (t.includes("remote")) return <RemoteScene />
-  if (t.includes("wanted")) return <WantedScene />
+  if (COUNTDOWN_IDS.has(insert.id)) return <CountdownScene />
+  if (TEXTFILE_IDS.has(insert.id)) return <TextFileScene />
+  if (REMOTE_IDS.has(insert.id)) return <RemoteScene />
+  if (WANTED_IDS.has(insert.id)) return <WantedScene />
   return <SituationScene insert={insert} />
 }
 
@@ -48,7 +56,7 @@ function Grain() {
 
 /* ------------------------------- scenes ------------------------------- */
 
-function CctvScene({ insert }: { insert: Insert }) {
+function CctvScene({ insert }: { insert: ResolvedInsert }) {
   return (
     <div className="absolute inset-0 bg-[#0b120e] text-[#9fb7a6]">
       <div
@@ -86,7 +94,7 @@ function TrackerScene({
   insert,
   compact,
 }: {
-  insert: Insert
+  insert: ResolvedInsert
   compact?: boolean
 }) {
   return (
@@ -129,7 +137,7 @@ function TrackerScene({
   )
 }
 
-function TvNewsScene({ insert }: { insert: Insert }) {
+function TvNewsScene({ insert }: { insert: ResolvedInsert }) {
   return (
     <div className="absolute inset-0 bg-[#10131a] text-white">
       <div
@@ -191,7 +199,7 @@ function BankScene() {
   )
 }
 
-function CallScene({ video, insert }: { video?: boolean; insert: Insert }) {
+function CallScene({ video, insert }: { video?: boolean; insert: ResolvedInsert }) {
   return (
     <div className="absolute inset-0 flex flex-col bg-[#0a0c10] text-white">
       {video ? (
@@ -361,7 +369,7 @@ function WantedScene() {
   )
 }
 
-function SituationScene({ insert }: { insert: Insert }) {
+function SituationScene({ insert }: { insert: ResolvedInsert }) {
   return (
     <div className="absolute inset-0 bg-[#080b10] p-3 text-[#9fb0c8]">
       <div className="mb-2 flex items-center justify-between font-mono text-[10px] text-white/60">

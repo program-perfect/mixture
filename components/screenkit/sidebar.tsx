@@ -4,26 +4,12 @@ import * as React from "react"
 import { FileBox, Download, Bug, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  CATEGORIES,
-  PROJECT_VERSION,
-  INSERTS,
-} from "@/lib/screenkit/data"
+import { CATEGORIES, PROJECT_VERSION, INSERTS } from "@/lib/screenkit/data"
+import { categoryLabel } from "@/lib/screenkit/i18n"
 import { categoryIcon, appearanceIcon } from "./icons"
 import { IconTile } from "./primitives"
-import { useScreenkit, type Section } from "./store"
+import { useScreenkit } from "./store"
 import type { CategoryId } from "@/lib/screenkit/types"
-
-const SECTION_TITLE: Record<Section, string> = {
-  overview: "overview",
-  library: "library",
-  preview: "preview",
-  timeline: "timeline",
-  prompts: "prompts",
-  export: "export",
-  style: "style",
-  about: "info for nerds",
-}
 
 type ExtraItem = {
   id: string
@@ -36,7 +22,7 @@ type ExtraItem = {
 }
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
-  const { section, setSection, filters, setFilters } = useScreenkit()
+  const { section, setSection, filters, setFilters, locale, t } = useScreenkit()
 
   const nav = (fn: () => void) => () => {
     fn()
@@ -49,13 +35,12 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       setSection("library")
     })
 
-  const inLibraryAll =
-    section === "library" && filters.category === "all"
+  const inLibraryAll = section === "library" && filters.category === "all"
 
   const extras: ExtraItem[] = [
     {
       id: "appearance",
-      label: "appearance",
+      label: t("nav.appearance"),
       icon: appearanceIcon,
       accent: "var(--accent-blue)",
       tint: "rgba(47,128,237,0.14)",
@@ -64,7 +49,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     },
     {
       id: "metadata",
-      label: "metadata",
+      label: t("nav.metadata"),
       icon: FileBox,
       accent: "var(--accent-green)",
       tint: "rgba(34,197,94,0.14)",
@@ -73,7 +58,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     },
     {
       id: "export",
-      label: "export",
+      label: t("nav.export"),
       icon: Download,
       accent: "var(--accent-grey)",
       tint: "rgba(255,255,255,0.06)",
@@ -82,7 +67,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     },
     {
       id: "nerds",
-      label: "info for nerds",
+      label: t("nav.infoForNerds"),
       icon: Bug,
       accent: "var(--accent-grey)",
       tint: "rgba(255,255,255,0.06)",
@@ -98,7 +83,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           {PROJECT_VERSION}
         </p>
         <h2 className="mt-2 font-mono text-3xl font-bold lowercase text-foreground">
-          {SECTION_TITLE[section]}
+          {t(`section.${section}`)}
         </h2>
       </div>
 
@@ -130,14 +115,15 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             >
               {INSERTS.length}
             </span>
-            <span className="font-mono text-sm lowercase">all inserts</span>
+            <span className="font-mono text-sm lowercase">
+              {t("nav.allInserts")}
+            </span>
           </button>
 
           {/* device categories */}
           {CATEGORIES.map((cat) => {
             const Icon = categoryIcon[cat.id]
-            const active =
-              section === "library" && filters.category === cat.id
+            const active = section === "library" && filters.category === cat.id
             const count = INSERTS.filter((i) => i.category === cat.id).length
             return (
               <button
@@ -152,7 +138,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   active={active}
                 />
                 <span className="flex-1 text-left font-mono text-sm lowercase">
-                  {cat.label}
+                  {categoryLabel(cat.id, locale)}
                 </span>
                 <span className="font-mono text-xs text-text-faint">
                   {count}

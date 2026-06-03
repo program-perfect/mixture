@@ -9,16 +9,16 @@ import { Sidebar } from "./sidebar"
 import { Content } from "./content"
 
 function MobileTopBar() {
-  const { setMobileNavOpen } = useScreenkit()
+  const { setMobileNavOpen, t } = useScreenkit()
   return (
     <header className="flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 md:hidden">
       <button
         onClick={() => setMobileNavOpen(true)}
         className="flex items-center gap-2 rounded-lg border border-panel-border bg-panel-soft px-3 py-2 font-mono text-sm lowercase text-foreground"
-        aria-label="open menu"
+        aria-label={t("nav.openMenu")}
       >
         <Menu className="size-4" />
-        menu
+        {t("nav.menu")}
       </button>
       <span className="font-mono text-xs lowercase text-text-faint">
         {PROJECT_VERSION}
@@ -28,14 +28,14 @@ function MobileTopBar() {
 }
 
 function MobileNav() {
-  const { mobileNavOpen, setMobileNavOpen } = useScreenkit()
+  const { mobileNavOpen, setMobileNavOpen, t } = useScreenkit()
   return (
     <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
       <SheetContent
         side="left"
         className="w-[88vw] max-w-[420px] border-sidebar-border bg-background p-0"
       >
-        <SheetTitle className="sr-only">navigation</SheetTitle>
+        <SheetTitle className="sr-only">{t("nav.navigation")}</SheetTitle>
         <div className="flex h-full">
           <Rail onNavigate={() => setMobileNavOpen(false)} />
           <Sidebar onNavigate={() => setMobileNavOpen(false)} />
