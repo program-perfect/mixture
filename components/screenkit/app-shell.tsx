@@ -74,16 +74,22 @@ export function AppShell({
   initialInserts,
   initialCategories,
   initialSelectedId,
+  initialView,
+  initialCategory,
 }: {
   initialInserts?: Insert[]
   initialCategories?: CategoryDef[]
   initialSelectedId?: string
+  initialView?: string
+  initialCategory?: string
 }) {
   return (
     <ScreenkitProvider
       initialInserts={initialInserts}
       initialCategories={initialCategories}
       initialSelectedId={initialSelectedId}
+      initialView={initialView}
+      initialCategory={initialCategory}
     >
       <ShellInner />
     </ScreenkitProvider>

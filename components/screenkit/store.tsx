@@ -37,6 +37,25 @@ export type Section =
   | "style"
   | "about"
 
+// each menu item gets its own explicitly-assigned url slug (no transliteration).
+export const SECTION_SLUGS: Record<Section, string> = {
+  overview: "overview",
+  library: "library",
+  preview: "preview",
+  timeline: "timeline",
+  prompts: "metadata",
+  style: "appearance",
+  about: "info",
+}
+
+export function sectionFromSlug(slug?: string | null): Section | null {
+  if (!slug) return null
+  const entry = (Object.entries(SECTION_SLUGS) as [Section, string][]).find(
+    ([, s]) => s === slug,
+  )
+  return entry ? entry[0] : null
+}
+
 export type PreviewSettings = {
   device: DeviceType
   mode: PlaybackMode
@@ -107,12 +126,18 @@ export function ScreenkitProvider({
   initialInserts,
   initialCategories,
   initialSelectedId,
+  initialView,
+  initialCategory,
 }: {
   children: React.ReactNode
   initialInserts?: Insert[]
   initialCategories?: CategoryDef[]
   /** when provided, open straight into this insert's preview (deep link) */
   initialSelectedId?: string
+  /** menu-item slug to open on load (?view=…) */
+  initialView?: string
+  /** library category slug to open on load (?cat=…) */
+  initialCategory?: string
 }) {
   const [inserts, setInserts] = React.useState<Insert[]>(
     initialInserts ?? INSERTS,
@@ -123,12 +148,18 @@ export function ScreenkitProvider({
   const [libraryBusy, setLibraryBusy] = React.useState(false)
 
   const allInserts = initialInserts ?? INSERTS
+  const allCategories = initialCategories ?? DEFAULT_CATEGORY_DEFS
   const deepLinked =
     initialSelectedId && allInserts.some((i) => i.id === initialSelectedId)
       ? initialSelectedId
       : null
+  const viewSection = sectionFromSlug(initialView)
+  const initialCat =
+    initialCategory && allCategories.some((c) => c.id === initialCategory)
+      ? (initialCategory as CategoryId)
+      : "all"
   const [section, setSection] = React.useState<Section>(
-    deepLinked ? "preview" : "overview",
+    deepLinked ? "preview" : (viewSection ?? "overview"),
   )
   const [selectedId, setSelectedId] = React.useState<string>(
     deepLinked ?? allInserts[0]?.id ?? "",
@@ -141,7 +172,7 @@ export function ScreenkitProvider({
 
   const [filters, setFilters] = React.useState<Filters>({
     search: "",
-    category: "all",
+    category: initialCat,
     device: "all",
     status: "all",
   })
@@ -158,6 +189,25 @@ export function ScreenkitProvider({
     scanlines: false,
     timestamp: false,
   })
+
+  // keep the url in sync with the active menu item so every section/category
+  // is addressable by its own slug (no cyrillic transliteration involved).
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    const params = new URLSearchParams()
+    params.set("view", SECTION_SLUGS[section])
+    if (section === "library" && filters.category !== "all") {
+      params.set("cat", String(filters.category))
+    }
+    if (section === "preview" && selectedId) {
+      params.set("insert", selectedId)
+    }
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}?${params.toString()}`,
+    )
+  }, [section, filters.category, selectedId])
 
   // hydrate site locale from storage
   React.useEffect(() => {

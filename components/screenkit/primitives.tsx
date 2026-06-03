@@ -23,6 +23,11 @@ export function IconTile({
   className?: string
   size?: number
 }) {
+  // derive the inactive tile background from the accent so it tracks the
+  // active palette. the literal `tint` is only a fallback for non-accent uses.
+  const inactiveBg = accent
+    ? `color-mix(in srgb, ${accent} 16%, transparent)`
+    : tint ?? "rgba(255,255,255,0.04)"
   return (
     <span
       className={cn(
@@ -32,7 +37,7 @@ export function IconTile({
       style={{
         width: size,
         height: size,
-        background: active ? accent : tint ?? "rgba(255,255,255,0.04)",
+        background: active ? accent : inactiveBg,
         borderColor: active ? "transparent" : "var(--panel-border)",
       }}
     >
