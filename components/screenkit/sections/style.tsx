@@ -10,22 +10,24 @@ import { usePalette, useThemeMode, type Palette } from "../theme"
 
 type Mode = "light" | "dark" | "system"
 
+// fixed swatches per palette (mirrors [data-palette="…"] in globals.css) so each
+// preview card always shows ITS OWN colors, not the currently active palette.
 const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
   {
     id: "cobalt",
-    tokens: ["var(--accent-blue)", "var(--accent-cyan)", "var(--accent-green)", "var(--accent-orange)"],
+    tokens: ["#2f80ed", "#4cc9f0", "#22c55e", "#ff9f1c"],
   },
   {
     id: "sunset",
-    tokens: ["var(--accent-orange)", "var(--accent-red)", "var(--accent-purple)", "var(--accent-cyan)"],
+    tokens: ["#fb8500", "#e5383b", "#f72585", "#ffb703"],
   },
   {
     id: "forest",
-    tokens: ["var(--accent-green)", "var(--accent-cyan)", "var(--accent-blue)", "var(--accent-orange)"],
+    tokens: ["#2d6a4f", "#43cea2", "#2a9d8f", "#e9c46a"],
   },
   {
     id: "mono",
-    tokens: ["var(--accent-grey)", "var(--accent-blue)", "var(--accent-cyan)", "var(--accent-red)"],
+    tokens: ["#777777", "#8b8f99", "#a7abb4", "#b06a6a"],
   },
 ]
 

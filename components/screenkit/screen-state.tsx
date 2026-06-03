@@ -65,6 +65,18 @@ export function ScreenState({ insert }: { insert: Insert }) {
   const chromeVisible =
     !isFullscreen || (revealMode === "hotkey" && hotkeyShown)
 
+  // the reveal hint appears when chrome hides, then fades out after a moment
+  const [hintVisible, setHintVisible] = React.useState(false)
+  React.useEffect(() => {
+    if (chromeVisible) {
+      setHintVisible(false)
+      return
+    }
+    setHintVisible(true)
+    const t = window.setTimeout(() => setHintVisible(false), 2500)
+    return () => window.clearTimeout(t)
+  }, [chromeVisible])
+
   // restore persisted reveal mode + site locale
   React.useEffect(() => {
     try {
@@ -257,8 +269,8 @@ export function ScreenState({ insert }: { insert: Insert }) {
 
       {/* reveal hint, shown only while chrome is hidden in fullscreen */}
       <div
-        className={`pointer-events-none fixed bottom-5 left-1/2 z-30 -translate-x-1/2 transition-opacity duration-300 ${
-          chromeVisible ? "opacity-0" : "opacity-100"
+        className={`pointer-events-none fixed bottom-5 left-1/2 z-30 -translate-x-1/2 transition-opacity duration-500 ${
+          hintVisible ? "opacity-100" : "opacity-0"
         }`}
       >
         <span className="rounded-full bg-black/40 px-3 py-1 font-mono text-[10px] lowercase text-white/40 backdrop-blur-sm">
