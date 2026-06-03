@@ -34,7 +34,6 @@ export type Section =
   | "preview"
   | "timeline"
   | "prompts"
-  | "export"
   | "style"
   | "about"
 
@@ -144,13 +143,13 @@ export function ScreenkitProvider({
   const first = (initialInserts ?? INSERTS)[0]
   const [preview, setPreview] = React.useState<PreviewSettings>({
     device: first?.device ?? "phone",
-    mode: "filmed",
+    mode: "clean",
     aspect: first?.aspect ?? "9:16",
     brightness: 70,
-    noise: 35,
-    reflections: true,
-    scanlines: true,
-    timestamp: true,
+    noise: 0,
+    reflections: false,
+    scanlines: false,
+    timestamp: false,
   })
 
   // hydrate site locale from storage

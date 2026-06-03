@@ -18,6 +18,20 @@ const slug = (s: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 40) || "item"
 
+// a user-supplied slug is taken verbatim (lowercased, dash-separated) with no
+// transliteration — only latin letters, digits and dashes survive. returns null
+// when the cleaned result is empty so we can fall back to the derived slug.
+const customSlug = (s: string | null | undefined): string | null => {
+  if (!s) return null
+  const cleaned = s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40)
+  return cleaned.length ? cleaned : null
+}
+
 const ACCENT_VARS = [
   "var(--accent-blue)",
   "var(--accent-cyan)",
@@ -38,11 +52,13 @@ const optional = z
 const categorySchema = z.object({
   labelRu: nonEmpty.max(40),
   labelEn: optional,
+  slug: optional,
   accent: z.string().trim().optional(),
   tint: z.string().trim().optional(),
 })
 
 const insertSchema = z.object({
+  slug: optional,
   category: nonEmpty,
   device: z.enum(["phone", "monitor", "tv", "tablet", "projector", "cctv"]),
   aspect: z.enum(["9:16", "16:9", "4:3", "16:10"]),
@@ -88,7 +104,10 @@ export async function addCategoryAction(
     ...DEFAULT_CATEGORY_DEFS.map((c) => String(c.id)),
     ...existing.map((c) => c.id),
   ])
-  const id = await uniqueId(slug(data.labelEn ?? data.labelRu), taken)
+  const id = await uniqueId(
+    customSlug(data.slug) ?? slug(data.labelEn ?? data.labelRu),
+    taken,
+  )
   const accent =
     data.accent && data.accent.length
       ? data.accent
@@ -116,7 +135,10 @@ export async function addInsertAction(
     ...INSERTS.map((i) => i.id),
     ...existing.map((i) => i.id),
   ])
-  const id = await uniqueId(slug(data.titleEn ?? data.titleRu), taken)
+  const id = await uniqueId(
+    customSlug(data.slug) ?? slug(data.titleEn ?? data.titleRu),
+    taken,
+  )
 
   await db.insert(screenkitInserts).values({
     id,

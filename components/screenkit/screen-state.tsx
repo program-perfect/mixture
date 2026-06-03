@@ -17,7 +17,7 @@ import { InsertPreview } from "./insert-preview"
 import { FloatingMenu } from "./floating-menu"
 
 export function ScreenState({ insert }: { insert: Insert }) {
-  const [mode, setMode] = React.useState<PlaybackMode>("filmed")
+  const [mode, setMode] = React.useState<PlaybackMode>("clean")
   // standalone state: it has no site chrome, so it owns its own language.
   // it starts from the persisted site language, then can be overridden
   // locally for this insert only — never writing back to the site setting.
@@ -44,10 +44,11 @@ export function ScreenState({ insert }: { insert: Insert }) {
     mode,
     aspect: insert.aspect,
     brightness: 72,
-    noise: mode === "dirty" ? 48 : 32,
-    reflections: true,
-    scanlines: true,
-    timestamp: true,
+    // retro effects stay off in clean mode (the default)
+    noise: mode === "clean" ? 0 : mode === "dirty" ? 48 : 32,
+    reflections: mode !== "clean",
+    scanlines: mode !== "clean",
+    timestamp: mode !== "clean",
   }
 
   const modes: PlaybackMode[] = ["clean", "filmed", "dirty"]
