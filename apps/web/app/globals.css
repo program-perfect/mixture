@@ -394,4 +394,109 @@
     0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239,71,111,0.5); }
     70% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 14px rgba(239,71,111,0); }
   }
+
+  /* ---- ui motion: section / block enter animations ---- */
+  @keyframes sk-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes sk-fade-in-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes sk-fade-in-scale {
+    from { opacity: 0; transform: scale(0.985); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* whole-section enter — keyed remount triggers this on every navigation */
+  .sk-section-enter {
+    animation: sk-fade-in-up 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* individual block / list-item enter, with optional per-item stagger via
+     the --sk-delay custom property */
+  .sk-animate-in {
+    animation: sk-fade-in-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+  .sk-animate-fade {
+    animation: sk-fade-in 0.5s ease both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+  .sk-animate-scale {
+    animation: sk-fade-in-scale 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: var(--sk-delay, 0ms);
+  }
+
+  /* ---- skeleton placeholders ---- */
+  .sk-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--panel-hover) 70%, var(--panel-soft));
+    border-radius: var(--radius-md);
+  }
+  .sk-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--foreground) 8%, transparent) 50%,
+      transparent 100%
+    );
+    animation: sk-shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes sk-shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  /* the skeleton container itself fades/crossfades smoothly */
+  .sk-skeleton-wrap {
+    animation: sk-fade-in 0.2s ease both;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * reduce motion
+ *
+ * one switch that neutralises every animation + transition. driven either by
+ * the explicit setting (<html data-motion="reduced">) or, before js resolves /
+ * while still on auto, by the native browser preference. an explicit "full"
+ * choice opts out of the native baseline.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* skeleton shimmer is pure decoration — hide it entirely when motion is off */
+html[data-motion="reduced"] .sk-skeleton::after {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) .sk-skeleton::after {
+    display: none;
+  }
 }

@@ -1,14 +1,42 @@
 "use client"
 
+import * as React from "react"
 import { ArrowRight } from "lucide-react"
 import {
   PROJECT_SUBTITLE,
   PROJECT_VERSION,
   resolveInsert,
 } from "@/lib/screenkit/data"
+import type { AspectRatio } from "@/lib/screenkit/types"
 import { Pill } from "../primitives"
 import { InsertPreview } from "../insert-preview"
 import { useScreenkit } from "../store"
+import { useReveal, staggerDelay } from "../motion"
+import { PreviewTileSkeleton } from "../skeletons"
+
+const ASPECT_RATIO: Record<AspectRatio, string> = {
+  "9:16": "9/16",
+  "16:9": "16/9",
+  "4:3": "4/3",
+  "16:10": "16/10",
+}
+
+/* shows a skeleton tile first, then smoothly crossfades to the (heavy) device
+   preview once the reveal phase flips — gives a per-block skeleton -> content
+   transition for the most expensive components on the page */
+function RevealPreview({
+  children,
+  aspect,
+}: {
+  children: React.ReactNode
+  aspect: AspectRatio
+}) {
+  const phase = useReveal(260)
+  if (phase === "skeleton") {
+    return <PreviewTileSkeleton aspect={ASPECT_RATIO[aspect] ?? "9/16"} />
+  }
+  return <div className="sk-animate-fade">{children}</div>
+}
 
 export function OverviewSection() {
   const {
@@ -84,28 +112,31 @@ export function OverviewSection() {
           </span>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {featuredIds.map((id) => {
+          {featuredIds.map((id, idx) => {
             const base = inserts.find((i) => i.id === id)!
             const insert = resolveInsert(base, insertLocaleFor(id))
             return (
               <button
                 key={id}
                 onClick={() => openInPreview(id)}
-                className="group flex flex-col gap-3 text-left"
+                className="sk-animate-in group flex flex-col gap-3 text-left"
+                style={staggerDelay(idx, 80)}
               >
-                <InsertPreview
-                  insert={insert}
-                  settings={{
-                    device: insert.device,
-                    aspect: insert.aspect,
-                    mode: "filmed",
-                    brightness: 72,
-                    noise: 30,
-                    reflections: true,
-                    scanlines: true,
-                    timestamp: true,
-                  }}
-                />
+                <RevealPreview aspect={insert.aspect}>
+                  <InsertPreview
+                    insert={insert}
+                    settings={{
+                      device: insert.device,
+                      aspect: insert.aspect,
+                      mode: "filmed",
+                      brightness: 72,
+                      noise: 30,
+                      reflections: true,
+                      scanlines: true,
+                      timestamp: true,
+                    }}
+                  />
+                </RevealPreview>
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-mono text-xs lowercase text-text-secondary group-hover:text-foreground">
                     {insert.title}

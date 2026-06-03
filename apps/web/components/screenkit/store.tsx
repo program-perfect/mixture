@@ -56,6 +56,45 @@ export function sectionFromSlug(slug?: string | null): Section | null {
   return entry ? entry[0] : null
 }
 
+/* ------------------------------------------------------------------ *
+ * client-side library cache (stale-while-revalidate)
+ *
+ * the server already streams the library on first paint, but we mirror it into
+ * sessionStorage so that any client-side path that has to (re)load the library
+ * can paint instantly from cache and then revalidate in the background. this is
+ * what makes already-loaded data reappear immediately yet stay fresh.
+ * ------------------------------------------------------------------ */
+
+const LIBRARY_CACHE_KEY = "screenkit-library-cache-v1"
+
+function readLibraryCache(): LibraryData | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = window.sessionStorage.getItem(LIBRARY_CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as LibraryData
+    if (
+      parsed &&
+      Array.isArray(parsed.inserts) &&
+      Array.isArray(parsed.categories)
+    ) {
+      return parsed
+    }
+  } catch {
+    // ignore
+  }
+  return null
+}
+
+function writeLibraryCache(data: LibraryData) {
+  if (typeof window === "undefined") return
+  try {
+    window.sessionStorage.setItem(LIBRARY_CACHE_KEY, JSON.stringify(data))
+  } catch {
+    // ignore
+  }
+}
+
 export type PreviewSettings = {
   device: DeviceType
   mode: PlaybackMode
@@ -249,6 +288,7 @@ export function ScreenkitProvider({
   const apply = React.useCallback((data: LibraryData) => {
     setCategories(data.categories)
     setInserts(data.inserts)
+    writeLibraryCache(data)
   }, [])
 
   const addCategory = React.useCallback(
@@ -286,8 +326,17 @@ export function ScreenkitProvider({
 
   // keep data fresh on mount (in case props were stale / not provided)
   React.useEffect(() => {
-    if (initialInserts && initialCategories) return
+    // server provided data -> just mirror it into the cache for later paints
+    if (initialInserts && initialCategories) {
+      writeLibraryCache({ categories: allCategories, inserts: allInserts })
+      return
+    }
+    // no server data -> paint instantly from cache, then revalidate in the bg
+    const cached = readLibraryCache()
+    if (cached) apply(cached)
     getLibraryAction().then(apply).catch(() => {})
+    // allCategories / allInserts are derived from the (stable) initial props
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apply, initialInserts, initialCategories])
 
   const setInsertLocale = React.useCallback((id: string, l: Locale) => {

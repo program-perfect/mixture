@@ -16,6 +16,7 @@ import {
 } from "../primitives"
 import { LibraryEditor } from "../library-editor"
 import { useScreenkit } from "../store"
+import { staggerDelay } from "../motion"
 
 export function LibrarySection() {
   const {
@@ -126,12 +127,12 @@ export function LibrarySection() {
 
       {/* list */}
       <ul className="flex flex-col gap-2">
-        {filtered.map((raw) => {
+        {filtered.map((raw, idx) => {
           const insert = resolveInsert(raw, locale)
           const cat = catDef(insert.category)
           const Icon = iconForCategory(insert.category)
           return (
-            <li key={insert.id}>
+            <li key={insert.id} className="sk-animate-in" style={staggerDelay(idx)}>
               <button
                 onClick={() => openInPreview(insert.id)}
                 className="group flex w-full items-start gap-3 rounded-2xl border border-panel-border bg-panel-soft p-3 text-left transition-colors hover:border-ring hover:bg-panel-hover"

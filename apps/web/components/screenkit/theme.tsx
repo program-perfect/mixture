@@ -5,6 +5,7 @@ import {
   ThemeProvider as NextThemesProvider,
   useTheme as useNextTheme,
 } from "next-themes"
+import { MotionProvider } from "./motion"
 
 export const PALETTES = ["cobalt", "sunset", "forest", "mono"] as const
 export type Palette = (typeof PALETTES)[number]
@@ -73,7 +74,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <PaletteProvider>{children}</PaletteProvider>
+      <MotionProvider>
+        <PaletteProvider>{children}</PaletteProvider>
+      </MotionProvider>
     </NextThemesProvider>
   )
 }

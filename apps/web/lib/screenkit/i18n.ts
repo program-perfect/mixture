@@ -133,7 +133,7 @@ const RU: Dict = {
   "style.sw.accentGreen": "акцент зелёный",
   "style.sw.accentBlue": "акцент синий",
   "style.rule.1":
-    "везде моноширинн����й шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
+    "везде моноширинн������й шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
   "style.rule.2":
     "обобщённый, небрендированный корпус устройства. никогда не воспроизводите реальный продукт или логотип.",
   "style.rule.3":
@@ -242,6 +242,19 @@ const RU: Dict = {
   "palette.sunset": "закат",
   "palette.forest": "лес",
   "palette.mono": "моно",
+
+  // motion / accessibility
+  "motion.title": "движение",
+  "motion.desc":
+    "плавные переходы, анимации появления и скелетоны при загрузке. уменьшите движение, если анимации мешают или устройство тормозит.",
+  "motion.auto": "авто",
+  "motion.full": "включено",
+  "motion.reduced": "уменьшено",
+  "motion.autoNoteOn":
+    "авто: движение уменьшено — так просит система или устройство недостаточно мощное.",
+  "motion.autoNoteOff": "авто: анимации включены по предпочтениям системы.",
+  "motion.manualOn": "движение уменьшено вручную.",
+  "motion.manualOff": "анимации включены вручную.",
 }
 
 const EN: Dict = {
@@ -449,6 +462,19 @@ const EN: Dict = {
   "palette.sunset": "sunset",
   "palette.forest": "forest",
   "palette.mono": "mono",
+
+  // motion / accessibility
+  "motion.title": "motion",
+  "motion.desc":
+    "smooth transitions, enter animations and loading skeletons. reduce motion if animations get in the way or the device feels slow.",
+  "motion.auto": "auto",
+  "motion.full": "on",
+  "motion.reduced": "reduced",
+  "motion.autoNoteOn":
+    "auto: motion reduced — the system asks for it or the device looks underpowered.",
+  "motion.autoNoteOff": "auto: animations on, following the system preference.",
+  "motion.manualOn": "motion reduced manually.",
+  "motion.manualOff": "animations enabled manually.",
 }
 
 const DICT: Record<Locale, Dict> = { ru: RU, en: EN }

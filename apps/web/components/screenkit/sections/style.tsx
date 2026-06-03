@@ -7,6 +7,7 @@ import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
 import { SectionHeading, Explain, SegmentedControl } from "../primitives"
 import { useScreenkit } from "../store"
 import { usePalette, useThemeMode, type Palette } from "../theme"
+import { useMotion } from "../motion"
 
 type Mode = "light" | "dark" | "system"
 
@@ -116,6 +117,48 @@ function ThemeControls() {
   )
 }
 
+type MotionChoice = "auto" | "full" | "reduced"
+
+function MotionControls() {
+  const { t } = useScreenkit()
+  const { reduceMotion, isAuto, setReduceMotion, resetToAuto } = useMotion()
+
+  const value: MotionChoice = isAuto ? "auto" : reduceMotion ? "reduced" : "full"
+
+  const onChange = (choice: MotionChoice) => {
+    if (choice === "auto") resetToAuto()
+    else if (choice === "full") setReduceMotion(false)
+    else setReduceMotion(true)
+  }
+
+  const note = isAuto
+    ? reduceMotion
+      ? t("motion.autoNoteOn")
+      : t("motion.autoNoteOff")
+    : reduceMotion
+      ? t("motion.manualOn")
+      : t("motion.manualOff")
+
+  return (
+    <div className="flex flex-col gap-3">
+      <SectionHeading title={t("motion.title")} />
+      <SegmentedControl<MotionChoice>
+        options={[
+          { value: "auto", label: t("motion.auto") },
+          { value: "full", label: t("motion.full") },
+          { value: "reduced", label: t("motion.reduced") },
+        ]}
+        value={value}
+        onChange={onChange}
+      />
+      <Explain>{t("motion.desc")}</Explain>
+      <span className="font-mono text-[12px] lowercase text-text-faint">
+        {note}
+      </span>
+    </div>
+  )
+}
+
 const SWATCHES: { key: string; token: string }[] = [
   { key: "style.sw.background", token: "var(--background)" },
   { key: "style.sw.panel", token: "var(--panel-soft)" },
@@ -153,6 +196,8 @@ export function StyleSection() {
         />
         <Explain>{t("style.languageDesc")}</Explain>
       </div>
+
+      <MotionControls />
 
       <ThemeControls />
 
