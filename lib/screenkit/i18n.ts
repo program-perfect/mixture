@@ -133,7 +133,7 @@ const RU: Dict = {
   "style.sw.accentGreen": "акцент зелёный",
   "style.sw.accentBlue": "акцент синий",
   "style.rule.1":
-    "везде моноширинн��й шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
+    "везде моноширинн����й шрифт, подписи строчными. интерфейс читается как терминал, а не как буклет.",
   "style.rule.2":
     "обобщённый, небрендированный корпус устройства. никогда не воспроизводите реальный продукт или логотип.",
   "style.rule.3":
@@ -175,14 +175,16 @@ const RU: Dict = {
   "licenses.empty": "ничего не найдено.",
 
   // floating menu
-  "fm.back": "на главную",
+  "fm.back": "к предпросмотру",
   "fm.fullscreen": "полный экран",
   "fm.exitFullscreen": "выйти из полного экрана",
   "fm.rotate": "повернуть",
-  "fm.locked": "ориентация заблокирована",
-  "fm.lock": "заблокировать ориентацию",
   "fm.landscape": "альбомная",
   "fm.portrait": "книжная",
+  "fm.revealExit": "меню: выход из полного экрана",
+  "fm.revealHotkey": "меню: клавиша «m»",
+  "fm.revealHintExit": "выйдите из полного экрана, чтобы показать меню",
+  "fm.revealHintKey": "нажмите «m», чтобы показать меню",
 
   // shared
   "common.copy": "копировать",
@@ -381,14 +383,16 @@ const EN: Dict = {
   "licenses.unavailable": "license text unavailable.",
   "licenses.empty": "nothing found.",
 
-  "fm.back": "back to home",
+  "fm.back": "back to preview",
   "fm.fullscreen": "fullscreen",
   "fm.exitFullscreen": "exit fullscreen",
   "fm.rotate": "rotate",
-  "fm.locked": "orientation locked",
-  "fm.lock": "lock orientation",
   "fm.landscape": "landscape",
   "fm.portrait": "portrait",
+  "fm.revealExit": "menu: exit fullscreen",
+  "fm.revealHotkey": "menu: press “m”",
+  "fm.revealHintExit": "exit fullscreen to show the menu",
+  "fm.revealHintKey": "press “m” to show the menu",
 
   "common.copy": "copy",
   "common.copied": "copied",

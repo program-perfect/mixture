@@ -7,8 +7,8 @@ import {
   Maximize,
   Minimize,
   RotateCw,
-  Lock,
-  LockOpen,
+  Eye,
+  Keyboard,
   Menu,
   X,
 } from "lucide-react"
@@ -16,49 +16,46 @@ import { cn } from "@/lib/utils"
 import type { Locale } from "@/lib/screenkit/types"
 import { DEFAULT_LOCALE, translate } from "@/lib/screenkit/i18n"
 
-type Orientation = "landscape" | "portrait"
+export type Orientation = "landscape" | "portrait"
+export type RevealMode = "exit" | "hotkey"
 
-export function FloatingMenu({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+export function FloatingMenu({
+  locale = DEFAULT_LOCALE,
+  insertId,
+  orientation,
+  onOrientationChange,
+  isFullscreen,
+  onToggleFullscreen,
+  revealMode,
+  onRevealModeChange,
+  className,
+}: {
+  locale?: Locale
+  insertId: string
+  orientation: Orientation
+  onOrientationChange: (o: Orientation) => void
+  isFullscreen: boolean
+  onToggleFullscreen: () => void
+  revealMode: RevealMode
+  onRevealModeChange: (m: RevealMode) => void
+  className?: string
+}) {
   const router = useRouter()
   const t = (key: string) => translate(locale, key)
   const [open, setOpen] = React.useState(false)
-  const [isFullscreen, setIsFullscreen] = React.useState(false)
-  const [orientation, setOrientation] = React.useState<Orientation>("landscape")
-  const [locked, setLocked] = React.useState(false)
 
-  // request fullscreen by default on mount (best-effort, requires gesture on some browsers)
-  React.useEffect(() => {
-    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
-    document.addEventListener("fullscreenchange", onChange)
-    return () => document.removeEventListener("fullscreenchange", onChange)
-  }, [])
-
-  const toggleFullscreen = React.useCallback(async () => {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen()
-      } else {
-        await document.documentElement.requestFullscreen()
-      }
-    } catch {
-      // fullscreen may be blocked; ignore
-    }
-  }, [])
-
-  const toggleOrientation = React.useCallback(() => {
-    if (locked) return
-    setOrientation((o) => (o === "landscape" ? "portrait" : "landscape"))
-  }, [locked])
-
-  // apply orientation as a rotation on the stage element
-  React.useEffect(() => {
-    const stage = document.getElementById("screen-stage")
-    if (!stage) return
-    stage.dataset.orientation = orientation
-  }, [orientation])
+  // back returns to this insert's preview inside the app (not the home root)
+  const goBack = React.useCallback(() => {
+    router.push(`/?insert=${encodeURIComponent(insertId)}`)
+  }, [router, insertId])
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2 sm:bottom-6 sm:right-6">
+    <div
+      className={cn(
+        "fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2 sm:bottom-6 sm:right-6",
+        className,
+      )}
+    >
       {/* expanded actions */}
       <div
         className={cn(
@@ -68,29 +65,33 @@ export function FloatingMenu({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
             : "pointer-events-none translate-y-2 opacity-0",
         )}
       >
-        <MenuButton
-          label={t("fm.back")}
-          onClick={() => router.push("/")}
-          icon={ArrowLeft}
-        />
+        <MenuButton label={t("fm.back")} onClick={goBack} icon={ArrowLeft} />
         <MenuButton
           label={isFullscreen ? t("fm.exitFullscreen") : t("fm.fullscreen")}
-          onClick={toggleFullscreen}
+          onClick={onToggleFullscreen}
           icon={isFullscreen ? Minimize : Maximize}
         />
         <MenuButton
           label={`${t("fm.rotate")} (${
             orientation === "landscape" ? t("fm.landscape") : t("fm.portrait")
           })`}
-          onClick={toggleOrientation}
+          onClick={() =>
+            onOrientationChange(
+              orientation === "landscape" ? "portrait" : "landscape",
+            )
+          }
           icon={RotateCw}
-          disabled={locked}
         />
+        {/* reveal-mode setting: how the menu comes back while fullscreen */}
         <MenuButton
-          label={locked ? t("fm.locked") : t("fm.lock")}
-          onClick={() => setLocked((l) => !l)}
-          icon={locked ? Lock : LockOpen}
-          active={locked}
+          label={
+            revealMode === "exit" ? t("fm.revealExit") : t("fm.revealHotkey")
+          }
+          onClick={() =>
+            onRevealModeChange(revealMode === "exit" ? "hotkey" : "exit")
+          }
+          icon={revealMode === "exit" ? Eye : Keyboard}
+          active
         />
       </div>
 
