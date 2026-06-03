@@ -5,7 +5,7 @@ import { Search, ArrowUpRight, Eye } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { DEVICES, STATUSES, resolveInsert } from "@/lib/screenkit/data"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
-import { iconForCategory } from "../icons"
+import { iconForDevice } from "../icons"
 import {
   IconTile,
   StatusBadge,
@@ -130,7 +130,7 @@ export function LibrarySection() {
         {filtered.map((raw, idx) => {
           const insert = resolveInsert(raw, locale)
           const cat = catDef(insert.category)
-          const Icon = iconForCategory(insert.category)
+          const Icon = iconForDevice(insert.device)
           return (
             <li key={insert.id} className="sk-animate-in" style={staggerDelay(idx)}>
               <button

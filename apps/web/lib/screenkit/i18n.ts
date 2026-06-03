@@ -214,6 +214,10 @@ const RU: Dict = {
   "editor.slug": "слаг (адрес)",
   "editor.slugHint": "необязательно, латиница",
   "editor.slugPh": "напр. phone-lock-screen",
+  "editor.icon": "иконка",
+  "editor.iconHint": "выберите свою",
+  "editor.color": "цвет",
+  "editor.colorHint": "вставки в этой категории перенимают его",
   "editor.aspect": "формат кадра",
   "editor.episode": "серия",
   "editor.scene": "сцена",
@@ -262,6 +266,15 @@ const RU: Dict = {
   "motion.autoNoteOff": "авто: анимации включены по предпочтениям системы.",
   "motion.manualOn": "движение уменьшено вручную.",
   "motion.manualOff": "анимации включены вручную.",
+
+  // scale / zoom
+  "scale.title": "масштаб",
+  "scale.desc":
+    "размер текста, отступов и элементов на сайте. подберите комфортный масштаб — настройка запоминается.",
+  "scale.compact": "компактный",
+  "scale.normal": "обычный",
+  "scale.large": "крупный",
+  "scale.huge": "очень крупный",
 }
 
 const EN: Dict = {
@@ -441,6 +454,10 @@ const EN: Dict = {
   "editor.slug": "slug (url)",
   "editor.slugHint": "optional, latin only",
   "editor.slugPh": "e.g. phone-lock-screen",
+  "editor.icon": "icon",
+  "editor.iconHint": "pick your own",
+  "editor.color": "color",
+  "editor.colorHint": "inserts in this category inherit it",
   "editor.aspect": "aspect ratio",
   "editor.episode": "episode",
   "editor.scene": "scene",

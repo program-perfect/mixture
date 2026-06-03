@@ -80,6 +80,8 @@ function AddCategoryDialog() {
   const [labelRu, setLabelRu] = React.useState("")
   const [labelEn, setLabelEn] = React.useState("")
   const [slug, setSlug] = React.useState("")
+  const [icon, setIcon] = React.useState<string>("layers")
+  const [accent, setAccent] = React.useState<string>(ACCENT_OPTIONS[0])
   const [error, setError] = React.useState<string | null>(null)
 
   async function submit() {
@@ -92,10 +94,14 @@ function AddCategoryDialog() {
       labelRu,
       labelEn: labelEn || undefined,
       slug: slug || undefined,
+      icon,
+      accent,
     })
     setLabelRu("")
     setLabelEn("")
     setSlug("")
+    setIcon("layers")
+    setAccent(ACCENT_OPTIONS[0])
     setOpen(false)
   }
 
@@ -140,6 +146,62 @@ function AddCategoryDialog() {
               className={inputCls}
             />
           </Fld>
+
+          <Fld label={t("editor.color")} hint={t("editor.colorHint")}>
+            <div className="flex flex-wrap items-center gap-2">
+              {ACCENT_OPTIONS.map((c) => {
+                const selected = accent === c
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setAccent(c)}
+                    aria-pressed={selected}
+                    aria-label={c}
+                    className={cn(
+                      "size-8 rounded-full border-2 transition-transform",
+                      selected
+                        ? "scale-110 border-foreground"
+                        : "border-transparent hover:scale-105",
+                    )}
+                    style={{ background: c }}
+                  />
+                )
+              })}
+            </div>
+          </Fld>
+
+          <Fld label={t("editor.icon")} hint={t("editor.iconHint")}>
+            <div className="grid max-h-40 grid-cols-7 gap-1.5 overflow-y-auto rounded-xl border border-panel-border bg-control p-2 sk-scroll sm:grid-cols-9">
+              {ICON_NAMES.map((name) => {
+                const Glyph = ICON_LIBRARY[name]
+                const selected = icon === name
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setIcon(name)}
+                    aria-pressed={selected}
+                    aria-label={name}
+                    className={cn(
+                      "flex aspect-square items-center justify-center rounded-lg border transition-colors",
+                      selected
+                        ? "border-transparent text-control-active-foreground"
+                        : "border-panel-border text-text-secondary hover:bg-panel-hover hover:text-foreground",
+                    )}
+                    style={
+                      selected
+                        ? { background: accent, color: "#050505" }
+                        : undefined
+                    }
+                  >
+                    <Glyph className="size-4" />
+                  </button>
+                )
+              })}
+            </div>
+          </Fld>
+
           {error ? (
             <p className="font-mono text-xs text-accent-red">{error}</p>
           ) : null}

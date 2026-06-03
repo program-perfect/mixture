@@ -13,6 +13,7 @@ import {
   useThemeTransition,
   type GradientLevel,
   type Palette,
+  type ScaleLevel,
 } from "../theme"
 import { useMotion } from "../motion"
 
@@ -42,7 +43,8 @@ const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
 function ThemeControls() {
   const { t } = useScreenkit()
   const { theme, setTheme } = useThemeMode()
-  const { palette, setPalette, gradients, setGradients } = usePalette()
+  const { palette, setPalette, gradients, setGradients, scale, setScale } =
+    usePalette()
   const transition = useThemeTransition()
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
@@ -51,6 +53,13 @@ function ThemeControls() {
     { value: "off", label: t("theme.gradOff") },
     { value: "soft", label: t("theme.gradSoft") },
     { value: "vivid", label: t("theme.gradVivid") },
+  ]
+
+  const scaleOptions: { value: ScaleLevel; label: string }[] = [
+    { value: "compact", label: t("scale.compact") },
+    { value: "normal", label: t("scale.normal") },
+    { value: "large", label: t("scale.large") },
+    { value: "huge", label: t("scale.huge") },
   ]
 
   const mode = (mounted ? (theme as Mode) : "dark") ?? "dark"
@@ -148,6 +157,16 @@ function ThemeControls() {
           )}
         </div>
         <Explain>{t("theme.gradientsDesc")}</Explain>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("scale.title")} />
+        <SegmentedControl<ScaleLevel>
+          options={scaleOptions}
+          value={scale}
+          onChange={setScale}
+        />
+        <Explain>{t("scale.desc")}</Explain>
       </div>
     </>
   )

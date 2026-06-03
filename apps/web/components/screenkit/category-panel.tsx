@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
 import type { CategoryId } from "@/lib/screenkit/types"
-import { iconForCategory } from "./icons"
+import { categoryIconFor } from "./icons"
 import { IconTile, Pill } from "./primitives"
 import { useScreenkit } from "./store"
 import { useGradients } from "./theme"
@@ -91,7 +91,7 @@ export function CategoryPanel({
           <div className="my-2 h-px bg-panel-border/70" />
 
           {categories.map((cat) => {
-            const Icon = iconForCategory(cat.id)
+            const Icon = categoryIconFor(cat)
             const active = isActive(cat.id)
             const count = inserts.filter((i) => i.category === cat.id).length
             return (

@@ -30,7 +30,7 @@ export function DeviceFrame({
 
   const screen = (
     <div
-      className="relative w-full overflow-hidden"
+      className="sk-resize relative w-full overflow-hidden"
       style={{ aspectRatio: ratio }}
     >
       {children}
@@ -39,7 +39,7 @@ export function DeviceFrame({
 
   if (device === "phone") {
     return (
-      <div className={cn("mx-auto w-full max-w-[300px]", className)}>
+      <div className={cn("sk-resize mx-auto w-full max-w-[300px]", className)}>
         <div className="rounded-[2.2rem] border border-panel-border bg-[#0a0a0b] p-2 shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_20px_60px_-20px_rgba(0,0,0,0.9)]">
           <div className="relative overflow-hidden rounded-[1.6rem] bg-black">
             <div className="absolute left-1/2 top-2 z-20 h-1.5 w-16 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/10" />
@@ -52,7 +52,7 @@ export function DeviceFrame({
 
   if (device === "tablet") {
     return (
-      <div className={cn("mx-auto w-full max-w-[640px]", className)}>
+      <div className={cn("sk-resize mx-auto w-full max-w-[640px]", className)}>
         <div className="rounded-[1.4rem] border border-panel-border bg-[#0a0a0b] p-3 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
           <div className="overflow-hidden rounded-[0.9rem] bg-black">{screen}</div>
         </div>
@@ -62,7 +62,7 @@ export function DeviceFrame({
 
   if (device === "tv") {
     return (
-      <div className={cn("mx-auto w-full max-w-[820px]", className)}>
+      <div className={cn("sk-resize mx-auto w-full max-w-[820px]", className)}>
         <div className="rounded-2xl border border-panel-border bg-[#070708] p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)]">
           <div className="overflow-hidden rounded-lg bg-black ring-1 ring-white/5">
             {screen}
@@ -75,7 +75,7 @@ export function DeviceFrame({
 
   if (device === "projector") {
     return (
-      <div className={cn("mx-auto w-full max-w-[820px]", className)}>
+      <div className={cn("sk-resize mx-auto w-full max-w-[820px]", className)}>
         <div className="rounded-md border border-panel-border bg-[#0c0c0d] p-2">
           <div
             className="overflow-hidden rounded-sm bg-black ring-1 ring-white/5"
@@ -90,7 +90,7 @@ export function DeviceFrame({
 
   if (device === "cctv") {
     return (
-      <div className={cn("mx-auto w-full max-w-[640px]", className)}>
+      <div className={cn("sk-resize mx-auto w-full max-w-[640px]", className)}>
         <div className="rounded-lg border border-panel-border bg-[#0a0a0b] p-2.5">
           <div className="overflow-hidden rounded-sm bg-black ring-1 ring-white/5">
             {screen}
@@ -102,7 +102,7 @@ export function DeviceFrame({
 
   // monitor (default)
   return (
-    <div className={cn("mx-auto w-full max-w-[760px]", className)}>
+    <div className={cn("sk-resize mx-auto w-full max-w-[760px]", className)}>
       <div className="rounded-xl border border-panel-border bg-[#08080a] p-2.5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)]">
         <div className="overflow-hidden rounded-md bg-black ring-1 ring-white/5">
           {screen}

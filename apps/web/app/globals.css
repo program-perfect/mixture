@@ -262,10 +262,20 @@
   }
   html {
     @apply bg-background;
+    /* site zoom — driven by the appearance setting (see theme.tsx). scaling the
+       root font-size scales every rem-based size + spacing token together. */
+    font-size: calc(100% * var(--app-scale, 1));
   }
   body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* smooth scrolling everywhere (neutralised by the reduce-motion block) */
+  html,
+  [data-radix-scroll-area-viewport],
+  .sk-scroll {
+    scroll-behavior: smooth;
   }
 
   /* interactive element cursors */
@@ -310,6 +320,17 @@
 }
 
 @layer utilities {
+  /* ---- smooth size/layout changes ----
+     any element that can change its dimensions (the device preview frame, the
+     side panels, etc.) eases between sizes instead of snapping. automatically
+     disabled when motion is reduced via the global override below. */
+  .sk-resize {
+    transition-property: width, height, max-width, max-height, min-width,
+      min-height, aspect-ratio, flex-basis, padding, margin;
+    transition-duration: 0.45s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
   /* subtle technical scrollbars */
   .sk-scroll {
     scrollbar-width: thin;
@@ -516,6 +537,7 @@ html[data-motion="reduced"]::view-transition-new(root) {
   }
 }
 
+html[data-motion="reduced"],
 html[data-motion="reduced"] *,
 html[data-motion="reduced"] *::before,
 html[data-motion="reduced"] *::after {
