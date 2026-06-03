@@ -1,0 +1,258 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  screen inserts — гремучая смесь / prop playback system
+  cobalt.tools-inspired technical tool. dark-first, monospace, sparse.
+*/
+:root {
+  --background: #000000;
+  --foreground: #f4f4f5;
+
+  --card: #101011;
+  --card-foreground: #f4f4f5;
+  --popover: #0b0b0c;
+  --popover-foreground: #f4f4f5;
+
+  --primary: #e7e7e7;
+  --primary-foreground: #050505;
+  --secondary: #1c1c1d;
+  --secondary-foreground: #f4f4f5;
+  --muted: #19191b;
+  --muted-foreground: #8b8b8b;
+  --accent: #19191b;
+  --accent-foreground: #f4f4f5;
+  --destructive: #ef4444;
+  --destructive-foreground: #f4f4f5;
+
+  --border: #262626;
+  --input: #1c1c1d;
+  --ring: #3a3a3a;
+
+  --radius: 0.875rem;
+
+  /* screenkit surfaces */
+  --sidebar: #151515;
+  --sidebar-foreground: #d7d7d7;
+  --sidebar-primary: #e7e7e7;
+  --sidebar-primary-foreground: #050505;
+  --sidebar-accent: #1c1c1d;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: #232323;
+  --sidebar-ring: #3a3a3a;
+  --sidebar-muted: #8b8b8b;
+
+  --panel: #0b0b0c;
+  --panel-soft: #111112;
+  --panel-hover: #19191b;
+  --panel-border: #262626;
+
+  --control: #1c1c1d;
+  --control-hover: #242426;
+  --control-active: #e7e7e7;
+  --control-active-foreground: #050505;
+
+  --text-primary: #f5f5f5;
+  --text-secondary: #a5adb8;
+  --text-muted: #737984;
+  --text-faint: #50545d;
+
+  --accent-blue: #2f80ed;
+  --accent-cyan: #4cc9f0;
+  --accent-purple: #6c63ff;
+  --accent-red: #ef476f;
+  --accent-orange: #ff9f1c;
+  --accent-green: #22c55e;
+  --accent-grey: #777777;
+
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+
+  --chart-1: #2f80ed;
+  --chart-2: #4cc9f0;
+  --chart-3: #6c63ff;
+  --chart-4: #ff9f1c;
+  --chart-5: #22c55e;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f4f4f5;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-muted: var(--sidebar-muted);
+
+  /* screenkit semantic tokens */
+  --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
+  --color-panel-hover: var(--panel-hover);
+  --color-panel-border: var(--panel-border);
+
+  --color-control: var(--control);
+  --color-control-hover: var(--control-hover);
+  --color-control-active: var(--control-active);
+  --color-control-active-foreground: var(--control-active-foreground);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-green: var(--accent-green);
+  --color-accent-grey: var(--accent-grey);
+
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply bg-background;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  /* subtle technical scrollbars */
+  .sk-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a transparent;
+  }
+  .sk-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .sk-scroll::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 999px;
+  }
+
+  /* ---- gritty playback effects (insert previews only) ---- */
+  .fx-scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.28) 3px,
+      rgba(0, 0, 0, 0.28) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+  .fx-moire::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      48deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 2px,
+      transparent 5px
+    );
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+  .fx-bloom {
+    box-shadow: inset 0 0 90px rgba(255, 255, 255, 0.16);
+  }
+  .fx-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 120% at 50% 40%,
+      transparent 45%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+  .fx-glitch {
+    animation: fx-glitch 2.4s steps(1) infinite;
+  }
+  @keyframes fx-glitch {
+    0%, 92%, 100% { transform: translateX(0); filter: none; }
+    93% { transform: translateX(-2px); filter: hue-rotate(8deg); }
+    95% { transform: translateX(3px); }
+    97% { transform: translateX(-1px); filter: contrast(1.2); }
+  }
+  .fx-flicker {
+    animation: fx-flicker 3.5s ease-in-out infinite;
+  }
+  @keyframes fx-flicker {
+    0%, 100% { opacity: 1; }
+    47% { opacity: 0.97; }
+    48% { opacity: 0.8; }
+    49% { opacity: 0.98; }
+    72% { opacity: 0.9; }
+  }
+  .pulse-dot {
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239,71,111,0.5); }
+    70% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 14px rgba(239,71,111,0); }
+  }
+}
