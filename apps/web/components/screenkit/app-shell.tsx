@@ -1,13 +1,13 @@
 "use client"
 
-import { Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
 import type { CategoryDef, Insert } from "@/lib/screenkit/types"
-import { ScreenkitProvider, useScreenkit } from "./store"
-import { Rail } from "./rail"
+import { Menu } from "lucide-react"
 import { CategoryPanel } from "./category-panel"
 import { Content } from "./content"
+import { Rail } from "./rail"
+import { ScreenkitProvider, useScreenkit } from "./store"
 
 function MobileTopBar() {
   const { setMobileNavOpen, t } = useScreenkit()
@@ -34,12 +34,15 @@ function MobileNav() {
     <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
       <SheetContent
         side="left"
-        className="w-[88vw] max-w-[420px] border-sidebar-border bg-background p-0"
+        className="w-[92vw] max-w-[440px] border-sidebar-border bg-background p-0 sm:w-[420px]"
       >
         <SheetTitle className="sr-only">{t("nav.navigation")}</SheetTitle>
-        <div className="flex h-full">
+        <div className="flex h-full min-w-0">
           <Rail onNavigate={() => setMobileNavOpen(false)} />
-          <CategoryPanel onNavigate={() => setMobileNavOpen(false)} />
+          <CategoryPanel
+            className="flex min-w-0 flex-1"
+            onNavigate={() => setMobileNavOpen(false)}
+          />
         </div>
       </SheetContent>
     </Sheet>

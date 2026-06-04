@@ -25,6 +25,7 @@ import { Maximize2 } from "lucide-react"
 import Link from "next/link"
 import { InsertLanguageToggle } from "../insert-language-toggle"
 import { InsertPreview } from "../insert-preview"
+import { MotionNumber } from "../motion-number"
 import {
   Explain,
   SectionHeading,
@@ -32,7 +33,6 @@ import {
   StatusBadge,
 } from "../primitives"
 import { useScreenkit } from "../store"
-import { MotionNumber } from '../motion-number'
 
 const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
 
@@ -96,7 +96,7 @@ export function PreviewSection() {
       </div>
 
       {/* preview stage */}
-      <div className="flex items-center justify-center rounded-3xl border border-panel-border bg-[radial-gradient(120%_120%_at_50%_0%,#0e0e10,#000)] px-4 py-10">
+      <div className="flex min-w-0 items-center justify-center overflow-hidden rounded-3xl border border-panel-border bg-[radial-gradient(120%_120%_at_50%_0%,#0e0e10,#000)] px-3 py-6 sm:px-4 sm:py-8 lg:py-10">
         <InsertPreview insert={insert} settings={preview} />
       </div>
 
@@ -231,7 +231,7 @@ function SwitchControl({
   onChange: (v: boolean) => void
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-panel-border bg-control px-4 py-3.5">
+    <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-control px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="flex flex-col gap-1">
         <span className="font-mono text-sm lowercase text-foreground">{title}</span>
         <span className="font-mono text-[12px] text-text-muted">{desc}</span>

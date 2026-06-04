@@ -1,26 +1,26 @@
 "use client"
 
-import * as React from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useScreenkit, type Section } from "./store"
+import * as React from "react"
+import { CategoryChips, CategoryPanel } from "./category-panel"
 import { useReveal } from "./motion"
-import { CategoryPanel, CategoryChips } from "./category-panel"
-import { OverviewSection } from "./sections/overview"
+import { AboutSection } from "./sections/about"
 import { LibrarySection } from "./sections/library"
+import { OverviewSection } from "./sections/overview"
 import { PreviewSection } from "./sections/preview"
-import { TimelineSection } from "./sections/timeline"
 import { PromptsSection } from "./sections/prompts"
 import { StyleSection } from "./sections/style"
-import { AboutSection } from "./sections/about"
+import { TimelineSection } from "./sections/timeline"
 import {
-  OverviewSkeleton,
+  AboutSkeleton,
   LibrarySkeleton,
+  OverviewSkeleton,
   PreviewSkeleton,
-  TimelineSkeleton,
   PromptsSkeleton,
   StyleSkeleton,
-  AboutSkeleton,
+  TimelineSkeleton,
 } from "./skeletons"
+import { useScreenkit, type Section } from "./store"
 
 const SECTION_CONTENT: Record<Section, React.ReactNode> = {
   overview: <OverviewSection />,
@@ -46,17 +46,19 @@ export function Content() {
   const { section } = useScreenkit()
 
   return (
-    <div className="flex h-full min-h-0">
-      {/* category navigation lives inside the main area — list on md+ */}
-      <CategoryPanel className="hidden md:flex" />
+    <div className="flex h-full min-h-0 min-w-0">
+      {/* 
+        Категории:
+        - mobile/tablet/pre-desktop: горизонтальные чипы сверху
+        - desktop и шире: боковая панель
+      */}
+      <CategoryPanel className="hidden lg:flex" />
 
       <ScrollArea className="h-full min-w-0 flex-1 sk-scroll">
-        <div className="mx-auto w-full max-w-[820px] px-5 py-6 sm:px-8 lg:py-10 2xl:max-w-[980px] 2xl:px-12 2xl:py-14">
-          {/* mobile / pre-tablet: categories as a horizontal chip strip */}
-          <CategoryChips className="mb-6 md:hidden" />
+        <div className="mx-auto w-full max-w-[min(100%,44rem)] px-4 py-5 sm:px-6 sm:py-6 md:max-w-[min(100%,52rem)] md:px-8 lg:max-w-[min(100%,58rem)] lg:px-8 lg:py-10 xl:max-w-[min(100%,64rem)] 2xl:max-w-[min(100%,72rem)] 2xl:px-12 2xl:py-14">
+          {/* mobile / tablet / pre-desktop */}
+          <CategoryChips className="mb-5 sm:mb-6 lg:hidden" />
 
-          {/* keyed by section so each navigation remounts -> instant transition,
-              a brief skeleton, then a smooth enter animation of the real content */}
           <SectionView key={section} section={section} />
         </div>
       </ScrollArea>

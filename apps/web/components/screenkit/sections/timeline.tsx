@@ -3,9 +3,9 @@
 import { resolveInsert } from "@/lib/screenkit/data"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
 import type { Insert } from "@/lib/screenkit/types"
+import { MotionNumber } from "../motion-number"
 import { Explain, RuOnlyBadge, SectionHeading, StatusBadge } from "../primitives"
 import { useScreenkit } from "../store"
-import { MotionNumber } from '../motion-number'
 
 export function TimelineSection() {
   const { openInPreview, locale, t, inserts } = useScreenkit()

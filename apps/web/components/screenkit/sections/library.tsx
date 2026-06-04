@@ -26,7 +26,7 @@ import * as React from "react"
 import { iconForDevice } from "../icons"
 import { LibraryEditor } from "../library-editor"
 import { staggerDelay } from "../motion"
-import { MotionNumber } from '../motion-number'
+import { MotionNumber } from "../motion-number"
 import {
   Explain,
   IconTile,
@@ -243,11 +243,11 @@ export function LibrarySection() {
         </FilterRow>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-panel-soft p-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-panel-soft p-3 md:flex-row md:flex-wrap md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <ControlLabel>{labels.sort}</ControlLabel>
           <Select value={sortKey} onValueChange={(value) => setSortKey(value as SortKey)}>
-            <SelectTrigger className="h-9 rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground">
+            <SelectTrigger className="h-9 w-[min(100vw-3rem,13rem)] rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground sm:w-[13rem]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -264,7 +264,7 @@ export function LibrarySection() {
             value={String(pageSize)}
             onValueChange={(value) => setPageSize(Number(value) as PageSize)}
           >
-            <SelectTrigger className="h-9 rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground">
+            <SelectTrigger className="h-9 w-[min(100vw-3rem,13rem)] rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground sm:w-[13rem]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -378,7 +378,7 @@ function InsertCard({
   const Icon = iconForDevice(insert.device)
 
   return (
-    <button onClick={onPreview} className={cardCls(viewMode)}>
+    <button type="button" onClick={onPreview} className={cardCls(viewMode)}>
       <IconTile
         icon={Icon}
         accent={categoryAccent}
@@ -388,7 +388,7 @@ function InsertCard({
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="truncate font-mono text-sm lowercase text-foreground">
+          <span className="min-w-0 truncate font-mono text-sm lowercase text-foreground">
             {insert.title}
           </span>
           <StatusBadge status={insert.status} label={statusLabel(insert.status, locale)} />
@@ -403,7 +403,7 @@ function InsertCard({
           </p>
         )}
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] text-text-faint">
+        <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] text-text-faint sm:gap-x-3">
           <span>{insert.date}</span>
           <span>· {insert.episode}</span>
           <span>· {insert.scene}</span>
@@ -574,13 +574,13 @@ function paginationWindow(page: number, pageCount: number): Array<number | "dots
 }
 
 function listCls(viewMode: ViewMode) {
-  if (viewMode === "grid") return "grid gap-3 sm:grid-cols-2"
+  if (viewMode === "grid") return "grid gap-3 sm:grid-cols-2 2xl:grid-cols-3"
   return "flex flex-col gap-2"
 }
 
 function cardCls(viewMode: ViewMode) {
   const base =
-    "group w-full rounded-2xl border border-panel-border bg-panel-soft text-left transition-colors hover:border-ring hover:bg-panel-hover"
+    "group w-full min-w-0 rounded-2xl border border-panel-border bg-panel-soft text-left transition-colors hover:border-ring hover:bg-panel-hover"
 
   if (viewMode === "compact") {
     return cn(base, "flex items-center gap-3 p-2.5")

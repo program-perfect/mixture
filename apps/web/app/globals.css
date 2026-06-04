@@ -328,7 +328,7 @@
      disabled when motion is reduced via the global override below. */
   .sk-resize {
     transition-property:
-      width, height, max-width, max-height, min-width, min-height, aspect-ratio, flex-basis, padding, margin, gap,
+      width, min-width, max-width, height, max-height, min-height, aspect-ratio, flex-basis, padding, margin, gap,
       border-radius, transform;
     transition-duration: 0.45s;
     transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -536,6 +536,18 @@
   .sk-chips::-webkit-scrollbar {
     display: none;
   }
+  .sk-safe-x {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .sk-safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .sk-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -603,7 +615,25 @@ html[data-motion="reduced"] *::after {
 
 /* skeleton shimmer is pure decoration — hide it entirely when motion is off */
 html[data-motion="reduced"] .sk-skeleton::after {
-  display: none;
+  animation: none !important;
+  transform: none;
+  background: none;
+}
+
+html[data-motion="reduced"] .sk-skeleton-wrap {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) .sk-skeleton::after {
+    animation: none !important;
+    transform: none;
+    background: none;
+  }
+
+  html:not([data-motion="full"]) .sk-skeleton-wrap {
+    animation: none !important;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html:not([data-motion="full"]) .sk-skeleton::after {
