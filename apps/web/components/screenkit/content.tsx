@@ -46,20 +46,21 @@ export function Content() {
   const { section } = useScreenkit()
 
   return (
-    <div className="flex h-full min-h-0 min-w-0">
-      {/* 
-        Категории:
-        - mobile/tablet/pre-desktop: горизонтальные чипы сверху
-        - desktop и шире: боковая панель
-      */}
-      <CategoryPanel className="hidden lg:flex" />
+    <div className="flex h-full min-h-0 min-w-0 overflow-hidden">
+      {/* The side category panel needs enough room to share the main area.
+          Keep chips on mobile/tablet/pre-desktop so the panel never consumes
+          the whole content column around the narrow desktop breakpoint. */}
+      <CategoryPanel className="hidden xl:flex" />
 
-      <ScrollArea className="h-full min-w-0 flex-1 sk-scroll">
-        <div className="mx-auto w-full max-w-[min(100%,44rem)] px-4 py-5 sm:px-6 sm:py-6 md:max-w-[min(100%,52rem)] md:px-8 lg:max-w-[min(100%,58rem)] lg:px-8 lg:py-10 xl:max-w-[min(100%,64rem)] 2xl:max-w-[min(100%,72rem)] 2xl:px-12 2xl:py-14">
-          {/* mobile / tablet / pre-desktop */}
-          <CategoryChips className="mb-5 sm:mb-6 lg:hidden" />
+      <ScrollArea className="h-full min-w-0 flex-1 overflow-x-hidden sk-scroll">
+        <div className="w-full min-w-0 overflow-x-hidden">
+          {/* Chips span the whole available main area: from the category-panel
+              edge to the right edge, not only the centered content column. */}
+          <CategoryChips className="mb-5 border-b border-panel-border/40 bg-background/95 py-3 backdrop-blur sm:mb-6 xl:hidden" />
 
-          <SectionView key={section} section={section} />
+          <div className="mx-auto w-full min-w-0 max-w-[min(100%,44rem)] overflow-x-hidden px-4 py-5 sm:px-6 sm:py-6 md:max-w-[min(100%,52rem)] md:px-8 lg:max-w-[min(100%,58rem)] lg:px-8 lg:py-10 xl:max-w-[min(100%,64rem)] 2xl:max-w-[min(100%,72rem)] 2xl:px-12 2xl:py-14">
+            <SectionView key={section} section={section} />
+          </div>
         </div>
       </ScrollArea>
     </div>
@@ -70,8 +71,16 @@ function SectionView({ section }: { section: Section }) {
   const phase = useReveal()
 
   if (phase === "skeleton") {
-    return <>{SECTION_SKELETON[section]}</>
+    return (
+      <div className="min-w-0 max-w-full overflow-x-hidden">
+        {SECTION_SKELETON[section]}
+      </div>
+    )
   }
 
-  return <div className="sk-section-enter">{SECTION_CONTENT[section]}</div>
+  return (
+    <div className="sk-section-enter min-w-0 max-w-full overflow-x-hidden">
+      {SECTION_CONTENT[section]}
+    </div>
+  )
 }
