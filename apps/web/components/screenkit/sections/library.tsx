@@ -17,6 +17,7 @@ import { iconForDevice } from "../icons"
 import {
   LIBRARY_LIST_UI,
   compareLibraryInserts,
+  type LibraryViewMode,
 } from "../library-list-settings"
 import { LibraryEditor } from "../library-editor"
 import { staggerDelay } from "../motion"
@@ -30,7 +31,6 @@ import {
   StatusBadge,
 } from "../primitives"
 import { useScreenkit } from "../store"
-import type { LibraryViewMode } from "../library-list-settings"
 
 export function LibrarySection() {
   const {
