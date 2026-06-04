@@ -58,7 +58,7 @@ export function Content() {
               edge to the right edge, not only the centered content column. */}
           <CategoryChips className="mb-5 border-b border-panel-border/40 bg-background/95 py-3 backdrop-blur sm:mb-6 xl:hidden" />
 
-          <div className="mx-auto w-full min-w-0 max-w-[min(100%,44rem)] overflow-x-hidden px-4 py-5 sm:px-6 sm:py-6 md:max-w-[min(100%,52rem)] md:px-8 lg:max-w-[min(100%,58rem)] lg:px-8 lg:py-10 xl:max-w-[min(100%,64rem)] 2xl:max-w-[min(100%,72rem)] 2xl:px-12 2xl:py-14">
+          <div className="w-full min-w-0 overflow-x-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(1.25rem,3vw,3.5rem)]">
             <SectionView key={section} section={section} />
           </div>
         </div>
