@@ -224,19 +224,16 @@ export function Pill({
   onClick?: () => void
   className?: string
 }) {
-  const Comp = onClick ? "button" : "span"
-  return (
-    <Comp
-      type={onClick ? "button" : undefined}
-      onClick={onClick}
-      className={cn(
-        "inline-flex min-w-0 items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs lowercase transition-colors",
-        active
-          ? "border-transparent bg-control-active text-control-active-foreground"
-          : "border-panel-border bg-panel-soft text-text-secondary hover:bg-panel-hover hover:text-foreground",
-        className,
-      )}
-    >
+  const pillClassName = cn(
+    "inline-flex min-w-0 items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs lowercase transition-colors",
+    active
+      ? "border-transparent bg-control-active text-control-active-foreground"
+      : "border-panel-border bg-panel-soft text-text-secondary hover:bg-panel-hover hover:text-foreground",
+    className,
+  )
+
+  const content = (
+    <>
       {accent ? (
         <span
           className="size-1.5 shrink-0 rounded-full"
@@ -244,8 +241,18 @@ export function Pill({
         />
       ) : null}
       {children}
-    </Comp>
+    </>
   )
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={pillClassName}>
+        {content}
+      </button>
+    )
+  }
+
+  return <span className={pillClassName}>{content}</span>
 }
 
 /* ----------------------------- key/value row ----------------------------- */
