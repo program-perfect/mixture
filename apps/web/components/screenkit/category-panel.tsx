@@ -13,10 +13,10 @@ import { useScreenkit } from "./store"
 import { useGradients } from "./theme"
 
 /* ------------------------------------------------------------------ *
- * category navigation — now lives INSIDE the main area.
+ * category navigation lives inside the main area.
  *
- *   • tablet / pre-desktop / desktop (md+) -> resizable vertical list
- *   • pre-tablet / mobile (< md)           -> horizontal chip strip
+ *   • phone / tablet / pre-desktop (< xl) -> horizontal chip strip
+ *   • wide desktop (xl+)                 -> resizable vertical panel
  *
  * resize rules:
  *   • max width = 1/3 of the main content area, excluding the left rail
@@ -71,7 +71,8 @@ function useCategoryPanelSize(labels: string[]) {
   const panelRef = React.useRef<HTMLElement | null>(null)
   const measureRef = React.useRef<HTMLDivElement | null>(null)
 
-  const isDesktopPanel = useMediaQuery("(min-width: 1024px)")
+  // Match the CSS visibility breakpoint in Content: CategoryPanel is xl:flex.
+  const isDesktopPanel = useMediaQuery("(min-width: 1280px)")
   const [rawWidth, setRawWidth] = React.useState(DEFAULT_WIDTH)
   const [mainWidth, setMainWidth] = React.useState(0)
   const [readableMinWidth, setReadableMinWidth] = React.useState(
@@ -112,8 +113,9 @@ function useCategoryPanelSize(labels: string[]) {
     const node = measureRef.current
     if (!node) return
 
-    const labelWidths = Array.from(node.querySelectorAll<HTMLElement>("[data-label]"))
-      .map((el) => Math.ceil(el.getBoundingClientRect().width))
+    const labelWidths = Array.from(
+      node.querySelectorAll<HTMLElement>("[data-label]"),
+    ).map((el) => Math.ceil(el.getBoundingClientRect().width))
 
     const widestLabel = Math.max(0, ...labelWidths)
 
@@ -131,8 +133,8 @@ function useCategoryPanelSize(labels: string[]) {
     if (!isDesktopPanel) return DEFAULT_WIDTH
     if (mainWidth <= 0) return MAX_WIDTH_FALLBACK
 
-    // Content already excludes the left rail, so this is exactly 1/3 of the
-    // remaining main area.
+    // Content already excludes the left rail, so this is 1/3 of the remaining
+    // main area. It is intentionally capped by the current viewport/container.
     return Math.max(ICON_ONLY_WIDTH, Math.floor(mainWidth / 3))
   }, [isDesktopPanel, mainWidth])
 
@@ -281,7 +283,7 @@ export function CategoryPanel({
     <aside
       ref={panelRef}
       className={cn(
-        "sk-resize relative flex h-full w-full min-w-0 flex-col border-r border-panel-border bg-background lg:shrink-0",
+        "sk-resize relative flex h-full w-full min-w-0 flex-col overflow-hidden border-r border-panel-border bg-background xl:shrink-0",
         isCollapsed && "items-center",
         className,
       )}
@@ -336,6 +338,7 @@ export function CategoryPanel({
           )}
         >
           <button
+            type="button"
             onClick={goAll}
             className={rowCls(inLibraryAll, isCollapsed)}
             style={activeRowStyle(inLibraryAll, "var(--accent-grey)", gradients)}
@@ -349,7 +352,7 @@ export function CategoryPanel({
             ) : (
               <>
                 <span
-                  className="flex size-9 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs"
                   style={{ color: "var(--text-secondary)" }}
                 >
                   <MotionNumber value={inserts.length} />
@@ -376,6 +379,7 @@ export function CategoryPanel({
 
             return (
               <button
+                type="button"
                 key={cat.id}
                 onClick={() => goCategory(cat.id)}
                 className={rowCls(active, isCollapsed)}
@@ -438,32 +442,41 @@ export function CategoryChips({ className }: { className?: string }) {
   const { inLibraryAll, isActive, goAll, goCategory } = useCategoryNav()
 
   return (
-    <nav
-      aria-label={t("nav.categories")}
-      className={cn(
-        "sk-chips -mx-4 flex snap-x items-center gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8",
-        className,
-      )}
-    >
-      <Pill active={inLibraryAll} onClick={goAll} className="shrink-0 snap-start">
-        {t("nav.allInserts")}
-      </Pill>
-      {categories.map((cat) => (
-        <Pill
-          key={cat.id}
-          accent={cat.accent}
-          active={isActive(cat.id)}
-          onClick={() => goCategory(cat.id)}
-          className="shrink-0"
-        >
-          {catLabel(cat.id)}
-          <MotionNumber
-            value={inserts.filter((i) => i.category === cat.id).length}
-            className="text-text-faint"
-          />
-        </Pill>
-      ))}
-    </nav>
+    <div className={cn("relative min-w-0 overflow-hidden", className)}>
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[clamp(1.25rem,5vw,3rem)] bg-gradient-to-r from-background via-background/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[clamp(1.25rem,5vw,3rem)] bg-gradient-to-l from-background via-background/80 to-transparent" />
+
+      <nav
+        aria-label={t("nav.categories")}
+        className="min-w-0 snap-x snap-mandatory overflow-x-auto overscroll-x-contain px-4 pb-1 [scroll-padding-inline:1rem] [scrollbar-width:none] [-webkit-overflow-scrolling:touch] sm:px-6 md:px-8 [&::-webkit-scrollbar]:hidden"
+      >
+        <div className="mx-auto flex w-max max-w-full items-center gap-2">
+          <Pill
+            active={inLibraryAll}
+            onClick={goAll}
+            className="shrink-0 snap-center whitespace-nowrap"
+          >
+            {t("nav.allInserts")}
+          </Pill>
+
+          {categories.map((cat) => (
+            <Pill
+              key={cat.id}
+              accent={cat.accent}
+              active={isActive(cat.id)}
+              onClick={() => goCategory(cat.id)}
+              className="shrink-0 snap-center whitespace-nowrap"
+            >
+              {catLabel(cat.id)}
+              <MotionNumber
+                value={inserts.filter((i) => i.category === cat.id).length}
+                className="text-text-faint"
+              />
+            </Pill>
+          ))}
+        </div>
+      </nav>
+    </div>
   )
 }
 
@@ -471,7 +484,7 @@ export function CategoryChips({ className }: { className?: string }) {
 
 function rowCls(active: boolean, collapsed: boolean) {
   return cn(
-    "flex items-center rounded-xl transition-colors",
+    "flex min-w-0 items-center rounded-xl transition-colors",
     collapsed ? "justify-center p-1.5" : "gap-3 px-2.5 py-2.5",
     active ? "text-foreground" : "text-foreground hover:bg-panel-hover",
   )
