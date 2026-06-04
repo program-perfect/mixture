@@ -27,6 +27,10 @@ import {
   resetLibraryAction,
   type LibraryData,
 } from "@/app/actions/library"
+import {
+  DEFAULT_LIBRARY_LIST_SETTINGS,
+  type LibraryListSettings,
+} from "./library-list-settings"
 
 export type Section =
   | "overview"
@@ -127,6 +131,9 @@ type Ctx = {
   filters: Filters
   setFilters: React.Dispatch<React.SetStateAction<Filters>>
 
+  libraryListSettings: LibraryListSettings
+  setLibraryListSettings: React.Dispatch<React.SetStateAction<LibraryListSettings>>
+
   preview: PreviewSettings
   setPreview: React.Dispatch<React.SetStateAction<PreviewSettings>>
 
@@ -215,6 +222,9 @@ export function ScreenkitProvider({
     device: "all",
     status: "all",
   })
+  const [libraryListSettings, setLibraryListSettings] =
+    React.useState<LibraryListSettings>(DEFAULT_LIBRARY_LIST_SETTINGS)
+
   const first =
     (deepLinked ? allInserts.find((i) => i.id === deepLinked) : null) ??
     allInserts[0]
@@ -387,6 +397,8 @@ export function ScreenkitProvider({
     setSelectedId,
     filters,
     setFilters,
+    libraryListSettings,
+    setLibraryListSettings,
     preview,
     setPreview,
     mobileNavOpen,
