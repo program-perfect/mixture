@@ -17,7 +17,7 @@ export function Scene(_: SceneProps) {
           className="flex flex-col gap-1 rounded-md bg-black/40 p-1.5 ring-1 ring-white/5"
         >
           <div className="aspect-square w-full rounded-sm bg-white/10" />
-          <span className="font-mono text-[8px] text-white/50">№ 0{i + 1}-2025</span>
+          <span className="font-mono text-[8px] text-white/50">№ 0{i + 1}-2026</span>
           <span className="h-1 w-2/3 rounded-full bg-[#ef476f]/70" />
         </div>
       ))}

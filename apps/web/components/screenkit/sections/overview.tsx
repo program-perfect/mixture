@@ -9,6 +9,7 @@ import {
 } from "@/lib/screenkit/data"
 import type { AspectRatio } from "@/lib/screenkit/types"
 import { Pill } from "../primitives"
+import { MotionNumber } from "../motion-number"
 import { InsertPreview } from "../insert-preview"
 import { useScreenkit } from "../store"
 import { useReveal, staggerDelay } from "../motion"
@@ -108,7 +109,7 @@ export function OverviewSection() {
             {t("overview.recentInserts")}
           </h2>
           <span className="font-mono text-xs text-text-faint">
-            {inserts.length} {t("overview.total")}
+            <MotionNumber value={inserts.length} /> {t("overview.total")}
           </span>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

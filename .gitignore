@@ -4,12 +4,96 @@ __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
 .snowflake/
 .v0-trash/
+
+# Vercel
 .vercel/
 
-# Environment variables
+# Environment variables / secrets
+.env
+.env.*
 .env*.local
+!.env.example
+!.env.*.example
+!.env.template
 
-# Common ignores
-node_modules
+# Database / local credentials
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.bak
+
+# Private keys / certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
 .next/
+out/
+next-env.d.ts
+
+# Build outputs
+dist/
+build/
+.turbo/
+turbo.log
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage / tests
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# OS files
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Project dumps / temporary files
+_project_dump.txt
+project-dump.txt
+dump-project.txt
+*.tmp
+*.temp
+.cache/
+
+# Package manager pollution
+package-lock.json
+yarn.lock
+bun.lockb
+
+# Keep pnpm lockfile tracked
+!pnpm-lock.yaml

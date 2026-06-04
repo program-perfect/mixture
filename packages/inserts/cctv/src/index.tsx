@@ -31,7 +31,7 @@ export function Scene({ insert }: SceneProps) {
         CAM {insert.id.slice(-2)} · {insert.scene.toUpperCase()}
       </div>
       <div className="absolute right-2 top-2 font-mono text-[10px] text-[#cfe3d4]/80">
-        2025-03-{insert.id.slice(-2)} 23:41:0{insert.id.slice(-1)}
+        2026-01-{insert.id.slice(-2)} 23:41:0{insert.id.slice(-1)}
       </div>
       <div className="absolute bottom-2 left-2 flex items-center gap-1.5 font-mono text-[10px] text-[#ff6b6b]">
         <span className="size-1.5 rounded-full bg-[#ff6b6b] pulse-dot" /> REC

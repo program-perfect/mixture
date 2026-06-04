@@ -1,9 +1,5 @@
 "use client"
 
-import Link from "next/link"
-import { Maximize2 } from "lucide-react"
-import { Slider } from "@/components/ui/slider"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -11,27 +7,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
 import {
   DEVICES,
   PLAYBACK_MODES,
   resolveInsert,
 } from "@/lib/screenkit/data"
-import type { AspectRatio, DeviceType, PlaybackMode } from "@/lib/screenkit/types"
 import {
   deviceLabel,
   modeLabel,
   modeNote,
   statusLabel,
 } from "@/lib/screenkit/i18n"
+import type { AspectRatio, DeviceType, PlaybackMode } from "@/lib/screenkit/types"
+import { Maximize2 } from "lucide-react"
+import Link from "next/link"
+import { InsertLanguageToggle } from "../insert-language-toggle"
+import { InsertPreview } from "../insert-preview"
 import {
-  SegmentedControl,
-  SectionHeading,
   Explain,
+  SectionHeading,
+  SegmentedControl,
   StatusBadge,
 } from "../primitives"
-import { InsertPreview } from "../insert-preview"
-import { InsertLanguageToggle } from "../insert-language-toggle"
 import { useScreenkit } from "../store"
+import { MotionNumber } from '../motion-number'
 
 const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
 
@@ -204,7 +205,7 @@ function SliderControl({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <SectionHeading title={title} />
-        <span className="font-mono text-xs text-text-secondary">{value}</span>
+        <MotionNumber value={value} className="font-mono text-xs text-text-secondary" />
       </div>
       <Slider
         value={[value]}

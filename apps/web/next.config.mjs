@@ -21,6 +21,6 @@ const nextConfig = {
     "@screenkit/insert-tv-news",
     "@screenkit/insert-wanted",
   ],
-}
+};
 
-export default nextConfig
+export default nextConfig;

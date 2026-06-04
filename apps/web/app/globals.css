@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -183,8 +183,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-sans: var(--font-geist-sans), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -296,7 +296,9 @@
   }
 
   /* text-entry fields get the text caret */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not(
+      [type="reset"]
+    ):not([type="file"]):not([type="color"]),
   textarea,
   [contenteditable="true"] {
     cursor: text;
@@ -325,8 +327,9 @@
      side panels, etc.) eases between sizes instead of snapping. automatically
      disabled when motion is reduced via the global override below. */
   .sk-resize {
-    transition-property: width, height, max-width, max-height, min-width,
-      min-height, aspect-ratio, flex-basis, padding, margin;
+    transition-property:
+      width, height, max-width, max-height, min-width, min-height, aspect-ratio, flex-basis, padding, margin, gap,
+      border-radius, transform;
     transition-duration: 0.45s;
     transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
@@ -347,7 +350,7 @@
 
   /* ---- gritty playback effects (insert previews only) ---- */
   .fx-scanlines::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -361,7 +364,7 @@
     mix-blend-mode: multiply;
   }
   .fx-moire::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: -20%;
     pointer-events: none;
@@ -379,55 +382,100 @@
     box-shadow: inset 0 0 90px rgba(255, 255, 255, 0.16);
   }
   .fx-vignette::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(
-      120% 120% at 50% 40%,
-      transparent 45%,
-      rgba(0, 0, 0, 0.7) 100%
-    );
+    background: radial-gradient(120% 120% at 50% 40%, transparent 45%, rgba(0, 0, 0, 0.7) 100%);
   }
   .fx-glitch {
     animation: fx-glitch 2.4s steps(1) infinite;
   }
   @keyframes fx-glitch {
-    0%, 92%, 100% { transform: translateX(0); filter: none; }
-    93% { transform: translateX(-2px); filter: hue-rotate(8deg); }
-    95% { transform: translateX(3px); }
-    97% { transform: translateX(-1px); filter: contrast(1.2); }
+    0%,
+    92%,
+    100% {
+      transform: translateX(0);
+      filter: none;
+    }
+    93% {
+      transform: translateX(-2px);
+      filter: hue-rotate(8deg);
+    }
+    95% {
+      transform: translateX(3px);
+    }
+    97% {
+      transform: translateX(-1px);
+      filter: contrast(1.2);
+    }
   }
   .fx-flicker {
     animation: fx-flicker 3.5s ease-in-out infinite;
   }
   @keyframes fx-flicker {
-    0%, 100% { opacity: 1; }
-    47% { opacity: 0.97; }
-    48% { opacity: 0.8; }
-    49% { opacity: 0.98; }
-    72% { opacity: 0.9; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    47% {
+      opacity: 0.97;
+    }
+    48% {
+      opacity: 0.8;
+    }
+    49% {
+      opacity: 0.98;
+    }
+    72% {
+      opacity: 0.9;
+    }
   }
   .pulse-dot {
     animation: pulse-dot 1.6s ease-in-out infinite;
   }
   @keyframes pulse-dot {
-    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239,71,111,0.5); }
-    70% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 14px rgba(239,71,111,0); }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.5);
+    }
+    70% {
+      transform: scale(1.15);
+      opacity: 0.85;
+      box-shadow: 0 0 0 14px rgba(239, 71, 111, 0);
+    }
   }
 
   /* ---- ui motion: section / block enter animations ---- */
   @keyframes sk-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes sk-fade-in-up {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes sk-fade-in-scale {
-    from { opacity: 0; transform: scale(0.985); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   /* whole-section enter — keyed remount triggers this on every navigation */
@@ -458,7 +506,7 @@
     border-radius: var(--radius-md);
   }
   .sk-skeleton::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
@@ -471,7 +519,9 @@
     animation: sk-shimmer 1.4s ease-in-out infinite;
   }
   @keyframes sk-shimmer {
-    100% { transform: translateX(100%); }
+    100% {
+      transform: translateX(100%);
+    }
   }
 
   /* the skeleton container itself fades/crossfades smoothly */
@@ -508,7 +558,9 @@
   animation-name: sk-fade-in;
 }
 @keyframes sk-fade-out {
-  to { opacity: 0; }
+  to {
+    opacity: 0;
+  }
 }
 
 html[data-motion="reduced"]::view-transition-old(root),

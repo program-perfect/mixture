@@ -1,3 +1,4 @@
+import { CATEGORY_LABELS } from "./i18n";
 import type {
   AspectRatio,
   CategoryDef,
@@ -10,17 +11,16 @@ import type {
   LocalizedText,
   PlaybackMode,
   ResolvedInsert,
-} from "./types"
-import { CATEGORY_LABELS } from "./i18n"
+} from "./types";
 
-export const PROJECT_VERSION = "v0.9-gs-screenkit"
-export const PROJECT_SUBTITLE = "гремучая смесь / prop playback system"
+export const PROJECT_VERSION = "v0.9-gs-screenkit";
+export const PROJECT_SUBTITLE = "гремучая смесь / prop playback system";
 
 export type CategoryMeta = {
-  id: CategoryId
-  accent: string
-  tint: string
-}
+  id: CategoryId;
+  accent: string;
+  tint: string;
+};
 
 export const CATEGORIES: CategoryMeta[] = [
   { id: "phones", accent: "var(--accent-orange)", tint: "rgba(255,159,28,0.14)" },
@@ -29,10 +29,9 @@ export const CATEGORIES: CategoryMeta[] = [
   { id: "tv-news", accent: "var(--accent-blue)", tint: "rgba(47,128,237,0.14)" },
   { id: "bank", accent: "var(--accent-green)", tint: "rgba(34,197,94,0.14)" },
   { id: "hq-monitors", accent: "var(--accent-cyan)", tint: "rgba(76,201,240,0.14)" },
-]
+];
 
-export const categoryMeta = (id: CategoryId): CategoryMeta =>
-  CATEGORIES.find((c) => c.id === id) ?? CATEGORIES[0]
+export const categoryMeta = (id: CategoryId): CategoryMeta => CATEGORIES.find((c) => c.id === id) ?? CATEGORIES[0];
 
 /* built-in categories as fully self-describing defs (meta + localized label) */
 export const DEFAULT_CATEGORY_DEFS: CategoryDef[] = CATEGORIES.map((c) => ({
@@ -43,29 +42,26 @@ export const DEFAULT_CATEGORY_DEFS: CategoryDef[] = CATEGORIES.map((c) => ({
     ru: CATEGORY_LABELS.ru[c.id as keyof (typeof CATEGORY_LABELS)["ru"]],
     en: CATEGORY_LABELS.en[c.id as keyof (typeof CATEGORY_LABELS)["en"]],
   },
-}))
+}));
 
 /* merge built-in defaults with custom (server-stored) rows */
 export const buildCategoryDefs = (custom: CategoryDef[] = []): CategoryDef[] => {
-  const ids = new Set(DEFAULT_CATEGORY_DEFS.map((c) => c.id))
-  return [...DEFAULT_CATEGORY_DEFS, ...custom.filter((c) => !ids.has(c.id))]
-}
+  const ids = new Set(DEFAULT_CATEGORY_DEFS.map((c) => c.id));
+  return [...DEFAULT_CATEGORY_DEFS, ...custom.filter((c) => !ids.has(c.id))];
+};
 
 export const mergeInserts = (custom: Insert[] = []): Insert[] => {
-  const ids = new Set(INSERTS.map((i) => i.id))
-  return [...INSERTS, ...custom.filter((i) => !ids.has(i.id))]
-}
+  const ids = new Set(INSERTS.map((i) => i.id));
+  return [...INSERTS, ...custom.filter((i) => !ids.has(i.id))];
+};
 
-export const findInsert = (list: Insert[], id: string): Insert | undefined =>
-  list.find((i) => i.id === id)
+export const findInsert = (list: Insert[], id: string): Insert | undefined => list.find((i) => i.id === id);
 
-export const findCategoryDef = (
-  list: CategoryDef[],
-  id: CategoryId,
-): CategoryDef | undefined => list.find((c) => c.id === id)
+export const findCategoryDef = (list: CategoryDef[], id: CategoryId): CategoryDef | undefined =>
+  list.find((c) => c.id === id);
 
 export const categoryLabelFromDef = (def: CategoryDef, locale: Locale): string =>
-  locale === "en" ? def.label.en ?? def.label.ru : def.label.ru
+  locale === "en" ? (def.label.en ?? def.label.ru) : def.label.ru;
 
 export const DEVICES: { id: DeviceType; aspect: AspectRatio }[] = [
   { id: "phone", aspect: "9:16" },
@@ -74,36 +70,29 @@ export const DEVICES: { id: DeviceType; aspect: AspectRatio }[] = [
   { id: "tablet", aspect: "16:10" },
   { id: "projector", aspect: "16:9" },
   { id: "cctv", aspect: "4:3" },
-]
+];
 
-export const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
+export const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"];
 
-export const PLAYBACK_MODES: { id: PlaybackMode }[] = [
-  { id: "clean" },
-  { id: "filmed" },
-  { id: "dirty" },
-]
+export const PLAYBACK_MODES: { id: PlaybackMode }[] = [{ id: "clean" }, { id: "filmed" }, { id: "dirty" }];
 
 export const STATUSES: { id: InsertStatus; accent: string }[] = [
   { id: "draft", accent: "var(--text-muted)" },
   { id: "ready", accent: "var(--accent-green)" },
   { id: "needs review", accent: "var(--accent-orange)" },
   { id: "shooting", accent: "var(--accent-red)" },
-]
+];
 
 export const statusAccent = (s: InsertStatus): string =>
-  STATUSES.find((x) => x.id === s)?.accent ?? "var(--text-muted)"
+  STATUSES.find((x) => x.id === s)?.accent ?? "var(--text-muted)";
 
 /* ------------------------------- resolvers ------------------------------- */
 
-export const pick = (t: LocalizedText, locale: Locale): string =>
-  locale === "en" ? t.en ?? t.ru : t.ru
+export const pick = (t: LocalizedText, locale: Locale): string => (locale === "en" ? (t.en ?? t.ru) : t.ru);
 
-export const pickList = (l: LocalizedList, locale: Locale): string[] =>
-  locale === "en" ? l.en ?? l.ru : l.ru
+export const pickList = (l: LocalizedList, locale: Locale): string[] => (locale === "en" ? (l.en ?? l.ru) : l.ru);
 
-export const hasEnglish = (insert: Insert): boolean =>
-  typeof insert.title.en === "string"
+export const hasEnglish = (insert: Insert): boolean => typeof insert.title.en === "string";
 
 export function resolveInsert(insert: Insert, locale: Locale): ResolvedInsert {
   return {
@@ -122,7 +111,7 @@ export function resolveInsert(insert: Insert, locale: Locale): ResolvedInsert {
     negativePrompt: pick(insert.negativePrompt, locale),
     technicalNotes: pickList(insert.technicalNotes, locale),
     hasEnglish: hasEnglish(insert),
-  }
+  };
 }
 
 /* --------------------------------- data --------------------------------- */
@@ -130,7 +119,7 @@ export function resolveInsert(insert: Insert, locale: Locale): ResolvedInsert {
 export const INSERTS: Insert[] = [
   {
     id: "gs-001",
-    date: "2025-03-04",
+    date: "2026-03-04",
     episode: "ep.01",
     scene: "sc.14",
     category: "cctv",
@@ -174,7 +163,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-002",
-    date: "2025-03-05",
+    date: "2026-03-05",
     episode: "ep.01",
     scene: "sc.22",
     category: "hq-monitors",
@@ -213,7 +202,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-003",
-    date: "2025-03-06",
+    date: "2026-03-06",
     episode: "ep.02",
     scene: "sc.03",
     category: "hq-monitors",
@@ -255,7 +244,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-004",
-    date: "2025-03-07",
+    date: "2026-03-07",
     episode: "ep.02",
     scene: "sc.11",
     category: "cctv",
@@ -286,7 +275,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-005",
-    date: "2025-03-08",
+    date: "2026-03-08",
     episode: "ep.02",
     scene: "sc.27",
     category: "tv-news",
@@ -317,7 +306,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-006",
-    date: "2025-03-10",
+    date: "2026-03-10",
     episode: "ep.03",
     scene: "sc.05",
     category: "bank",
@@ -342,13 +331,17 @@ export const INSERTS: Insert[] = [
       en: "real bank logo, brand name, playful colors",
     },
     technicalNotes: {
-      ru: ["вымышленный банк, без реального бренда", "маскировать всё, кроме последних 4 цифр", "зелёный акцент подтверждения"],
+      ru: [
+        "вымышленный банк, без реального бренда",
+        "маскировать всё, кроме последних 4 цифр",
+        "зелёный акцент подтверждения",
+      ],
       en: ["fictional bank, no real brand", "mask all but last 4 digits", "green confirm accent"],
     },
   },
   {
     id: "gs-007",
-    date: "2025-03-11",
+    date: "2026-03-11",
     episode: "ep.03",
     scene: "sc.18",
     category: "hq-monitors",
@@ -379,7 +372,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-008",
-    date: "2025-03-12",
+    date: "2026-03-12",
     episode: "ep.04",
     scene: "sc.02",
     category: "phones",
@@ -410,7 +403,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-009",
-    date: "2025-03-12",
+    date: "2026-03-12",
     episode: "ep.04",
     scene: "sc.09",
     category: "phones",
@@ -441,7 +434,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-010",
-    date: "2025-03-13",
+    date: "2026-03-13",
     episode: "ep.04",
     scene: "sc.31",
     category: "phones",
@@ -466,13 +459,17 @@ export const INSERTS: Insert[] = [
       en: "studio quality webcam, perfect lighting",
     },
     technicalNotes: {
-      ru: ["заморозка кадра при потере пакетов", "вспышки блочной компрессии", "яркий тропический контраст против тёмного ui"],
+      ru: [
+        "заморозка кадра при потере пакетов",
+        "вспышки блочной компрессии",
+        "яркий тропический контраст против тёмного ui",
+      ],
       en: ["freeze-frame on dropped packets", "blocky compression bursts", "bright tropical contrast vs dark UI"],
     },
   },
   {
     id: "gs-011",
-    date: "2025-03-14",
+    date: "2026-03-14",
     episode: "ep.05",
     scene: "sc.04",
     category: "trackers",
@@ -497,13 +494,17 @@ export const INSERTS: Insert[] = [
       en: "google maps branding, colorful consumer map",
     },
     technicalNotes: {
-      ru: ["анимация пульсирующей красной точки", "схематичная карта, без реального провайдера", "координаты + скорость в моно hud"],
+      ru: [
+        "анимация пульсирующей красной точки",
+        "схематичная карта, без реального провайдера",
+        "координаты + скорость в моно hud",
+      ],
       en: ["pulsing red dot animation", "schematic map, no real provider", "coords + speed HUD mono"],
     },
   },
   {
     id: "gs-012",
-    date: "2025-03-15",
+    date: "2026-03-15",
     episode: "ep.05",
     scene: "sc.19",
     category: "hq-monitors",
@@ -534,7 +535,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-013",
-    date: "2025-03-16",
+    date: "2026-03-16",
     episode: "ep.06",
     scene: "sc.07",
     category: "phones",
@@ -565,7 +566,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-014",
-    date: "2025-03-18",
+    date: "2026-03-18",
     episode: "ep.06",
     scene: "sc.24",
     category: "cctv",
@@ -596,7 +597,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-015",
-    date: "2025-03-19",
+    date: "2026-03-19",
     episode: "ep.07",
     scene: "sc.05",
     category: "cctv",
@@ -627,7 +628,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-016",
-    date: "2025-03-20",
+    date: "2026-03-20",
     episode: "ep.07",
     scene: "sc.16",
     category: "cctv",
@@ -653,7 +654,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-017",
-    date: "2025-03-22",
+    date: "2026-03-22",
     episode: "ep.08",
     scene: "sc.02",
     category: "phones",
@@ -687,7 +688,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-018",
-    date: "2025-03-23",
+    date: "2026-03-23",
     episode: "ep.08",
     scene: "sc.13",
     category: "hq-monitors",
@@ -718,7 +719,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-019",
-    date: "2025-03-24",
+    date: "2026-03-24",
     episode: "ep.09",
     scene: "sc.06",
     category: "tv-news",
@@ -744,7 +745,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-020",
-    date: "2025-03-25",
+    date: "2026-03-25",
     episode: "ep.09",
     scene: "sc.21",
     category: "phones",
@@ -775,7 +776,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-021",
-    date: "2025-03-26",
+    date: "2026-03-26",
     episode: "ep.10",
     scene: "sc.04",
     category: "cctv",
@@ -806,7 +807,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-022",
-    date: "2025-03-27",
+    date: "2026-03-27",
     episode: "ep.10",
     scene: "sc.17",
     category: "phones",
@@ -832,7 +833,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-023",
-    date: "2025-03-28",
+    date: "2026-03-28",
     episode: "ep.11",
     scene: "sc.03",
     category: "phones",
@@ -863,7 +864,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-024",
-    date: "2025-03-29",
+    date: "2026-03-29",
     episode: "ep.11",
     scene: "sc.20",
     category: "hq-monitors",
@@ -894,7 +895,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-025",
-    date: "2025-03-30",
+    date: "2026-03-30",
     episode: "ep.12",
     scene: "sc.08",
     category: "hq-monitors",
@@ -920,7 +921,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-026",
-    date: "2025-03-31",
+    date: "2026-03-31",
     episode: "ep.12",
     scene: "sc.22",
     category: "trackers",
@@ -951,7 +952,7 @@ export const INSERTS: Insert[] = [
   },
   {
     id: "gs-027",
-    date: "2025-04-01",
+    date: "2026-04-01",
     episode: "ep.13",
     scene: "sc.05",
     category: "trackers",
@@ -975,7 +976,50 @@ export const INSERTS: Insert[] = [
       ru: ["пузырь чата с живой локацией", "два сходящихся маркера", "показание eta в моно"],
     },
   },
-]
+  {
+    id: "gs-courier-delivery",
+    date: "2026-06-04",
+    episode: "screen test",
+    scene: "courier app",
+    category: "maps",
+    device: "phone",
+    aspect: "9:16",
+    status: "ready",
+    title: {
+      ru: "мобильное приложение курьера еды",
+      en: "food courier mobile app",
+    },
+    description: {
+      ru: "Вымышленный экран курьерского приложения: активная смена, карта маршрута, новый заказ, точки забора и доставки, доход, рейтинг и нижняя навигация. Без логотипов и названий реальных брендов.",
+      en: "Fictional courier app screen: active shift, route map, new order, pickup/drop-off points, earnings, rating and bottom navigation. No real brand names or logos.",
+    },
+    prompt: {
+      ru: "реалистичный мобильный интерфейс курьера еды, активная смена, абстрактная карта маршрута, карточка нового заказа, нижний sheet, кнопка принять заказ, красно-горчично-кремовая палитра, дизайн-паттерны современного курьерского приложения, без логотипов и реальных брендов, 9:16",
+      en: "realistic food courier mobile interface, active shift, abstract route map, new order card, bottom sheet, accept order button, red mustard cream palette, modern courier app design patterns, no logos and no real brands, 9:16",
+    },
+    shortPrompt: {
+      ru: "курьерское приложение еды, активная смена, карта, заказ, 9:16",
+      en: "food courier app, active shift, map, order, 9:16",
+    },
+    negativePrompt: {
+      ru: "логотип Яндекса, логотип Burger King, реальные бренды, точная копия интерфейса, товарные знаки",
+      en: "Yandex logo, Burger King logo, real brands, exact interface copy, trademarks",
+    },
+    technicalNotes: {
+      ru: [
+        "не использовать реальные логотипы и названия брендов",
+        "палитра: красный, горчичный, кремовый, тёмно-коричневый",
+        "карта должна быть абстрактной, без реального картографического провайдера",
+        "экран рассчитан на вертикальный телефон 9:16",
+      ],
+      en: [
+        "do not use real logos or brand names",
+        "palette: red, mustard, cream, dark brown",
+        "map must be abstract, no real map provider",
+        "designed for a 9:16 vertical phone screen",
+      ],
+    },
+  },
+];
 
-export const getInsert = (id: string): Insert | undefined =>
-  INSERTS.find((i) => i.id === id)
+export const getInsert = (id: string): Insert | undefined => INSERTS.find((i) => i.id === id);

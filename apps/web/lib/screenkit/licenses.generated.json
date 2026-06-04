@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-03T23:36:12.003Z",
-  "count": 61,
+  "generatedAt": "2026-06-04T17:35:34.860Z",
+  "count": 62,
   "packages": [
     {
       "name": "@hookform/resolvers",
@@ -11,6 +11,17 @@
       "repository": "https://github.com/react-hook-form/resolvers",
       "homepage": "https://react-hook-form.com",
       "licenseFile": "hookform__resolvers.txt",
+      "hasText": true
+    },
+    {
+      "name": "@number-flow/react",
+      "version": "0.6.0",
+      "declared": "^0.6.0",
+      "license": "MIT",
+      "author": "Maxwell Barvian <max@barvian.me>",
+      "repository": "https://github.com/barvian/number-flow",
+      "homepage": "https://number-flow.barvian.me",
+      "licenseFile": "number-flow__react.txt",
       "hasText": true
     },
     {

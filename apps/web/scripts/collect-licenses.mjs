@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, "..")
-// In the monorepo, Bun hoists most dependencies to the repo-root node_modules.
+// In the monorepo, pnpm hoists most dependencies to the repo-root node_modules.
 // Resolve packages by checking the app-local node_modules first, then walking
 // up to the workspace root, so license collection works either way.
 const NODE_MODULES_CANDIDATES = [

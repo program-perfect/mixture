@@ -153,18 +153,24 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
     [transition],
   )
 
-  const setScale = React.useCallback((s: ScaleLevel) => {
-    setScaleState(s)
-    document.documentElement.style.setProperty(
-      "--app-scale",
-      String(SCALE_VALUE[s]),
-    )
-    try {
-      window.localStorage.setItem(SCALE_KEY, s)
-    } catch {
-      // ignore
-    }
-  }, [])
+  const setScale = React.useCallback(
+    (s: ScaleLevel) => {
+      transition(() => {
+        setScaleState(s)
+        document.documentElement.style.setProperty(
+          "--app-scale",
+          String(SCALE_VALUE[s]),
+        )
+      })
+
+      try {
+        window.localStorage.setItem(SCALE_KEY, s)
+      } catch {
+        // ignore
+      }
+    },
+    [transition],
+  )
 
   const value = React.useMemo(
     () => ({

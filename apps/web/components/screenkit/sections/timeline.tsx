@@ -1,10 +1,11 @@
 "use client"
 
 import { resolveInsert } from "@/lib/screenkit/data"
-import type { Insert } from "@/lib/screenkit/types"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
-import { SectionHeading, Explain, StatusBadge, RuOnlyBadge } from "../primitives"
+import type { Insert } from "@/lib/screenkit/types"
+import { Explain, RuOnlyBadge, SectionHeading, StatusBadge } from "../primitives"
 import { useScreenkit } from "../store"
+import { MotionNumber } from '../motion-number'
 
 export function TimelineSection() {
   const { openInPreview, locale, t, inserts } = useScreenkit()
@@ -31,7 +32,7 @@ export function TimelineSection() {
               </span>
               <span className="h-px flex-1 bg-panel-border" />
               <span className="font-mono text-[11px] lowercase text-text-muted">
-                {byEpisode[ep].length} {t("library.countMany")}
+                <MotionNumber value={byEpisode[ep].length} /> {t("library.countMany")}
               </span>
             </div>
 

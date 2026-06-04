@@ -1,11 +1,12 @@
 "use client"
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
 import type { CategoryId } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
+import * as React from "react"
 import { categoryIconFor } from "./icons"
+import { MotionNumber } from "./motion-number"
 import { IconTile, Pill } from "./primitives"
 import { useScreenkit } from "./store"
 import { useGradients } from "./theme"
@@ -81,7 +82,7 @@ export function CategoryPanel({
               className="flex size-9 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs"
               style={{ color: "var(--text-secondary)" }}
             >
-              {inserts.length}
+              <MotionNumber value={inserts.length} />
             </span>
             <span className="font-mono text-sm lowercase">
               {t("nav.allInserts")}
@@ -110,7 +111,7 @@ export function CategoryPanel({
                 <span className="flex-1 text-left font-mono text-sm lowercase">
                   {catLabel(cat.id)}
                 </span>
-                <span className="font-mono text-xs text-text-faint">{count}</span>
+                <MotionNumber value={count} className="font-mono text-xs text-text-faint" />
               </button>
             )
           })}
@@ -146,9 +147,7 @@ export function CategoryChips({ className }: { className?: string }) {
           className="shrink-0"
         >
           {catLabel(cat.id)}
-          <span className="text-text-faint">
-            {inserts.filter((i) => i.category === cat.id).length}
-          </span>
+          <MotionNumber value={inserts.filter((i) => i.category === cat.id).length} className="text-text-faint" />
         </Pill>
       ))}
     </nav>
