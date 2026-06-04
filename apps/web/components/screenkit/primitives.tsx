@@ -89,14 +89,14 @@ export function SegmentedControl<T extends string>({
             aria-selected={active}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "flex-1 rounded-xl text-center font-mono font-medium lowercase transition-colors",
+              "min-w-0 flex-1 rounded-xl text-center font-mono font-medium lowercase transition-colors",
               size === "sm" ? "px-2 py-1.5 text-xs" : "px-3 py-2.5 text-sm",
               active
                 ? "bg-control-active text-control-active-foreground"
                 : "text-text-secondary hover:bg-panel-hover hover:text-foreground",
             )}
           >
-            {opt.label}
+            <span className="block truncate">{opt.label}</span>
           </button>
         )
       })}
@@ -118,12 +118,12 @@ export function SectionHeading({
   return (
     <h3
       className={cn(
-        "flex items-center gap-2 font-mono text-base font-bold lowercase text-foreground",
+        "flex min-w-0 items-center gap-2 font-mono text-base font-bold lowercase text-foreground",
         className,
       )}
     >
-      {title}
-      {link ? <Link2 className="size-3.5 text-text-faint" /> : null}
+      <span className="min-w-0 truncate">{title}</span>
+      {link ? <Link2 className="size-3.5 shrink-0 text-text-faint" /> : null}
     </h3>
   )
 }
@@ -138,7 +138,7 @@ export function Explain({
   return (
     <p
       className={cn(
-        "max-w-xl text-pretty font-mono text-[13px] leading-relaxed text-text-muted",
+        "max-w-xl text-pretty font-mono text-[13px] leading-relaxed text-text-muted [overflow-wrap:anywhere]",
         className,
       )}
     >
@@ -154,7 +154,7 @@ export function FormRow({
   children: React.ReactNode
   className?: string
 }) {
-  return <div className={cn("flex flex-col gap-3", className)}>{children}</div>
+  return <div className={cn("flex min-w-0 flex-col gap-3", className)}>{children}</div>
 }
 
 /* ----------------------------- status badge ----------------------------- */
@@ -169,14 +169,14 @@ export function StatusBadge({
   const accent = statusAccent(status)
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full border border-panel-border bg-panel-soft px-2.5 py-1 font-mono text-[11px] lowercase"
+      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-panel-border bg-panel-soft px-2.5 py-1 font-mono text-[11px] lowercase"
       style={{ color: accent }}
     >
       <span
-        className="size-1.5 rounded-full"
+        className="size-1.5 shrink-0 rounded-full"
         style={{ background: accent }}
       />
-      {label ?? status}
+      <span className="min-w-0 truncate">{label ?? status}</span>
     </span>
   )
 }
@@ -195,7 +195,7 @@ export function RuOnlyBadge({
     <span
       title={title}
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-dashed px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide",
+        "inline-flex max-w-full items-center gap-1 rounded-full border border-dashed px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide",
         className,
       )}
       style={{
@@ -204,7 +204,7 @@ export function RuOnlyBadge({
         background: "rgba(108,99,255,0.08)",
       }}
     >
-      {label}
+      <span className="min-w-0 truncate">{label}</span>
     </span>
   )
 }
@@ -227,9 +227,10 @@ export function Pill({
   const Comp = onClick ? "button" : "span"
   return (
     <Comp
+      type={onClick ? "button" : undefined}
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs lowercase transition-colors",
+        "inline-flex min-w-0 items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs lowercase transition-colors",
         active
           ? "border-transparent bg-control-active text-control-active-foreground"
           : "border-panel-border bg-panel-soft text-text-secondary hover:bg-panel-hover hover:text-foreground",
@@ -238,7 +239,7 @@ export function Pill({
     >
       {accent ? (
         <span
-          className="size-1.5 rounded-full"
+          className="size-1.5 shrink-0 rounded-full"
           style={{ background: accent }}
         />
       ) : null}
@@ -259,13 +260,13 @@ export function KeyVal({
   accent?: string
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-panel-border/60 py-2 last:border-0">
-      <span className="font-mono text-[12px] lowercase text-text-muted">
+    <div className="flex min-w-0 items-center justify-between gap-4 border-b border-panel-border/60 py-2 last:border-0">
+      <span className="min-w-0 truncate font-mono text-[11px] lowercase text-text-faint">
         {label}
       </span>
       <span
-        className="text-right font-mono text-[12px]"
-        style={{ color: accent ?? "var(--text-primary)" }}
+        className="min-w-0 truncate text-right font-mono text-xs text-text-secondary"
+        style={accent ? { color: accent } : undefined}
       >
         {value}
       </span>
