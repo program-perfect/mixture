@@ -10,6 +10,17 @@ import { Content } from "./content"
 import { Rail } from "./rail"
 import { ScreenkitProvider, useScreenkit } from "./store"
 
+const LOCALE_FLOW_CSS = `
+@keyframes sk-locale-text-flow {
+  0% { opacity: .45; filter: blur(2px); transform: translate3d(0, .32em, 0); }
+  55% { opacity: .9; filter: blur(.35px); }
+  100% { opacity: 1; filter: blur(0); transform: translate3d(0, 0, 0); }
+}
+html[data-locale-flow="on"][data-motion="full"] :where(h1,h2,h3,h4,p,span,button,label,a,li,dt,dd,th,td,small) {
+  animation: sk-locale-text-flow .44s cubic-bezier(.16, 1, .3, 1) both;
+}
+`
+
 function MobileTopBar() {
   const { setMobileNavOpen, t } = useScreenkit()
   return (
@@ -77,23 +88,26 @@ function LocaleFlowEffect() {
 
 function ShellInner({ notFound = false }: { notFound?: boolean }) {
   return (
-    <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
-      <LocaleFlowEffect />
-      <MobileTopBar />
-      <MobileNav />
-      <div className="flex min-h-0 flex-1 bg-sidebar">
-        {/* desktop icon rail — sits behind the main area; the rounded left
-            corners of main reveal the rail color so it appears to tuck under */}
-        <div className="hidden md:block">
-          <Rail />
+    <>
+      <style>{LOCALE_FLOW_CSS}</style>
+      <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
+        <LocaleFlowEffect />
+        <MobileTopBar />
+        <MobileNav />
+        <div className="flex min-h-0 flex-1 bg-sidebar">
+          {/* desktop icon rail — sits behind the main area; the rounded left
+              corners of main reveal the rail color so it appears to tuck under */}
+          <div className="hidden md:block">
+            <Rail />
+          </div>
+          {/* main area — no top/bottom/right margins. only the left edge is
+              rounded and pulled over the rail so the rail tucks beneath it. */}
+          <main className="relative z-10 min-w-0 flex-1 overflow-hidden bg-background md:-ml-3 md:rounded-l-[1.5rem]">
+            <Content notFound={notFound} />
+          </main>
         </div>
-        {/* main area — no top/bottom/right margins. only the left edge is
-            rounded and pulled over the rail so the rail tucks beneath it. */}
-        <main className="relative z-10 min-w-0 flex-1 overflow-hidden bg-background md:-ml-3 md:rounded-l-[1.5rem]">
-          <Content notFound={notFound} />
-        </main>
       </div>
-    </div>
+    </>
   )
 }
 
