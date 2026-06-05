@@ -49,7 +49,7 @@ function MobileNav() {
   )
 }
 
-function ShellInner() {
+function ShellInner({ notFound = false }: { notFound?: boolean }) {
   return (
     <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
       <MobileTopBar />
@@ -63,7 +63,7 @@ function ShellInner() {
         {/* main area — no top/bottom/right margins. only the left edge is
             rounded and pulled over the rail so the rail tucks beneath it. */}
         <main className="relative z-10 min-w-0 flex-1 overflow-hidden bg-background shadow-[-8px_0_24px_-12px_rgba(0,0,0,0.45)] md:-ml-3 md:rounded-l-[1.5rem]">
-          <Content />
+          <Content notFound={notFound} />
         </main>
       </div>
     </div>
@@ -76,12 +76,14 @@ export function AppShell({
   initialSelectedId,
   initialView,
   initialCategory,
+  notFound,
 }: {
   initialInserts?: Insert[]
   initialCategories?: CategoryDef[]
   initialSelectedId?: string
   initialView?: string
   initialCategory?: string
+  notFound?: boolean
 }) {
   return (
     <ScreenkitProvider
@@ -91,7 +93,7 @@ export function AppShell({
       initialView={initialView}
       initialCategory={initialCategory}
     >
-      <ShellInner />
+      <ShellInner notFound={notFound} />
     </ScreenkitProvider>
   )
 }
