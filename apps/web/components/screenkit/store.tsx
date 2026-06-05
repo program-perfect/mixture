@@ -99,6 +99,9 @@ function writeLibraryCache(data: LibraryData) {
   }
 }
 
+export type MessengerTheme = "dark" | "light"
+export type MessengerVideoFormat = "mixed" | "vertical" | "horizontal" | "square"
+
 export type PreviewSettings = {
   device: DeviceType
   mode: PlaybackMode
@@ -108,6 +111,11 @@ export type PreviewSettings = {
   reflections: boolean
   scanlines: boolean
   timestamp: boolean
+  messengerTheme: MessengerTheme
+  messengerMotion: boolean
+  messengerDelay: number
+  messengerVideoFormat: MessengerVideoFormat
+  messengerHiddenNumber: boolean
 }
 
 export type Filters = {
@@ -237,6 +245,11 @@ export function ScreenkitProvider({
     reflections: false,
     scanlines: false,
     timestamp: false,
+    messengerTheme: "dark",
+    messengerMotion: false,
+    messengerDelay: 4,
+    messengerVideoFormat: "mixed",
+    messengerHiddenNumber: true,
   })
 
   // keep the url in sync with the active menu item so every section/category
