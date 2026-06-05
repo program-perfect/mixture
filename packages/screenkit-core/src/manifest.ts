@@ -4,6 +4,8 @@ import type { CategoryId, ResolvedInsert } from "./types"
 /* the props every insert scene component receives */
 export type SceneProps = {
   insert: ResolvedInsert
+  /** optional preview/runtime controls supplied by the host app */
+  settings?: Record<string, unknown>
 }
 
 export type SceneComponent = ComponentType<SceneProps>
