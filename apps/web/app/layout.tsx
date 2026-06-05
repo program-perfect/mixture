@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import './neutral-theme.css'
+import './theme-transitions.css'
 import './glow.css'
 import './cursor.css'
 
