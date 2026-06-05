@@ -41,7 +41,7 @@ export function InsertPreview({
         )}
         style={{ filter: `${filter} ${blur !== "none" ? blur : ""}`.trim() }}
       >
-        <InsertCanvas insert={insert} />
+        <InsertCanvas insert={insert} settings={settings} />
       </div>
 
       {/* moire (filmed) */}
