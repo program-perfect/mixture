@@ -187,8 +187,6 @@
   }
   html {
     @apply bg-background;
-    /* site zoom — driven by the appearance setting (see theme.tsx). scaling the
-       root font-size scales every rem-based size + spacing token together. */
     font-size: calc(100% * var(--app-scale, 1));
   }
   body {
@@ -196,14 +194,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* smooth scrolling everywhere (neutralised by the reduce-motion block) */
   html,
   [data-radix-scroll-area-viewport],
   .sk-scroll {
     scroll-behavior: smooth;
   }
 
-  /* interactive element cursors */
   button,
   [role="button"],
   [role="tab"],
@@ -220,22 +216,17 @@
     cursor: pointer;
   }
 
-  /* text-entry fields get the text caret */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not(
-      [type="reset"]
-    ):not([type="file"]):not([type="color"]),
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="color"]),
   textarea,
   [contenteditable="true"] {
     cursor: text;
   }
 
-  /* sliders / range */
   input[type="range"],
   [role="slider"] {
     cursor: ew-resize;
   }
 
-  /* disabled controls override everything above */
   button:disabled,
   [aria-disabled="true"],
   [data-disabled],
@@ -247,7 +238,6 @@
 }
 
 @layer utilities {
-  /* ---- smooth size/layout changes ---- */
   .sk-resize {
     transition-property:
       width, min-width, max-width, height, max-height, min-height, aspect-ratio, flex-basis, padding, margin, gap,
@@ -256,7 +246,6 @@
     transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  /* subtle technical scrollbars */
   .sk-scroll {
     scrollbar-width: thin;
     scrollbar-color: var(--panel-border) transparent;
@@ -270,19 +259,12 @@
     border-radius: 999px;
   }
 
-  /* ---- gritty playback effects (insert previews only) ---- */
   .fx-scanlines::after {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0px,
-      rgba(0, 0, 0, 0) 2px,
-      rgba(0, 0, 0, 0.28) 3px,
-      rgba(0, 0, 0, 0.28) 4px
-    );
+    background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0.28) 3px, rgba(0, 0, 0, 0.28) 4px);
     mix-blend-mode: multiply;
   }
   .fx-moire::before {
@@ -290,19 +272,11 @@
     position: absolute;
     inset: -20%;
     pointer-events: none;
-    background: repeating-linear-gradient(
-      48deg,
-      rgba(255, 255, 255, 0.05) 0px,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 2px,
-      transparent 5px
-    );
+    background: repeating-linear-gradient(48deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 2px, transparent 5px);
     mix-blend-mode: screen;
     opacity: 0.7;
   }
-  .fx-bloom {
-    box-shadow: inset 0 0 90px rgba(255, 255, 255, 0.16);
-  }
+  .fx-bloom { box-shadow: inset 0 0 90px rgba(255, 255, 255, 0.16); }
   .fx-vignette::after {
     content: "";
     position: absolute;
@@ -310,117 +284,50 @@
     pointer-events: none;
     background: radial-gradient(120% 120% at 50% 40%, transparent 45%, rgba(0, 0, 0, 0.7) 100%);
   }
-  .fx-glitch {
-    animation: fx-glitch 2.4s steps(1) infinite;
-  }
+  .fx-glitch { animation: fx-glitch 2.4s steps(1) infinite; }
   @keyframes fx-glitch {
-    0%,
-    92%,
-    100% {
-      transform: translateX(0);
-      filter: none;
-    }
-    93% {
-      transform: translateX(-2px);
-      filter: hue-rotate(8deg);
-    }
-    95% {
-      transform: translateX(3px);
-    }
-    97% {
-      transform: translateX(-1px);
-      filter: contrast(1.2);
-    }
+    0%, 92%, 100% { transform: translateX(0); filter: none; }
+    93% { transform: translateX(-2px); filter: hue-rotate(8deg); }
+    95% { transform: translateX(3px); }
+    97% { transform: translateX(-1px); filter: contrast(1.2); }
   }
-  .fx-flicker {
-    animation: fx-flicker 3.5s ease-in-out infinite;
-  }
+  .fx-flicker { animation: fx-flicker 3.5s ease-in-out infinite; }
   @keyframes fx-flicker {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    47% {
-      opacity: 0.97;
-    }
-    48% {
-      opacity: 0.8;
-    }
-    49% {
-      opacity: 0.98;
-    }
-    72% {
-      opacity: 0.9;
-    }
+    0%, 100% { opacity: 1; }
+    47% { opacity: 0.97; }
+    48% { opacity: 0.8; }
+    49% { opacity: 0.98; }
+    72% { opacity: 0.9; }
   }
-  .pulse-dot {
-    animation: pulse-dot 1.6s ease-in-out infinite;
-  }
+  .pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
   @keyframes pulse-dot {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 1;
-      box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.5);
-    }
-    70% {
-      transform: scale(1.15);
-      opacity: 0.85;
-      box-shadow: 0 0 0 14px rgba(239, 71, 111, 0);
-    }
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.5); }
+    70% { transform: scale(1.15); opacity: 0.85; box-shadow: 0 0 0 14px rgba(239, 71, 111, 0); }
   }
 
-  /* ---- ui motion: section / block enter animations ---- */
-  @keyframes sk-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes sk-fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes sk-fade-in-scale {
-    from {
-      opacity: 0;
-      transform: scale(0.985);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
+  @keyframes sk-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sk-fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sk-fade-in-scale { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: scale(1); } }
+  @keyframes sk-page-bg-in { from { opacity: 0; background: var(--background); filter: saturate(0.8); } to { opacity: 1; background: transparent; filter: saturate(1); } }
+  @keyframes sk-fly-top { from { opacity: 0; transform: translate3d(0, -24px, 0) scale(0.985); } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+  @keyframes sk-fly-left { from { opacity: 0; transform: translate3d(-28px, 10px, 0) scale(0.985); } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+  @keyframes sk-fly-right { from { opacity: 0; transform: translate3d(28px, 10px, 0) scale(0.985); } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+  @keyframes sk-fly-bottom { from { opacity: 0; transform: translate3d(0, 26px, 0) scale(0.985); } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+  @keyframes sk-grow-y { from { transform: scaleY(0.08); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+  @keyframes sk-grow-x { from { transform: scaleX(0.02); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
 
-  /* whole-section enter — keyed remount triggers this on every navigation */
-  .sk-section-enter {
-    animation: sk-fade-in-up 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-  }
+  .sk-section-enter { animation: sk-fade-in-up 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+  .sk-animate-in { animation: sk-fade-in-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: var(--sk-delay, 0ms); }
+  .sk-animate-fade { animation: sk-fade-in 0.5s ease both; animation-delay: var(--sk-delay, 0ms); }
+  .sk-animate-scale { animation: sk-fade-in-scale 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: var(--sk-delay, 0ms); }
+  .sk-page-enter { animation: sk-page-bg-in 0.5s ease both; }
+  .sk-fly-from-top { animation: sk-fly-top 0.72s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .sk-fly-from-left { animation: sk-fly-left 0.72s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .sk-fly-from-right { animation: sk-fly-right 0.72s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .sk-fly-from-bottom { animation: sk-fly-bottom 0.72s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .sk-chart-bar > div { transform-origin: bottom; animation: sk-grow-y 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--sk-delay, 0ms); }
+  .sk-chart-line { transform-origin: left; animation: sk-grow-x 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--sk-delay, 0ms); }
 
-  /* individual block / list-item enter, with optional per-item stagger via
-     the --sk-delay custom property */
-  .sk-animate-in {
-    animation: sk-fade-in-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-    animation-delay: var(--sk-delay, 0ms);
-  }
-  .sk-animate-fade {
-    animation: sk-fade-in 0.5s ease both;
-    animation-delay: var(--sk-delay, 0ms);
-  }
-  .sk-animate-scale {
-    animation: sk-fade-in-scale 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-    animation-delay: var(--sk-delay, 0ms);
-  }
-
-  /* ---- skeleton placeholders ---- */
   .sk-skeleton {
     position: relative;
     overflow: hidden;
@@ -432,107 +339,50 @@
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--foreground) 8%, transparent) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--foreground) 8%, transparent) 50%, transparent 100%);
     animation: sk-shimmer 1.4s ease-in-out infinite;
   }
-  @keyframes sk-shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  /* the skeleton container itself fades/crossfades smoothly */
-  .sk-skeleton-wrap {
-    animation: sk-fade-in 0.2s ease both;
-  }
-
-  /* horizontal category chip strip (mobile) — hide the scrollbar */
-  .sk-chips {
-    scrollbar-width: none;
-  }
-  .sk-chips::-webkit-scrollbar {
-    display: none;
-  }
-  .sk-safe-x {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-  }
-
-  .sk-safe-bottom {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-  }
-
-  .sk-wrap-anywhere {
-    overflow-wrap: anywhere;
-  }
+  @keyframes sk-shimmer { 100% { transform: translateX(100%); } }
+  .sk-skeleton-wrap { animation: sk-fade-in 0.2s ease both; }
+  .sk-chips { scrollbar-width: none; }
+  .sk-chips::-webkit-scrollbar { display: none; }
+  .sk-safe-x { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+  .sk-safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .sk-wrap-anywhere { overflow-wrap: anywhere; }
 }
 
-/* ------------------------------------------------------------------ *
- * theme / palette switch animation
- * ------------------------------------------------------------------ */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.38s;
   animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
   mix-blend-mode: normal;
 }
-::view-transition-old(root) {
-  animation-name: sk-fade-out;
-}
-::view-transition-new(root) {
-  animation-name: sk-fade-in;
-}
-@keyframes sk-fade-out {
-  to {
-    opacity: 0;
-  }
-}
+::view-transition-old(root) { animation-name: sk-fade-out; }
+::view-transition-new(root) { animation-name: sk-fade-in; }
+@keyframes sk-fade-out { to { opacity: 0; } }
 
 html[data-motion-view="off"]::view-transition-old(root),
 html[data-motion-view="off"]::view-transition-new(root),
 html[data-motion="reduced"]::view-transition-old(root),
-html[data-motion="reduced"]::view-transition-new(root) {
-  animation: none !important;
-}
+html[data-motion="reduced"]::view-transition-new(root) { animation: none !important; }
 
-/* ------------------------------------------------------------------ *
- * granular motion switches
- * ------------------------------------------------------------------ */
 html[data-motion-scroll="off"],
 html[data-motion-scroll="off"] [data-radix-scroll-area-viewport],
-html[data-motion-scroll="off"] .sk-scroll {
-  scroll-behavior: auto !important;
-}
-
-html[data-motion-layout="off"] .sk-resize {
-  transition-duration: 0.001ms !important;
-  transition-delay: 0ms !important;
-}
-
+html[data-motion-scroll="off"] .sk-scroll { scroll-behavior: auto !important; }
+html[data-motion-layout="off"] .sk-resize { transition-duration: 0.001ms !important; transition-delay: 0ms !important; }
 html[data-motion-sections="off"] .sk-section-enter,
 html[data-motion-sections="off"] .sk-animate-in,
 html[data-motion-sections="off"] .sk-animate-fade,
-html[data-motion-sections="off"] .sk-animate-scale {
-  animation: none !important;
-}
+html[data-motion-sections="off"] .sk-animate-scale,
+html[data-motion-sections="off"] .sk-page-enter,
+html[data-motion-sections="off"] .sk-fly-from-top,
+html[data-motion-sections="off"] .sk-fly-from-left,
+html[data-motion-sections="off"] .sk-fly-from-right,
+html[data-motion-sections="off"] .sk-fly-from-bottom,
+html[data-motion-sections="off"] .sk-chart-bar > div,
+html[data-motion-sections="off"] .sk-chart-line { animation: none !important; }
+html[data-motion-skeletons="off"] .sk-skeleton::after { animation: none !important; transform: none; background: none; }
 
-html[data-motion-skeletons="off"] .sk-skeleton::after {
-  animation: none !important;
-  transform: none;
-  background: none;
-}
-
-/* ------------------------------------------------------------------ *
- * reduce motion
- *
- * one switch that neutralises site animations + transitions. custom cursor is
- * excluded on purpose and controlled by its own advanced switch.
- * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   html:not([data-motion="full"]) *:not(.sk-fluid-cursor),
   html:not([data-motion="full"]) *:not(.sk-fluid-cursor)::before,
@@ -558,7 +408,6 @@ html[data-motion="reduced"] *:not(.sk-fluid-cursor)::after {
   scroll-behavior: auto !important;
 }
 
-/* skeleton shimmer is pure decoration — hide it entirely when motion is off */
 html[data-motion="reduced"] .sk-skeleton::after {
   animation: none !important;
   transform: none;
