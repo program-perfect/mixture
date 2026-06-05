@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PROJECT_VERSION } from "@/lib/screenkit/data"
 import type { CategoryDef, Insert } from "@/lib/screenkit/types"
 import { Menu } from "lucide-react"
+import * as React from "react"
 import { CategoryPanel } from "./category-panel"
 import { Content } from "./content"
 import { Rail } from "./rail"
@@ -49,9 +50,35 @@ function MobileNav() {
   )
 }
 
+function LocaleFlowEffect() {
+  const { locale } = useScreenkit()
+  const previous = React.useRef(locale)
+
+  React.useEffect(() => {
+    if (previous.current === locale) return
+    previous.current = locale
+
+    const root = document.documentElement
+    const canAnimate =
+      root.dataset.motion === "full" && root.dataset.motionSections !== "off"
+
+    if (!canAnimate) return
+
+    root.setAttribute("data-locale-flow", "on")
+    const id = window.setTimeout(() => {
+      root.removeAttribute("data-locale-flow")
+    }, 520)
+
+    return () => window.clearTimeout(id)
+  }, [locale])
+
+  return null
+}
+
 function ShellInner({ notFound = false }: { notFound?: boolean }) {
   return (
     <div className="flex h-[100dvh] flex-col bg-sidebar text-foreground">
+      <LocaleFlowEffect />
       <MobileTopBar />
       <MobileNav />
       <div className="flex min-h-0 flex-1 bg-sidebar">
