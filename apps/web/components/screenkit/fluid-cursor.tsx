@@ -116,9 +116,6 @@ function isChromaticColor(value: string) {
   const chroma = brightest - darkest
   const saturation = brightest <= 0 ? 0 : chroma / brightest
 
-  // Neutral theme colors are intentionally grayscale / near-grayscale. Anything
-  // with visible chroma is treated as authored color and the cursor switches to
-  // a non-blending outline so it does not alter that color.
   return chroma > 24 && saturation > 0.12
 }
 
@@ -157,8 +154,6 @@ export function FluidCursor() {
   const cursorRef = React.useRef<HTMLDivElement | null>(null)
   const state = React.useRef<CursorState>(DEFAULT_STATE)
   const rendered = React.useRef<CursorState>(DEFAULT_STATE)
-  const velocity = React.useRef({ x: 0, y: 0 })
-  const lastPointer = React.useRef({ x: -100, y: -100 })
   const raf = React.useRef<number | null>(null)
 
   React.useEffect(() => {
@@ -179,8 +174,6 @@ export function FluidCursor() {
       document.documentElement.classList.remove("sk-fluid-cursor-active")
       state.current = { ...DEFAULT_STATE }
       rendered.current = { ...DEFAULT_STATE }
-      velocity.current = { x: 0, y: 0 }
-      lastPointer.current = { x: -100, y: -100 }
       if (raf.current) window.cancelAnimationFrame(raf.current)
       raf.current = null
       return undefined
@@ -198,14 +191,9 @@ export function FluidCursor() {
     }
 
     const setTargetFromElement = (el: Element | null, x: number, y: number) => {
-      velocity.current = {
-        x: x - lastPointer.current.x,
-        y: y - lastPointer.current.y,
-      }
-      lastPointer.current = { x, y }
-
       const textTarget = el?.closest(TEXT_SELECTOR)
       const interactiveTarget = el?.closest(TARGET_SELECTOR)
+
       if (textTarget instanceof HTMLElement && !interactiveTarget) {
         const rect = textTarget.getBoundingClientRect()
         state.current = {
@@ -240,13 +228,12 @@ export function FluidCursor() {
         return
       }
 
-      const stretch = clamp(Math.hypot(velocity.current.x, velocity.current.y) * 0.18, 0, 12)
       state.current = {
         ...state.current,
         x,
         y,
-        width: 16 + stretch,
-        height: 16 - stretch * 0.28,
+        width: 16,
+        height: 16,
         radius: 999,
         opacity: 1,
         mode: "idle",
@@ -286,14 +273,14 @@ export function FluidCursor() {
       if (node) {
         const current = rendered.current
         const target = state.current
-        const easing = target.mode === "target" ? 0.16 : target.mode === "text" ? 0.2 : 0.18
-        const sizeEase = target.mode === "target" ? 0.14 : 0.19
+        const easing = target.mode === "target" ? 0.16 : target.mode === "text" ? 0.22 : 0.24
+        const sizeEase = target.mode === "target" ? 0.14 : 0.2
         const next: CursorState = {
           x: lerp(current.x, target.x, easing),
           y: lerp(current.y, target.y, easing),
           width: lerp(current.width, target.width, sizeEase),
           height: lerp(current.height, target.height, sizeEase),
-          radius: lerp(current.radius, target.radius, 0.13),
+          radius: lerp(current.radius, target.radius, 0.14),
           opacity: lerp(current.opacity, target.opacity, 0.24),
           mode: target.mode,
           tone: target.tone,
@@ -301,19 +288,15 @@ export function FluidCursor() {
         }
         rendered.current = next
 
-        const speed = clamp(Math.hypot(velocity.current.x, velocity.current.y), 0, 36)
-        const angle = Math.atan2(velocity.current.y, velocity.current.x) || 0
-        const squash = next.mode === "idle" ? 1 + speed * 0.008 : 1
-        const scale = next.pressed ? 0.9 : 1
+        const scale = next.pressed ? 0.92 : 1
         node.style.opacity = String(next.opacity)
         node.style.borderRadius = `${next.radius}px`
         node.style.width = `${next.width}px`
         node.style.height = `${next.height}px`
-        node.style.transform = `translate3d(${next.x - next.width / 2}px, ${next.y - next.height / 2}px, 0) rotate(${angle}rad) scale(${scale * squash}, ${scale / squash})`
+        node.style.transform = `translate3d(${next.x - next.width / 2}px, ${next.y - next.height / 2}px, 0) scale(${scale})`
         node.dataset.mode = next.mode
         node.dataset.tone = next.tone
       }
-      velocity.current = { x: velocity.current.x * 0.82, y: velocity.current.y * 0.82 }
       raf.current = window.requestAnimationFrame(tick)
     }
 
