@@ -5,20 +5,44 @@ import * as React from "react"
 /* ------------------------------------------------------------------ *
  * motion preferences
  *
- * a single source of truth for "reduce motion". the resolved value is
- * mirrored onto <html data-motion="reduced|full"> so css can switch every
- * animation/transition off in one place (see globals.css).
- *
- * default behaviour (when the user has NOT made an explicit choice):
- *   • ON  (reduced) when the browser reports prefers-reduced-motion: reduce
- *   • ON  (reduced) when the device looks too slow to animate smoothly
- *   • OFF (full)    otherwise
- *
- * an explicit choice in settings is persisted and always wins, and it also
- * stops following the system preference afterwards.
+ * Main reduce-motion mode still works as the master accessibility switch.
+ * Advanced feature flags let the user disable specific animation families while
+ * keeping the rest of the UI animated. The custom fluid cursor is intentionally
+ * independent from reduce-motion: it stays animated unless its own switch is off.
  * ------------------------------------------------------------------ */
 
 const MOTION_KEY = "screenkit-motion"
+const MOTION_FEATURES_KEY = "screenkit-motion-features-v1"
+
+export const MOTION_FEATURE_KEYS = [
+  "sections",
+  "layout",
+  "skeletons",
+  "scroll",
+  "viewTransitions",
+  "cursor",
+] as const
+
+export type MotionFeature = (typeof MOTION_FEATURE_KEYS)[number]
+export type MotionFeatures = Record<MotionFeature, boolean>
+
+export const DEFAULT_MOTION_FEATURES: MotionFeatures = {
+  sections: true,
+  layout: true,
+  skeletons: true,
+  scroll: true,
+  viewTransitions: true,
+  cursor: true,
+}
+
+const FEATURE_ATTRS: Record<MotionFeature, string> = {
+  sections: "data-motion-sections",
+  layout: "data-motion-layout",
+  skeletons: "data-motion-skeletons",
+  scroll: "data-motion-scroll",
+  viewTransitions: "data-motion-view",
+  cursor: "data-fluid-cursor",
+}
 
 type MotionCtx = {
   /** true => animations are minimised */
@@ -27,9 +51,12 @@ type MotionCtx = {
   ready: boolean
   /** whether the value came from an explicit user choice vs auto-detection */
   isAuto: boolean
+  features: MotionFeatures
   setReduceMotion: (v: boolean) => void
   /** drop the explicit choice and follow the system / device heuristic again */
   resetToAuto: () => void
+  setMotionFeature: (feature: MotionFeature, enabled: boolean) => void
+  resetMotionFeatures: () => void
 }
 
 const MotionContext = React.createContext<MotionCtx | null>(null)
@@ -66,18 +93,53 @@ function autoReduceMotion(): boolean {
   return prefersReducedMotion() || isSlowDevice()
 }
 
-function applyToDocument(reduce: boolean) {
+function readMotionFeatures(): MotionFeatures {
+  if (typeof window === "undefined") return DEFAULT_MOTION_FEATURES
+
+  try {
+    const raw = window.localStorage.getItem(MOTION_FEATURES_KEY)
+    if (!raw) return DEFAULT_MOTION_FEATURES
+    const parsed = JSON.parse(raw) as Partial<MotionFeatures>
+    return MOTION_FEATURE_KEYS.reduce<MotionFeatures>(
+      (acc, key) => ({
+        ...acc,
+        [key]: typeof parsed[key] === "boolean" ? parsed[key] : DEFAULT_MOTION_FEATURES[key],
+      }),
+      { ...DEFAULT_MOTION_FEATURES },
+    )
+  } catch {
+    return DEFAULT_MOTION_FEATURES
+  }
+}
+
+function writeMotionFeatures(features: MotionFeatures) {
+  try {
+    window.localStorage.setItem(MOTION_FEATURES_KEY, JSON.stringify(features))
+  } catch {
+    // ignore
+  }
+}
+
+function applyToDocument(reduce: boolean, features: MotionFeatures) {
   if (typeof document === "undefined") return
   document.documentElement.setAttribute("data-motion", reduce ? "reduced" : "full")
+
+  for (const key of MOTION_FEATURE_KEYS) {
+    document.documentElement.setAttribute(FEATURE_ATTRS[key], features[key] ? "on" : "off")
+  }
 }
 
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   const [reduceMotion, setReduceMotionState] = React.useState(false)
   const [isAuto, setIsAuto] = React.useState(true)
   const [ready, setReady] = React.useState(false)
+  const [features, setFeaturesState] = React.useState<MotionFeatures>(DEFAULT_MOTION_FEATURES)
 
   // resolve the initial preference on the client
   React.useEffect(() => {
+    const initialFeatures = readMotionFeatures()
+    setFeaturesState(initialFeatures)
+
     let stored: string | null = null
     try {
       stored = window.localStorage.getItem(MOTION_KEY)
@@ -89,12 +151,12 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       const reduce = stored === "reduced"
       setReduceMotionState(reduce)
       setIsAuto(false)
-      applyToDocument(reduce)
+      applyToDocument(reduce, initialFeatures)
     } else {
       const reduce = autoReduceMotion()
       setReduceMotionState(reduce)
       setIsAuto(true)
-      applyToDocument(reduce)
+      applyToDocument(reduce, initialFeatures)
     }
     setReady(true)
   }, [])
@@ -106,22 +168,25 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
     const onChange = () => {
       const reduce = autoReduceMotion()
       setReduceMotionState(reduce)
-      applyToDocument(reduce)
+      applyToDocument(reduce, features)
     }
     mq.addEventListener?.("change", onChange)
     return () => mq.removeEventListener?.("change", onChange)
-  }, [isAuto])
+  }, [isAuto, features])
 
-  const setReduceMotion = React.useCallback((v: boolean) => {
-    setReduceMotionState(v)
-    setIsAuto(false)
-    applyToDocument(v)
-    try {
-      window.localStorage.setItem(MOTION_KEY, v ? "reduced" : "full")
-    } catch {
-      // ignore
-    }
-  }, [])
+  const setReduceMotion = React.useCallback(
+    (v: boolean) => {
+      setReduceMotionState(v)
+      setIsAuto(false)
+      applyToDocument(v, features)
+      try {
+        window.localStorage.setItem(MOTION_KEY, v ? "reduced" : "full")
+      } catch {
+        // ignore
+      }
+    },
+    [features],
+  )
 
   const resetToAuto = React.useCallback(() => {
     try {
@@ -132,12 +197,48 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
     const reduce = autoReduceMotion()
     setReduceMotionState(reduce)
     setIsAuto(true)
-    applyToDocument(reduce)
-  }, [])
+    applyToDocument(reduce, features)
+  }, [features])
+
+  const setMotionFeature = React.useCallback(
+    (feature: MotionFeature, enabled: boolean) => {
+      setFeaturesState((prev) => {
+        const next = { ...prev, [feature]: enabled }
+        writeMotionFeatures(next)
+        applyToDocument(reduceMotion, next)
+        return next
+      })
+    },
+    [reduceMotion],
+  )
+
+  const resetMotionFeatures = React.useCallback(() => {
+    setFeaturesState(DEFAULT_MOTION_FEATURES)
+    writeMotionFeatures(DEFAULT_MOTION_FEATURES)
+    applyToDocument(reduceMotion, DEFAULT_MOTION_FEATURES)
+  }, [reduceMotion])
 
   const value = React.useMemo<MotionCtx>(
-    () => ({ reduceMotion, ready, isAuto, setReduceMotion, resetToAuto }),
-    [reduceMotion, ready, isAuto, setReduceMotion, resetToAuto],
+    () => ({
+      reduceMotion,
+      ready,
+      isAuto,
+      features,
+      setReduceMotion,
+      resetToAuto,
+      setMotionFeature,
+      resetMotionFeatures,
+    }),
+    [
+      reduceMotion,
+      ready,
+      isAuto,
+      features,
+      setReduceMotion,
+      resetToAuto,
+      setMotionFeature,
+      resetMotionFeatures,
+    ],
   )
 
   return <MotionContext.Provider value={value}>{children}</MotionContext.Provider>
@@ -151,31 +252,22 @@ export function useMotion() {
 
 /* ------------------------------------------------------------------ *
  * reveal: skeleton -> content gate
- *
- * returns the current phase for a freshly-mounted block. it starts on
- * "skeleton" and flips to "content" after a short, paint-aligned delay so the
- * real content fades in smoothly instead of popping in. when motion is reduced
- * the skeleton phase is skipped entirely and content shows immediately.
- *
- * because section wrappers are keyed by section, this hook re-runs on every
- * navigation, giving the "instant transition -> skeleton -> smooth reveal"
- * behaviour for each page.
  * ------------------------------------------------------------------ */
 
 export function useReveal(delay = 220): "skeleton" | "content" {
-  const { reduceMotion, ready } = useMotion()
+  const { reduceMotion, ready, features } = useMotion()
   const [phase, setPhase] = React.useState<"skeleton" | "content">("skeleton")
 
   React.useEffect(() => {
-    // not resolved yet, or user prefers reduced motion -> no skeleton flash
-    if (!ready || reduceMotion) {
+    // not resolved yet, master reduce-motion, or skeletons disabled -> no skeleton flash
+    if (!ready || reduceMotion || !features.skeletons) {
       setPhase("content")
       return
     }
     setPhase("skeleton")
     const id = window.setTimeout(() => setPhase("content"), delay)
     return () => window.clearTimeout(id)
-  }, [ready, reduceMotion, delay])
+  }, [ready, reduceMotion, features.skeletons, delay])
 
   return phase
 }
