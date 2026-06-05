@@ -1,0 +1,78 @@
+/* Neutral light/dark surfaces. Accent palettes still work separately, but the
+   base theme no longer tints the whole site blue/cobalt. */
+
+:root {
+  --background: #08080a;
+  --foreground: #f4f4f5;
+  --card: #101012;
+  --card-foreground: #f4f4f5;
+  --popover: #111113;
+  --popover-foreground: #f4f4f5;
+  --primary: #f4f4f5;
+  --primary-foreground: #09090b;
+  --secondary: #18181b;
+  --secondary-foreground: #e4e4e7;
+  --muted: #17171a;
+  --muted-foreground: #a1a1aa;
+  --accent: #1f1f23;
+  --accent-foreground: #f4f4f5;
+  --border: #2a2a30;
+  --input: #18181b;
+  --ring: #d4d4d8;
+
+  --sidebar: #0b0b0d;
+  --sidebar-border: #26262b;
+  --sidebar-muted: #a1a1aa;
+  --panel: #101012;
+  --panel-soft: #161619;
+  --panel-hover: #202024;
+  --panel-border: #303036;
+  --control: #18181b;
+  --control-hover: #242428;
+  --control-active: #f4f4f5;
+  --control-active-foreground: #09090b;
+  --text-muted: #a1a1aa;
+  --text-faint: #71717a;
+  --text-secondary: #d4d4d8;
+
+  /* The cursor uses difference blending, so pure white becomes the visual
+     negative of the current surface and inverts all content underneath it. */
+  --fluid-cursor-ink: #ffffff;
+}
+
+.light {
+  --background: #f5f5f4;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+  --secondary: #ededeb;
+  --secondary-foreground: #18181b;
+  --muted: #eeeef0;
+  --muted-foreground: #71717a;
+  --accent: #e7e7e5;
+  --accent-foreground: #18181b;
+  --border: #d8d8d4;
+  --input: #e8e8e5;
+  --ring: #52525b;
+
+  --sidebar: #eeeeec;
+  --sidebar-border: #d6d6d2;
+  --sidebar-muted: #71717a;
+  --panel: #ffffff;
+  --panel-soft: #efefed;
+  --panel-hover: #e5e5e2;
+  --panel-border: #d6d6d2;
+  --control: #f7f7f5;
+  --control-hover: #e7e7e4;
+  --control-active: #18181b;
+  --control-active-foreground: #ffffff;
+  --text-muted: #71717a;
+  --text-faint: #a1a1aa;
+  --text-secondary: #3f3f46;
+
+  --fluid-cursor-ink: #ffffff;
+}
