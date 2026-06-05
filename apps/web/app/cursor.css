@@ -16,6 +16,9 @@
     summary,
     label[for],
     select,
+    input,
+    textarea,
+    [contenteditable="true"],
     [data-slot="select-trigger"],
     [data-slot="trigger"]
   ) {
@@ -33,34 +36,80 @@
   top: 0;
   z-index: 2147483647;
   pointer-events: none;
-  border: 1px solid color-mix(in srgb, var(--foreground) 38%, transparent);
-  background:
-    radial-gradient(circle at 36% 28%, color-mix(in srgb, #ffffff 34%, transparent), transparent 42%),
-    color-mix(in srgb, var(--foreground) 8%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 24%, transparent),
-    0 0 22px -12px color-mix(in srgb, var(--accent-cyan) 70%, transparent),
-    0 0 42px -24px color-mix(in srgb, var(--accent-blue) 70%, transparent);
+  border: 0;
+  background: var(--fluid-cursor-ink, #ffffff);
+  opacity: 1;
   mix-blend-mode: difference;
+  isolation: isolate;
+  filter: url("#sk-fluid-cursor-goo");
   will-change: transform, width, height, border-radius, opacity;
   transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    mix-blend-mode 0.18s ease;
+    border-radius 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sk-fluid-cursor::before,
+.sk-fluid-cursor::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  background: var(--fluid-cursor-ink, #ffffff);
+  border-radius: inherit;
+  inset: 0;
+  mix-blend-mode: difference;
+}
+
+.sk-fluid-cursor::before {
+  transform: scale(0.7);
+  opacity: 0.95;
+  filter: blur(3px);
+}
+
+.sk-fluid-cursor::after {
+  transform: scale(0.38);
+  opacity: 1;
+  filter: blur(8px);
+}
+
+.sk-fluid-cursor[data-mode="idle"] {
+  border-radius: 999px;
 }
 
 .sk-fluid-cursor[data-mode="target"] {
-  background:
-    radial-gradient(circle at 40% 20%, color-mix(in srgb, #ffffff 22%, transparent), transparent 48%),
-    color-mix(in srgb, var(--accent-cyan) 16%, transparent);
-  border-color: color-mix(in srgb, var(--accent-cyan) 42%, transparent);
-  mix-blend-mode: normal;
+  background: var(--fluid-cursor-ink, #ffffff);
+  mix-blend-mode: difference;
+}
+
+.sk-fluid-cursor[data-mode="target"]::before {
+  transform: scale(0.86);
+  filter: blur(5px);
+}
+
+.sk-fluid-cursor[data-mode="target"]::after {
+  transform: scale(0.52);
+  filter: blur(12px);
 }
 
 .sk-fluid-cursor[data-mode="text"] {
-  background: color-mix(in srgb, var(--foreground) 64%, transparent);
-  border-color: transparent;
-  box-shadow: 0 0 24px -12px color-mix(in srgb, var(--accent-cyan) 80%, transparent);
-  mix-blend-mode: normal;
+  background: var(--fluid-cursor-ink, #ffffff);
+  border-radius: 999px;
+  mix-blend-mode: difference;
+}
+
+.sk-fluid-cursor[data-mode="text"]::before {
+  transform: scaleX(1.8) scaleY(0.78);
+  filter: blur(5px);
+}
+
+.sk-fluid-cursor[data-mode="text"]::after {
+  transform: scaleX(0.7) scaleY(1.05);
+  filter: blur(9px);
+}
+
+.sk-fluid-cursor-svg {
+  position: fixed;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
 }
