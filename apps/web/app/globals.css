@@ -3,188 +3,135 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
-  screen inserts — гремучая смесь / prop playback system
-  cobalt.tools-inspired technical tool. monospace, sparse.
-
-  theming model:
-    • base surfaces come in two schemes — .dark and .light (cobalt.tools style)
-    • accent colors come from a swappable palette via [data-palette="…"]
-  surfaces + accents are independent, so any palette works in either scheme.
-*/
-
-/* ---- base scheme: DARK (default) ---- */
-:root,
-.dark {
-  --background: #000000;
-  --foreground: #f4f4f5;
-
-  --card: #101011;
-  --card-foreground: #f4f4f5;
-  --popover: #0b0b0c;
-  --popover-foreground: #f4f4f5;
-
-  --primary: #e7e7e7;
-  --primary-foreground: #050505;
-  --secondary: #1c1c1d;
-  --secondary-foreground: #f4f4f5;
-  --muted: #19191b;
-  --muted-foreground: #8b8b8b;
-  --accent: #19191b;
-  --accent-foreground: #f4f4f5;
-  --destructive: #ef4444;
-  --destructive-foreground: #f4f4f5;
-
-  --border: #262626;
-  --input: #1c1c1d;
-  --ring: #3a3a3a;
-
-  --radius: 0.875rem;
-
-  /* screenkit surfaces */
-  --sidebar: #151515;
-  --sidebar-foreground: #d7d7d7;
-  --sidebar-primary: #e7e7e7;
-  --sidebar-primary-foreground: #050505;
-  --sidebar-accent: #1c1c1d;
-  --sidebar-accent-foreground: #f4f4f5;
-  --sidebar-border: #232323;
-  --sidebar-ring: #3a3a3a;
-  --sidebar-muted: #8b8b8b;
-
-  --panel: #0b0b0c;
-  --panel-soft: #111112;
-  --panel-hover: #19191b;
-  --panel-border: #262626;
-
-  --control: #1c1c1d;
-  --control-hover: #242426;
-  --control-active: #e7e7e7;
-  --control-active-foreground: #050505;
-
-  --text-primary: #f5f5f5;
-  --text-secondary: #a5adb8;
-  --text-muted: #737984;
-  --text-faint: #50545d;
-
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --success: #22c55e;
-}
-
-/* ---- base scheme: LIGHT (cobalt.tools light) ---- */
-.light {
-  --background: #f4f5f7;
-  --foreground: #16181c;
-
-  --card: #ffffff;
-  --card-foreground: #16181c;
-  --popover: #ffffff;
-  --popover-foreground: #16181c;
-
-  --primary: #16181c;
-  --primary-foreground: #f8f9fb;
-  --secondary: #e7e9ee;
-  --secondary-foreground: #16181c;
-  --muted: #eceef2;
-  --muted-foreground: #5b616e;
-  --accent: #e7e9ee;
-  --accent-foreground: #16181c;
-  --destructive: #e5484d;
+:root {
+  --background: #05070c;
+  --foreground: #f5f7fb;
+  --card: #0b0f17;
+  --card-foreground: #f5f7fb;
+  --popover: #0b0f17;
+  --popover-foreground: #f5f7fb;
+  --primary: #f5f7fb;
+  --primary-foreground: #05070c;
+  --secondary: #121826;
+  --secondary-foreground: #e6edf8;
+  --muted: #101624;
+  --muted-foreground: #93a0b8;
+  --accent: #162033;
+  --accent-foreground: #f5f7fb;
+  --destructive: #ef476f;
   --destructive-foreground: #ffffff;
+  --border: #1b2538;
+  --input: #111827;
+  --ring: #4cc9f0;
 
-  --border: #dcdfe6;
-  --input: #e7e9ee;
-  --ring: #c2c6cf;
+  --sidebar: #070910;
+  --sidebar-border: #151d2d;
+  --sidebar-muted: #8792a8;
+  --panel: #0b0f17;
+  --panel-soft: #101624;
+  --panel-hover: #162033;
+  --panel-border: #22304a;
+  --control: #0f1624;
+  --control-hover: #172236;
+  --control-active: #f5f7fb;
+  --control-active-foreground: #05070c;
+  --text-muted: #a2aec5;
+  --text-faint: #5f6b82;
+  --text-secondary: #cbd5e1;
 
-  --sidebar: #e9ebef;
-  --sidebar-foreground: #2b2e35;
-  --sidebar-primary: #16181c;
-  --sidebar-primary-foreground: #f8f9fb;
-  --sidebar-accent: #dfe2e8;
-  --sidebar-accent-foreground: #16181c;
-  --sidebar-border: #d4d8e0;
-  --sidebar-ring: #c2c6cf;
-  --sidebar-muted: #6b7280;
-
-  --panel: #ffffff;
-  --panel-soft: #f7f8fa;
-  --panel-hover: #eef0f4;
-  --panel-border: #e2e5eb;
-
-  --control: #eceef2;
-  --control-hover: #e2e5eb;
-  --control-active: #16181c;
-  --control-active-foreground: #f8f9fb;
-
-  --text-primary: #16181c;
-  --text-secondary: #41454f;
-  --text-muted: #6b7280;
-  --text-faint: #969ba6;
-
-  --danger: #e5484d;
-  --warning: #d97706;
-  --success: #15a34a;
-}
-
-/* ---- accent palettes (independent of light / dark) ---- */
-/* cobalt (default) */
-:root,
-[data-palette="cobalt"] {
   --accent-blue: #2f80ed;
   --accent-cyan: #4cc9f0;
-  --accent-purple: #6c63ff;
+  --accent-purple: #9b5cff;
   --accent-red: #ef476f;
   --accent-orange: #ff9f1c;
   --accent-green: #22c55e;
-  --accent-grey: #777777;
+  --accent-grey: #8b8f99;
+
+  --danger: #ef476f;
+  --warning: #ffb703;
+  --success: #22c55e;
+
+  --radius: 0.75rem;
 }
 
-/* sunset — warm */
+.light {
+  --background: #f7f9fc;
+  --foreground: #0a0d14;
+  --card: #ffffff;
+  --card-foreground: #0a0d14;
+  --popover: #ffffff;
+  --popover-foreground: #0a0d14;
+  --primary: #0a0d14;
+  --primary-foreground: #ffffff;
+  --secondary: #edf1f8;
+  --secondary-foreground: #0a0d14;
+  --muted: #edf1f8;
+  --muted-foreground: #647084;
+  --accent: #e8eef8;
+  --accent-foreground: #0a0d14;
+  --destructive: #d72f55;
+  --destructive-foreground: #ffffff;
+  --border: #d9e1ee;
+  --input: #e7edf6;
+  --ring: #2f80ed;
+
+  --sidebar: #eef3fa;
+  --sidebar-border: #d5deec;
+  --sidebar-muted: #647084;
+  --panel: #ffffff;
+  --panel-soft: #f0f4fa;
+  --panel-hover: #e7edf6;
+  --panel-border: #d5deec;
+  --control: #f5f7fb;
+  --control-hover: #e7edf6;
+  --control-active: #0a0d14;
+  --control-active-foreground: #ffffff;
+  --text-muted: #647084;
+  --text-faint: #8c98aa;
+  --text-secondary: #273244;
+
+  --accent-blue: #2f80ed;
+  --accent-cyan: #0ea5e9;
+  --accent-purple: #7c3aed;
+  --accent-red: #d72f55;
+  --accent-orange: #f97316;
+  --accent-green: #16a34a;
+  --accent-grey: #71717a;
+}
+
 [data-palette="sunset"] {
-  --accent-blue: #ff6b35;
+  --accent-blue: #fb8500;
   --accent-cyan: #ffb703;
   --accent-purple: #f72585;
   --accent-red: #e5383b;
   --accent-orange: #fb8500;
-  --accent-green: #ef9f1c;
-  --accent-grey: #8a7f7a;
+  --accent-green: #ffb703;
+  --ring: #fb8500;
 }
 
-/* forest — cool greens / teals */
 [data-palette="forest"] {
-  --accent-blue: #2a9d8f;
+  --accent-blue: #2d6a4f;
   --accent-cyan: #43cea2;
-  --accent-purple: #5e807f;
-  --accent-red: #e76f51;
+  --accent-purple: #2a9d8f;
+  --accent-red: #bc4749;
   --accent-orange: #e9c46a;
-  --accent-green: #2d6a4f;
-  --accent-grey: #6b7d72;
+  --accent-green: #52b788;
+  --ring: #43cea2;
 }
 
-/* mono — desaturated */
 [data-palette="mono"] {
-  --accent-blue: #8b8f99;
+  --accent-blue: #777777;
   --accent-cyan: #a7abb4;
-  --accent-purple: #6f7480;
+  --accent-purple: #8b8f99;
   --accent-red: #b06a6a;
-  --accent-orange: #b09a6a;
-  --accent-green: #7a8a7a;
-  --accent-grey: #777777;
-}
-
-/* charts follow the active accent palette */
-:root {
-  --chart-1: var(--accent-blue);
-  --chart-2: var(--accent-cyan);
-  --chart-3: var(--accent-purple);
-  --chart-4: var(--accent-orange);
-  --chart-5: var(--accent-green);
+  --accent-orange: #9ca3af;
+  --accent-green: #7f8c8d;
+  --ring: #a7abb4;
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -206,42 +153,20 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
   --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-muted: var(--sidebar-muted);
-
-  /* screenkit semantic tokens */
   --color-panel: var(--panel);
   --color-panel-soft: var(--panel-soft);
   --color-panel-hover: var(--panel-hover);
   --color-panel-border: var(--panel-border);
-
   --color-control: var(--control);
   --color-control-hover: var(--control-hover);
   --color-control-active: var(--control-active);
   --color-control-active-foreground: var(--control-active-foreground);
-
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
   --color-text-faint: var(--text-faint);
+  --color-text-secondary: var(--text-secondary);
 
   --color-accent-blue: var(--accent-blue);
   --color-accent-cyan: var(--accent-cyan);
@@ -322,10 +247,7 @@
 }
 
 @layer utilities {
-  /* ---- smooth size/layout changes ----
-     any element that can change its dimensions (the device preview frame, the
-     side panels, etc.) eases between sizes instead of snapping. automatically
-     disabled when motion is reduced via the global override below. */
+  /* ---- smooth size/layout changes ---- */
   .sk-resize {
     transition-property:
       width, min-width, max-width, height, max-height, min-height, aspect-ratio, flex-basis, padding, margin, gap,
@@ -552,10 +474,6 @@
 
 /* ------------------------------------------------------------------ *
  * theme / palette switch animation
- *
- * palette + light/dark changes are wrapped in the View Transitions API, which
- * crossfades the whole document root between the old and new colors. kept short
- * and soft to stay minimal. disabled entirely when motion is reduced.
  * ------------------------------------------------------------------ */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -575,23 +493,50 @@
   }
 }
 
+html[data-motion-view="off"]::view-transition-old(root),
+html[data-motion-view="off"]::view-transition-new(root),
 html[data-motion="reduced"]::view-transition-old(root),
 html[data-motion="reduced"]::view-transition-new(root) {
   animation: none !important;
 }
 
 /* ------------------------------------------------------------------ *
+ * granular motion switches
+ * ------------------------------------------------------------------ */
+html[data-motion-scroll="off"],
+html[data-motion-scroll="off"] [data-radix-scroll-area-viewport],
+html[data-motion-scroll="off"] .sk-scroll {
+  scroll-behavior: auto !important;
+}
+
+html[data-motion-layout="off"] .sk-resize {
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+}
+
+html[data-motion-sections="off"] .sk-section-enter,
+html[data-motion-sections="off"] .sk-animate-in,
+html[data-motion-sections="off"] .sk-animate-fade,
+html[data-motion-sections="off"] .sk-animate-scale {
+  animation: none !important;
+}
+
+html[data-motion-skeletons="off"] .sk-skeleton::after {
+  animation: none !important;
+  transform: none;
+  background: none;
+}
+
+/* ------------------------------------------------------------------ *
  * reduce motion
  *
- * one switch that neutralises every animation + transition. driven either by
- * the explicit setting (<html data-motion="reduced">) or, before js resolves /
- * while still on auto, by the native browser preference. an explicit "full"
- * choice opts out of the native baseline.
+ * one switch that neutralises site animations + transitions. custom cursor is
+ * excluded on purpose and controlled by its own advanced switch.
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  html:not([data-motion="full"]) *,
-  html:not([data-motion="full"]) *::before,
-  html:not([data-motion="full"]) *::after {
+  html:not([data-motion="full"]) *:not(.sk-fluid-cursor),
+  html:not([data-motion="full"]) *:not(.sk-fluid-cursor)::before,
+  html:not([data-motion="full"]) *:not(.sk-fluid-cursor)::after {
     animation-duration: 0.001ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
@@ -602,9 +547,9 @@ html[data-motion="reduced"]::view-transition-new(root) {
 }
 
 html[data-motion="reduced"],
-html[data-motion="reduced"] *,
-html[data-motion="reduced"] *::before,
-html[data-motion="reduced"] *::after {
+html[data-motion="reduced"] *:not(.sk-fluid-cursor),
+html[data-motion="reduced"] *:not(.sk-fluid-cursor)::before,
+html[data-motion="reduced"] *:not(.sk-fluid-cursor)::after {
   animation-duration: 0.001ms !important;
   animation-delay: 0ms !important;
   animation-iteration-count: 1 !important;
@@ -618,25 +563,4 @@ html[data-motion="reduced"] .sk-skeleton::after {
   animation: none !important;
   transform: none;
   background: none;
-}
-
-html[data-motion="reduced"] .sk-skeleton-wrap {
-  animation: none !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html:not([data-motion="full"]) .sk-skeleton::after {
-    animation: none !important;
-    transform: none;
-    background: none;
-  }
-
-  html:not([data-motion="full"]) .sk-skeleton-wrap {
-    animation: none !important;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html:not([data-motion="full"]) .sk-skeleton::after {
-    display: none;
-  }
 }
