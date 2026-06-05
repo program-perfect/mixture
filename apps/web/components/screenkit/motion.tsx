@@ -12,14 +12,14 @@ import * as React from "react"
  * ------------------------------------------------------------------ */
 
 const MOTION_KEY = "screenkit-motion"
-const MOTION_FEATURES_KEY = "screenkit-motion-features-v1"
+const MOTION_FEATURES_KEY = "screenkit-motion-features-v2"
 
 export const MOTION_FEATURE_KEYS = [
   "sections",
   "layout",
   "skeletons",
   "scroll",
-  "viewTransitions",
+  "themeTransitions",
   "cursor",
 ] as const
 
@@ -31,7 +31,7 @@ export const DEFAULT_MOTION_FEATURES: MotionFeatures = {
   layout: true,
   skeletons: true,
   scroll: true,
-  viewTransitions: true,
+  themeTransitions: true,
   cursor: true,
 }
 
@@ -40,9 +40,11 @@ const FEATURE_ATTRS: Record<MotionFeature, string> = {
   layout: "data-motion-layout",
   skeletons: "data-motion-skeletons",
   scroll: "data-motion-scroll",
-  viewTransitions: "data-motion-view",
+  themeTransitions: "data-motion-theme",
   cursor: "data-fluid-cursor",
 }
+
+type LegacyMotionFeatures = Partial<MotionFeatures> & { viewTransitions?: boolean }
 
 type MotionCtx = {
   /** true => animations are minimised */
@@ -93,20 +95,37 @@ function autoReduceMotion(): boolean {
   return prefersReducedMotion() || isSlowDevice()
 }
 
+function normalizeMotionFeatures(parsed: LegacyMotionFeatures): MotionFeatures {
+  return MOTION_FEATURE_KEYS.reduce<MotionFeatures>(
+    (acc, key) => {
+      if (key === "themeTransitions") {
+        acc[key] =
+          typeof parsed.themeTransitions === "boolean"
+            ? parsed.themeTransitions
+            : typeof parsed.viewTransitions === "boolean"
+              ? parsed.viewTransitions
+              : DEFAULT_MOTION_FEATURES[key]
+        return acc
+      }
+      acc[key] =
+        typeof parsed[key] === "boolean"
+          ? parsed[key]
+          : DEFAULT_MOTION_FEATURES[key]
+      return acc
+    },
+    { ...DEFAULT_MOTION_FEATURES },
+  )
+}
+
 function readMotionFeatures(): MotionFeatures {
   if (typeof window === "undefined") return DEFAULT_MOTION_FEATURES
 
   try {
-    const raw = window.localStorage.getItem(MOTION_FEATURES_KEY)
+    const raw =
+      window.localStorage.getItem(MOTION_FEATURES_KEY) ??
+      window.localStorage.getItem("screenkit-motion-features-v1")
     if (!raw) return DEFAULT_MOTION_FEATURES
-    const parsed = JSON.parse(raw) as Partial<MotionFeatures>
-    return MOTION_FEATURE_KEYS.reduce<MotionFeatures>(
-      (acc, key) => ({
-        ...acc,
-        [key]: typeof parsed[key] === "boolean" ? parsed[key] : DEFAULT_MOTION_FEATURES[key],
-      }),
-      { ...DEFAULT_MOTION_FEATURES },
-    )
+    return normalizeMotionFeatures(JSON.parse(raw) as LegacyMotionFeatures)
   } catch {
     return DEFAULT_MOTION_FEATURES
   }
