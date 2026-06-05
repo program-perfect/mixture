@@ -4,6 +4,7 @@ import * as React from "react"
 import { useMotion } from "./motion"
 
 type CursorMode = "idle" | "target" | "text"
+type CursorTone = "neutral" | "color"
 
 type CursorState = {
   x: number
@@ -13,6 +14,7 @@ type CursorState = {
   radius: number
   opacity: number
   mode: CursorMode
+  tone: CursorTone
   pressed: boolean
 }
 
@@ -24,6 +26,7 @@ const DEFAULT_STATE: CursorState = {
   radius: 999,
   opacity: 0,
   mode: "idle",
+  tone: "neutral",
   pressed: false,
 }
 
@@ -73,6 +76,79 @@ function clamp(value: number, min: number, max: number) {
 
 function lerp(current: number, target: number, ease: number) {
   return current + (target - current) * ease
+}
+
+type Rgba = { r: number; g: number; b: number; a: number }
+
+function parseChannel(value: string) {
+  const trimmed = value.trim()
+  if (trimmed.endsWith("%")) return (Number.parseFloat(trimmed) / 100) * 255
+  return Number.parseFloat(trimmed)
+}
+
+function parseAlpha(value: string | undefined) {
+  if (!value) return 1
+  const trimmed = value.trim()
+  if (trimmed.endsWith("%")) return Number.parseFloat(trimmed) / 100
+  return Number.parseFloat(trimmed)
+}
+
+function parseRgb(value: string): Rgba | null {
+  if (!value || value === "transparent" || value === "currentcolor") return null
+  const match = value.match(/rgba?\(([^)]+)\)/i)
+  if (!match) return null
+  const normalized = match[1].replace(/,/g, " ").replace(/\//g, " ")
+  const parts = normalized.split(/\s+/).filter(Boolean)
+  if (parts.length < 3) return null
+  const r = parseChannel(parts[0])
+  const g = parseChannel(parts[1])
+  const b = parseChannel(parts[2])
+  const a = parseAlpha(parts[3])
+  if (![r, g, b, a].every(Number.isFinite)) return null
+  return { r, g, b, a }
+}
+
+function isChromaticColor(value: string) {
+  const rgb = parseRgb(value)
+  if (!rgb || rgb.a < 0.08) return false
+  const brightest = Math.max(rgb.r, rgb.g, rgb.b)
+  const darkest = Math.min(rgb.r, rgb.g, rgb.b)
+  const chroma = brightest - darkest
+  const saturation = brightest <= 0 ? 0 : chroma / brightest
+
+  // Neutral theme colors are intentionally grayscale / near-grayscale. Anything
+  // with visible chroma is treated as authored color and the cursor switches to
+  // a non-blending outline so it does not alter that color.
+  return chroma > 24 && saturation > 0.12
+}
+
+function elementHasAuthoredColor(element: HTMLElement) {
+  const style = window.getComputedStyle(element)
+  const colorValues = [
+    style.color,
+    style.backgroundColor,
+    style.borderTopColor,
+    style.borderRightColor,
+    style.borderBottomColor,
+    style.borderLeftColor,
+    style.outlineColor,
+    style.textDecorationColor,
+    style.caretColor,
+  ]
+  return colorValues.some(isChromaticColor)
+}
+
+function isColoredContext(source: Element | null, target: HTMLElement | null) {
+  if (!(source instanceof HTMLElement) && !target) return false
+  let node: HTMLElement | null = source instanceof HTMLElement ? source : target
+  let depth = 0
+  while (node && node !== document.body && node !== document.documentElement && depth < 8) {
+    if (elementHasAuthoredColor(node)) return true
+    if (node === target) break
+    node = node.parentElement
+    depth += 1
+  }
+  return target ? elementHasAuthoredColor(target) : false
 }
 
 export function FluidCursor() {
@@ -141,6 +217,7 @@ export function FluidCursor() {
           radius: 999,
           opacity: 1,
           mode: "text",
+          tone: isColoredContext(el, textTarget) ? "color" : "neutral",
         }
         return
       }
@@ -158,6 +235,7 @@ export function FluidCursor() {
           radius: clamp(rect.height / 2 + padY, 14, 34),
           opacity: 1,
           mode: "target",
+          tone: isColoredContext(el, interactiveTarget) ? "color" : "neutral",
         }
         return
       }
@@ -172,6 +250,7 @@ export function FluidCursor() {
         radius: 999,
         opacity: 1,
         mode: "idle",
+        tone: isColoredContext(el, null) ? "color" : "neutral",
       }
     }
 
@@ -217,6 +296,7 @@ export function FluidCursor() {
           radius: lerp(current.radius, target.radius, 0.13),
           opacity: lerp(current.opacity, target.opacity, 0.24),
           mode: target.mode,
+          tone: target.tone,
           pressed: target.pressed,
         }
         rendered.current = next
@@ -231,6 +311,7 @@ export function FluidCursor() {
         node.style.height = `${next.height}px`
         node.style.transform = `translate3d(${next.x - next.width / 2}px, ${next.y - next.height / 2}px, 0) rotate(${angle}rad) scale(${scale * squash}, ${scale / squash})`
         node.dataset.mode = next.mode
+        node.dataset.tone = next.tone
       }
       velocity.current = { x: velocity.current.x * 0.82, y: velocity.current.y * 0.82 }
       raf.current = window.requestAnimationFrame(tick)
