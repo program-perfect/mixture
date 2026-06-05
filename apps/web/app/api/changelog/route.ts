@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server"
 
 export const dynamic = "force-dynamic"
-export const revalidate = 0
+export const revalidate = 30
 
 const OWNER = "program-perfect"
 const REPO = "mixture"
 const API = "https://api.github.com"
-const MAX_COMMIT_PAGES_PER_BRANCH = 10
-const MAX_EVENT_PAGES = 5
+
+const MAX_BRANCHES_WITH_COMMITS = 32
+const MAX_COMMIT_PAGES_PER_BRANCH = 2
+const MAX_EVENT_PAGES = 2
+const GITHUB_PAGE_SIZE = 50
+const CACHE_TTL_MS = 30_000
+const STALE_TTL_MS = 5 * 60_000
+const REFRESH_HEADERS = {
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=300",
+}
 
 type RepositoryResponse = {
   full_name: string
@@ -110,8 +118,6 @@ type ChangelogCommit = {
   avatarUrl: string | null
   branches: string[]
   parentCount: number
-  additions?: number
-  deletions?: number
 }
 
 type ChangelogEvent = {
@@ -160,13 +166,58 @@ type LanguageStat = {
   percent: number
 }
 
+type RepoSmallItem = {
+  id: number
+  number: number | null
+  title: string
+  state: string
+  url: string | null
+  updatedAt: string | null
+  author: string
+  avatarUrl: string | null
+}
+
+type ChangelogPayload = {
+  repo: string
+  generatedAt: string
+  source: string
+  repository: Record<string, unknown> | null
+  branches: BranchStats[]
+  contributors: ContributorStats[]
+  languages: LanguageStat[]
+  releases: Record<string, unknown>[]
+  tags: Record<string, unknown>[]
+  issues: { open: number; closed: number; recent: RepoSmallItem[] }
+  pulls: { open: number; closed: number; recent: RepoSmallItem[] }
+  stats: {
+    days: DayStats[]
+    eventTypes: { type: string; count: number }[]
+    totals: Record<string, number>
+  }
+  commits: ChangelogCommit[]
+  events: ChangelogEvent[]
+  items: (ChangelogCommit | ChangelogEvent)[]
+  limits?: Record<string, number>
+  error?: string
+}
+
+let cachedPayload: ChangelogPayload | null = null
+let cachedAt = 0
+let inflight: Promise<ChangelogPayload> | null = null
+
 async function github<T>(path: string): Promise<T> {
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "screenkit-changelog",
+  }
+
+  if (process.env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  }
+
   const res = await fetch(`${API}${path}`, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "screenkit-changelog",
-    },
-    cache: "no-store",
+    headers,
+    next: { revalidate: 30 },
   })
 
   if (!res.ok) {
@@ -181,12 +232,36 @@ async function githubPages<T>(path: string, maxPages: number): Promise<T[]> {
 
   for (let page = 1; page <= maxPages; page += 1) {
     const separator = path.includes("?") ? "&" : "?"
-    const chunk = await github<T[]>(`${path}${separator}per_page=100&page=${page}`)
+    const chunk = await github<T[]>(
+      `${path}${separator}per_page=${GITHUB_PAGE_SIZE}&page=${page}`,
+    )
     rows.push(...chunk)
-    if (chunk.length < 100) break
+    if (chunk.length < GITHUB_PAGE_SIZE) break
   }
 
   return rows
+}
+
+async function mapLimit<T, R>(
+  rows: T[],
+  limit: number,
+  mapper: (row: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const result: R[] = []
+  let cursor = 0
+  const workers = Array.from(
+    { length: Math.min(limit, rows.length) },
+    async () => {
+      while (cursor < rows.length) {
+        const index = cursor
+        cursor += 1
+        result[index] = await mapper(rows[index], index)
+      }
+    },
+  )
+
+  await Promise.all(workers)
+  return result
 }
 
 function firstLine(message: string | undefined): string {
@@ -263,7 +338,10 @@ function describeEvent(event: EventResponse): ChangelogEvent {
     const action = typeof payload.action === "string" ? payload.action : "updated"
     const issue = payload.issue
     const issueTitle =
-      issue && typeof issue === "object" && "title" in issue && typeof issue.title === "string"
+      issue &&
+      typeof issue === "object" &&
+      "title" in issue &&
+      typeof issue.title === "string"
         ? issue.title
         : "issue"
     title = `issue · ${action}`
@@ -380,16 +458,33 @@ function buildLanguageStats(languages: Record<string, number>): LanguageStat[] {
   const total = Object.values(languages).reduce((sum, value) => sum + value, 0)
   if (!total) return []
   return Object.entries(languages)
-    .map(([name, bytes]) => ({ name, bytes, percent: Math.round((bytes / total) * 1000) / 10 }))
+    .map(([name, bytes]) => ({
+      name,
+      bytes,
+      percent: Math.round((bytes / total) * 1000) / 10,
+    }))
     .sort((a, b) => b.bytes - a.bytes)
 }
 
-export async function GET() {
-  try {
-    const [repo, branches, contributorsRaw, languagesRaw, releasesRaw, tagsRaw, issuesRaw, pullsRaw] = await Promise.all([
+function smallItems(items: IssueLikeResponse[]): RepoSmallItem[] {
+  return items.slice(0, 12).map((item) => ({
+    id: item.id,
+    number: item.number ?? null,
+    title: item.title ?? "item",
+    state: item.state ?? "unknown",
+    url: item.html_url ?? null,
+    updatedAt: item.updated_at ?? null,
+    author: item.user?.login ?? "unknown",
+    avatarUrl: item.user?.avatar_url ?? null,
+  }))
+}
+
+async function buildPayload(): Promise<ChangelogPayload> {
+  const [repo, branches, contributorsRaw, languagesRaw, releasesRaw, tagsRaw, issuesRaw, pullsRaw] =
+    await Promise.all([
       github<RepositoryResponse>(`/repos/${OWNER}/${REPO}`),
       github<BranchResponse[]>(`/repos/${OWNER}/${REPO}/branches?per_page=100`),
-      githubPages<ContributorResponse>(`/repos/${OWNER}/${REPO}/contributors`, 2).catch(() => []),
+      githubPages<ContributorResponse>(`/repos/${OWNER}/${REPO}/contributors`, 1).catch(() => []),
       github<Record<string, number>>(`/repos/${OWNER}/${REPO}/languages`).catch(() => ({})),
       githubPages<ReleaseResponse>(`/repos/${OWNER}/${REPO}/releases`, 1).catch(() => []),
       githubPages<TagResponse>(`/repos/${OWNER}/${REPO}/tags`, 1).catch(() => []),
@@ -397,214 +492,248 @@ export async function GET() {
       githubPages<IssueLikeResponse>(`/repos/${OWNER}/${REPO}/pulls?state=all`, 1).catch(() => []),
     ])
 
-    const branchStats = new Map<string, BranchStats>()
-    const commitMap = new Map<string, ChangelogCommit>()
+  const branchStats = new Map<string, BranchStats>()
+  const commitMap = new Map<string, ChangelogCommit>()
+  const branchesForCommits = branches.slice(0, MAX_BRANCHES_WITH_COMMITS)
 
-    await Promise.all(
-      branches.map(async (branch) => {
-        const branchCommits = await githubPages<CommitResponse>(
-          `/repos/${OWNER}/${REPO}/commits?sha=${encodeURIComponent(branch.name)}`,
-          MAX_COMMIT_PAGES_PER_BRANCH,
-        ).catch(() => [])
-
-        branchStats.set(branch.name, {
-          name: branch.name,
-          sha: branch.commit?.sha ?? null,
-          protected: Boolean(branch.protected),
-          commits: branchCommits.length,
-          lastCommitAt:
-            branchCommits[0]?.commit?.committer?.date ?? branchCommits[0]?.commit?.author?.date ?? null,
-        })
-
-        for (const commit of branchCommits) {
-          const existing = commitMap.get(commit.sha)
-          if (existing) {
-            if (!existing.branches.includes(branch.name)) existing.branches.push(branch.name)
-            continue
-          }
-
-          const message = commit.commit?.message ?? ""
-          commitMap.set(commit.sha, {
-            id: `commit-${commit.sha}`,
-            slug: `commit-${commit.sha.slice(0, 12)}`,
-            kind: "commit",
-            sha: commit.sha,
-            shortSha: commit.sha.slice(0, 7),
-            title: firstLine(message),
-            body: restLines(message),
-            date:
-              commit.commit?.committer?.date ??
-              commit.commit?.author?.date ??
-              new Date().toISOString(),
-            url: commit.html_url ?? null,
-            author:
-              commit.author?.login ??
-              commit.commit?.author?.name ??
-              commit.committer?.login ??
-              "unknown",
-            authorLogin: commit.author?.login ?? commit.committer?.login ?? null,
-            avatarUrl: commit.author?.avatar_url ?? commit.committer?.avatar_url ?? null,
-            branches: [branch.name],
-            parentCount: commit.parents?.length ?? 0,
-          })
-        }
-      }),
-    )
-
-    const eventsRaw = await githubPages<EventResponse>(
-      `/repos/${OWNER}/${REPO}/events`,
-      MAX_EVENT_PAGES,
+  await mapLimit(branchesForCommits, 4, async (branch) => {
+    const branchCommits = await githubPages<CommitResponse>(
+      `/repos/${OWNER}/${REPO}/commits?sha=${encodeURIComponent(branch.name)}`,
+      MAX_COMMIT_PAGES_PER_BRANCH,
     ).catch(() => [])
-    const events = eventsRaw.map(describeEvent)
-    const commits = [...commitMap.values()].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    )
-    const items = [...commits, ...events].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    )
-    const contributors = buildContributorStats(contributorsRaw, commits, events)
-    const dayStats = buildDayStats(commits, events)
-    const eventTypeStats = Object.entries(
-      events.reduce<Record<string, number>>((acc, event) => {
-        acc[event.eventType] = (acc[event.eventType] ?? 0) + 1
-        return acc
-      }, {}),
-    )
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count)
 
-    const openIssues = issuesRaw.filter((issue) => !issue.pull_request && issue.state === "open")
-    const closedIssues = issuesRaw.filter((issue) => !issue.pull_request && issue.state === "closed")
-    const openPulls = pullsRaw.filter((pull) => pull.state === "open")
-    const closedPulls = pullsRaw.filter((pull) => pull.state === "closed")
+    branchStats.set(branch.name, {
+      name: branch.name,
+      sha: branch.commit?.sha ?? null,
+      protected: Boolean(branch.protected),
+      commits: branchCommits.length,
+      lastCommitAt: branchCommits[0]?.commit?.committer?.date ?? branchCommits[0]?.commit?.author?.date ?? null,
+    })
 
-    return NextResponse.json(
-      {
-        repo: `${OWNER}/${REPO}`,
-        generatedAt: new Date().toISOString(),
-        source: "github-live",
-        repository: {
-          name: repo.full_name,
-          url: repo.html_url ?? null,
-          description: repo.description ?? null,
-          private: Boolean(repo.private),
-          fork: Boolean(repo.fork),
-          defaultBranch: repo.default_branch ?? "main",
-          primaryLanguage: repo.language ?? null,
-          stars: repo.stargazers_count ?? 0,
-          watchers: repo.watchers_count ?? 0,
-          forks: repo.forks_count ?? 0,
-          openIssues: repo.open_issues_count ?? 0,
-          size: repo.size ?? 0,
-          createdAt: repo.created_at ?? null,
-          updatedAt: repo.updated_at ?? null,
-          pushedAt: repo.pushed_at ?? null,
-          license: repo.license?.spdx_id ?? repo.license?.name ?? null,
-          owner: repo.owner
-            ? {
-                login: repo.owner.login ?? OWNER,
-                avatarUrl: repo.owner.avatar_url ?? null,
-                url: repo.owner.html_url ?? null,
-              }
-            : null,
-        },
-        branches: [...branchStats.values()].sort((a, b) => b.commits - a.commits),
-        contributors,
-        languages: buildLanguageStats(languagesRaw),
-        releases: releasesRaw.map((release) => ({
-          id: release.id,
-          name: release.name || release.tag_name || "release",
-          tag: release.tag_name ?? null,
-          url: release.html_url ?? null,
-          draft: Boolean(release.draft),
-          prerelease: Boolean(release.prerelease),
-          publishedAt: release.published_at ?? release.created_at ?? null,
-        })),
-        tags: tagsRaw.map((tag) => ({
-          name: tag.name,
-          sha: tag.commit?.sha ?? null,
-          zipballUrl: tag.zipball_url ?? null,
-          tarballUrl: tag.tarball_url ?? null,
-        })),
-        issues: {
-          open: openIssues.length,
-          closed: closedIssues.length,
-          recent: issuesRaw
-            .filter((issue) => !issue.pull_request)
-            .slice(0, 12)
-            .map((issue) => ({
-              id: issue.id,
-              number: issue.number ?? null,
-              title: issue.title ?? "issue",
-              state: issue.state ?? "unknown",
-              url: issue.html_url ?? null,
-              updatedAt: issue.updated_at ?? null,
-              author: issue.user?.login ?? "unknown",
-              avatarUrl: issue.user?.avatar_url ?? null,
-            })),
-        },
-        pulls: {
-          open: openPulls.length,
-          closed: closedPulls.length,
-          recent: pullsRaw.slice(0, 12).map((pull) => ({
-            id: pull.id,
-            number: pull.number ?? null,
-            title: pull.title ?? "pull request",
-            state: pull.state ?? "unknown",
-            url: pull.html_url ?? null,
-            updatedAt: pull.updated_at ?? null,
-            author: pull.user?.login ?? "unknown",
-            avatarUrl: pull.user?.avatar_url ?? null,
-          })),
-        },
-        stats: {
-          days: dayStats,
-          eventTypes: eventTypeStats,
-          totals: {
-            commits: commits.length,
-            events: events.length,
-            branches: branches.length,
-            contributors: contributors.length,
-            releases: releasesRaw.length,
-            tags: tagsRaw.length,
-            languages: Object.keys(languagesRaw).length,
-          },
-        },
-        commits,
-        events,
-        items,
-        limits: {
-          commitPagesPerBranch: MAX_COMMIT_PAGES_PER_BRANCH,
-          eventPages: MAX_EVENT_PAGES,
-        },
+    for (const commit of branchCommits) {
+      const existing = commitMap.get(commit.sha)
+      if (existing) {
+        if (!existing.branches.includes(branch.name)) existing.branches.push(branch.name)
+        continue
+      }
+
+      const message = commit.commit?.message ?? ""
+      commitMap.set(commit.sha, {
+        id: `commit-${commit.sha}`,
+        slug: `commit-${commit.sha.slice(0, 12)}`,
+        kind: "commit",
+        sha: commit.sha,
+        shortSha: commit.sha.slice(0, 7),
+        title: firstLine(message),
+        body: restLines(message),
+        date: commit.commit?.committer?.date ?? commit.commit?.author?.date ?? new Date().toISOString(),
+        url: commit.html_url ?? null,
+        author:
+          commit.author?.login ??
+          commit.commit?.author?.name ??
+          commit.committer?.login ??
+          "unknown",
+        authorLogin: commit.author?.login ?? commit.committer?.login ?? null,
+        avatarUrl: commit.author?.avatar_url ?? commit.committer?.avatar_url ?? null,
+        branches: [branch.name],
+        parentCount: commit.parents?.length ?? 0,
+      })
+    }
+  })
+
+  for (const branch of branches) {
+    if (branchStats.has(branch.name)) continue
+    branchStats.set(branch.name, {
+      name: branch.name,
+      sha: branch.commit?.sha ?? null,
+      protected: Boolean(branch.protected),
+      commits: 0,
+      lastCommitAt: null,
+    })
+  }
+
+  const eventsRaw = await githubPages<EventResponse>(`/repos/${OWNER}/${REPO}/events`, MAX_EVENT_PAGES).catch(
+    () => [],
+  )
+  const events = eventsRaw.map(describeEvent)
+  const commits = [...commitMap.values()].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  )
+  const items = [...commits, ...events].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  )
+  const contributors = buildContributorStats(contributorsRaw, commits, events)
+  const dayStats = buildDayStats(commits, events)
+  const eventTypeStats = Object.entries(
+    events.reduce<Record<string, number>>((acc, event) => {
+      acc[event.eventType] = (acc[event.eventType] ?? 0) + 1
+      return acc
+    }, {}),
+  )
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count)
+
+  const openIssues = issuesRaw.filter((issue) => !issue.pull_request && issue.state === "open")
+  const closedIssues = issuesRaw.filter((issue) => !issue.pull_request && issue.state === "closed")
+  const openPulls = pullsRaw.filter((pull) => pull.state === "open")
+  const closedPulls = pullsRaw.filter((pull) => pull.state === "closed")
+
+  return {
+    repo: `${OWNER}/${REPO}`,
+    generatedAt: new Date().toISOString(),
+    source: "github-live",
+    repository: {
+      name: repo.full_name,
+      url: repo.html_url ?? null,
+      description: repo.description ?? null,
+      private: Boolean(repo.private),
+      fork: Boolean(repo.fork),
+      defaultBranch: repo.default_branch ?? "main",
+      primaryLanguage: repo.language ?? null,
+      stars: repo.stargazers_count ?? 0,
+      watchers: repo.watchers_count ?? 0,
+      forks: repo.forks_count ?? 0,
+      openIssues: repo.open_issues_count ?? 0,
+      size: repo.size ?? 0,
+      createdAt: repo.created_at ?? null,
+      updatedAt: repo.updated_at ?? null,
+      pushedAt: repo.pushed_at ?? null,
+      license: repo.license?.spdx_id ?? repo.license?.name ?? null,
+      owner: repo.owner
+        ? {
+            login: repo.owner.login ?? OWNER,
+            avatarUrl: repo.owner.avatar_url ?? null,
+            url: repo.owner.html_url ?? null,
+          }
+        : null,
+    },
+    branches: [...branchStats.values()].sort((a, b) => b.commits - a.commits),
+    contributors,
+    languages: buildLanguageStats(languagesRaw),
+    releases: releasesRaw.map((release) => ({
+      id: release.id,
+      name: release.name || release.tag_name || "release",
+      tag: release.tag_name ?? null,
+      url: release.html_url ?? null,
+      draft: Boolean(release.draft),
+      prerelease: Boolean(release.prerelease),
+      publishedAt: release.published_at ?? release.created_at ?? null,
+    })),
+    tags: tagsRaw.map((tag) => ({
+      name: tag.name,
+      sha: tag.commit?.sha ?? null,
+      zipballUrl: tag.zipball_url ?? null,
+      tarballUrl: tag.tarball_url ?? null,
+    })),
+    issues: {
+      open: openIssues.length,
+      closed: closedIssues.length,
+      recent: smallItems(issuesRaw.filter((issue) => !issue.pull_request)),
+    },
+    pulls: {
+      open: openPulls.length,
+      closed: closedPulls.length,
+      recent: smallItems(pullsRaw),
+    },
+    stats: {
+      days: dayStats,
+      eventTypes: eventTypeStats,
+      totals: {
+        commits: commits.length,
+        events: events.length,
+        branches: branches.length,
+        contributors: contributors.length,
+        releases: releasesRaw.length,
+        tags: tagsRaw.length,
+        languages: Object.keys(languagesRaw).length,
       },
-      {
-        headers: {
-          "Cache-Control": "no-store, max-age=0",
-        },
-      },
-    )
+    },
+    commits,
+    events,
+    items,
+    limits: {
+      branchCommitLimit: MAX_BRANCHES_WITH_COMMITS,
+      commitPagesPerBranch: MAX_COMMIT_PAGES_PER_BRANCH,
+      eventPages: MAX_EVENT_PAGES,
+      pageSize: GITHUB_PAGE_SIZE,
+    },
+  }
+}
+
+function emptyPayload(error: unknown): ChangelogPayload {
+  return {
+    repo: `${OWNER}/${REPO}`,
+    generatedAt: new Date().toISOString(),
+    source: "github-live",
+    repository: null,
+    branches: [],
+    contributors: [],
+    languages: [],
+    releases: [],
+    tags: [],
+    issues: { open: 0, closed: 0, recent: [] },
+    pulls: { open: 0, closed: 0, recent: [] },
+    stats: { days: [], eventTypes: [], totals: {} },
+    commits: [],
+    events: [],
+    items: [],
+    error: error instanceof Error ? error.message : "unknown changelog error",
+  }
+}
+
+function refreshCache() {
+  if (!inflight) {
+    inflight = buildPayload()
+      .then((payload) => {
+        cachedPayload = payload
+        cachedAt = Date.now()
+        return payload
+      })
+      .finally(() => {
+        inflight = null
+      })
+  }
+
+  return inflight
+}
+
+function json(payload: ChangelogPayload, cacheState: string) {
+  return NextResponse.json(payload, {
+    status: 200,
+    headers: {
+      ...REFRESH_HEADERS,
+      "X-Screenkit-Cache": cacheState,
+    },
+  })
+}
+
+export async function GET() {
+  const now = Date.now()
+  const age = now - cachedAt
+
+  try {
+    if (cachedPayload && age < CACHE_TTL_MS) {
+      return json(cachedPayload, "hit")
+    }
+
+    if (cachedPayload && age < STALE_TTL_MS) {
+      void refreshCache()
+      return json(cachedPayload, "stale")
+    }
+
+    const payload = await refreshCache()
+    return json(payload, cachedPayload ? "refreshed" : "miss")
   } catch (error) {
-    return NextResponse.json(
-      {
-        repo: `${OWNER}/${REPO}`,
-        generatedAt: new Date().toISOString(),
-        source: "github-live",
-        repository: null,
-        branches: [],
-        contributors: [],
-        languages: [],
-        releases: [],
-        tags: [],
-        issues: { open: 0, closed: 0, recent: [] },
-        pulls: { open: 0, closed: 0, recent: [] },
-        stats: { days: [], eventTypes: [], totals: {} },
-        commits: [],
-        events: [],
-        items: [],
-        error: error instanceof Error ? error.message : "unknown changelog error",
-      },
-      { status: 200, headers: { "Cache-Control": "no-store, max-age=0" } },
-    )
+    if (cachedPayload) {
+      return json(
+        {
+          ...cachedPayload,
+          error: error instanceof Error ? error.message : "unknown changelog error",
+        },
+        "stale-error",
+      )
+    }
+
+    return json(emptyPayload(error), "error")
   }
 }
