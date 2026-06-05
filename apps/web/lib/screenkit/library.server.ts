@@ -3,6 +3,10 @@ import { asc } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { screenkitCategories, screenkitInserts } from "@/lib/db/schema"
 import { buildCategoryDefs, mergeInserts } from "./data"
+import {
+  GENERATED_INSERT_CATEGORIES,
+  GENERATED_INSERTS,
+} from "./generated-inserts"
 import type {
   AspectRatio,
   CategoryDef,
@@ -70,7 +74,7 @@ export async function fetchLibrary(): Promise<{
     fetchCustomInserts(),
   ])
   return {
-    categories: buildCategoryDefs(cats),
-    inserts: mergeInserts(ins),
+    categories: buildCategoryDefs([...GENERATED_INSERT_CATEGORIES, ...cats]),
+    inserts: mergeInserts([...GENERATED_INSERTS, ...ins]),
   }
 }
