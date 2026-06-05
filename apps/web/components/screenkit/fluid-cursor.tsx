@@ -47,6 +47,19 @@ const TEXT_SELECTOR = [
   "input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='button']):not([type='submit']):not([type='reset']):not([type='file']):not([type='color'])",
   "textarea",
   "[contenteditable='true']",
+  "p",
+  "span",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "li",
+  "code",
+  "pre",
+  "blockquote",
+  "[data-fluid-cursor='text']",
 ].join(",")
 
 function canUseFinePointer() {
@@ -73,14 +86,40 @@ export function FluidCursor() {
   const raf = React.useRef<number | null>(null)
 
   React.useEffect(() => {
-    setEnabled(features.cursor && canUseFinePointer())
+    const sync = () => setEnabled(features.cursor && canUseFinePointer())
+    sync()
+
+    const queries = [
+      window.matchMedia("(hover: hover)"),
+      window.matchMedia("(pointer: fine)"),
+      window.matchMedia("(pointer: coarse)"),
+    ]
+    queries.forEach((query) => query.addEventListener("change", sync))
+    return () => queries.forEach((query) => query.removeEventListener("change", sync))
   }, [features.cursor])
 
   React.useEffect(() => {
-    if (!enabled) return undefined
+    if (!enabled) {
+      document.documentElement.classList.remove("sk-fluid-cursor-active")
+      state.current = { ...DEFAULT_STATE }
+      rendered.current = { ...DEFAULT_STATE }
+      velocity.current = { x: 0, y: 0 }
+      lastPointer.current = { x: -100, y: -100 }
+      if (raf.current) window.cancelAnimationFrame(raf.current)
+      raf.current = null
+      return undefined
+    }
 
     const root = document.documentElement
     root.classList.add("sk-fluid-cursor-active")
+
+    const disableIfPointerBecameCoarse = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse" || !canUseFinePointer()) {
+        state.current.opacity = 0
+        return true
+      }
+      return false
+    }
 
     const setTargetFromElement = (el: Element | null, x: number, y: number) => {
       velocity.current = {
@@ -90,7 +129,8 @@ export function FluidCursor() {
       lastPointer.current = { x, y }
 
       const textTarget = el?.closest(TEXT_SELECTOR)
-      if (textTarget instanceof HTMLElement) {
+      const interactiveTarget = el?.closest(TARGET_SELECTOR)
+      if (textTarget instanceof HTMLElement && !interactiveTarget) {
         const rect = textTarget.getBoundingClientRect()
         state.current = {
           ...state.current,
@@ -105,9 +145,8 @@ export function FluidCursor() {
         return
       }
 
-      const target = el?.closest(TARGET_SELECTOR)
-      if (target instanceof HTMLElement) {
-        const rect = target.getBoundingClientRect()
+      if (interactiveTarget instanceof HTMLElement) {
+        const rect = interactiveTarget.getBoundingClientRect()
         const padX = clamp(rect.width * 0.11, 8, 18)
         const padY = clamp(rect.height * 0.16, 7, 14)
         state.current = {
@@ -137,25 +176,30 @@ export function FluidCursor() {
     }
 
     const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return
+      if (disableIfPointerBecameCoarse(event)) return
       const el = document.elementFromPoint(event.clientX, event.clientY)
       setTargetFromElement(el, event.clientX, event.clientY)
     }
 
-    const onPointerEnter = () => {
-      state.current.opacity = 1
+    const onPointerEnter = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && canUseFinePointer()) state.current.opacity = 1
     }
 
     const onPointerLeave = () => {
       state.current.opacity = 0
     }
 
-    const onPointerDown = () => {
-      state.current.pressed = true
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") state.current.pressed = true
     }
 
-    const onPointerUp = () => {
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") state.current.pressed = false
+    }
+
+    const onPointerCancel = () => {
       state.current.pressed = false
+      state.current.opacity = 0
     }
 
     const tick = () => {
@@ -197,6 +241,7 @@ export function FluidCursor() {
     window.addEventListener("pointerleave", onPointerLeave)
     window.addEventListener("pointerdown", onPointerDown)
     window.addEventListener("pointerup", onPointerUp)
+    window.addEventListener("pointercancel", onPointerCancel)
     raf.current = window.requestAnimationFrame(tick)
 
     return () => {
@@ -206,6 +251,7 @@ export function FluidCursor() {
       window.removeEventListener("pointerleave", onPointerLeave)
       window.removeEventListener("pointerdown", onPointerDown)
       window.removeEventListener("pointerup", onPointerUp)
+      window.removeEventListener("pointercancel", onPointerCancel)
       if (raf.current) window.cancelAnimationFrame(raf.current)
       raf.current = null
     }
