@@ -6,6 +6,10 @@ import { db } from "@/lib/db"
 import { screenkitCategories, screenkitInserts } from "@/lib/db/schema"
 import { fetchLibrary } from "@/lib/screenkit/library.server"
 import { DEFAULT_CATEGORY_DEFS, INSERTS } from "@/lib/screenkit/data"
+import {
+  GENERATED_INSERT_CATEGORIES,
+  GENERATED_INSERTS,
+} from "@/lib/screenkit/generated-inserts"
 import type { CategoryDef, Insert } from "@/lib/screenkit/types"
 
 export type LibraryData = { categories: CategoryDef[]; inserts: Insert[] }
@@ -103,6 +107,7 @@ export async function addCategoryAction(
   const existing = await db.select().from(screenkitCategories)
   const taken = new Set<string>([
     ...DEFAULT_CATEGORY_DEFS.map((c) => String(c.id)),
+    ...GENERATED_INSERT_CATEGORIES.map((c) => String(c.id)),
     ...existing.map((c) => c.id),
   ])
   const id = await uniqueId(
@@ -135,6 +140,7 @@ export async function addInsertAction(
   const existing = await db.select().from(screenkitInserts)
   const taken = new Set<string>([
     ...INSERTS.map((i) => i.id),
+    ...GENERATED_INSERTS.map((i) => i.id),
     ...existing.map((i) => i.id),
   ])
   const id = await uniqueId(
