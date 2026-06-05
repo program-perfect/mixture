@@ -579,7 +579,7 @@ export const INSERTS: Insert[] = [
       en: "tea-house surveillance, warm interior, patrons at low tables, fixed corner angle.",
     },
     prompt: {
-      ru: "cctv интерьера среднеазиатской чайханы, тёплый тусклый свет, посетители за низкими столиками, фиксированный высокий угол, 4:3, таймстамп поверх, лёгкая компрессия, выпавшие кадры, гря��ная вставка наблюдения",
+      ru: "cctv интерьера среднеазиатской чайханы, тёплый тусклый свет, посетители за низкими столиками, фиксированный высокий угол, 4:3, таймстамп поверх, лёгкая компрессия, выпавшие кадры, грязная вставка наблюдения",
       en: "cctv of a central asian tea-house interior, warm dim lighting, patrons at low tables, fixed high corner angle, 4:3, timestamp overlay, mild compression, dropped frames, gritty surveillance insert",
     },
     shortPrompt: {
@@ -587,7 +587,7 @@ export const INSERTS: Insert[] = [
       en: "tea-house cctv, warm interior, corner angle, 4:3",
     },
     negativePrompt: {
-      ru: "кинематогра��ичный долли, цветокоррекция, резкий 4k",
+      ru: "кинематографичный долли, цветокоррекция, резкий 4k",
       en: "cinematic dolly, color graded, crisp 4k",
     },
     technicalNotes: {
@@ -842,7 +842,7 @@ export const INSERTS: Insert[] = [
     status: "needs review",
     title: { ru: "футбол на умирающем телефоне", en: "dying battery football video" },
     description: {
-      ru: "просмотр футбольного клипа на теле��оне, пока садится батарея, предупреждение 1%, экран гаснет.",
+      ru: "просмотр футбольного клипа на телефоне, пока садится батарея, предупреждение 1%, экран гаснет.",
       en: "watching a football clip on a phone as the battery dies, 1% warning, screen dims.",
     },
     prompt: {
