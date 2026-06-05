@@ -19,7 +19,7 @@ export const MOTION_FEATURE_KEYS = [
   "layout",
   "skeletons",
   "scroll",
-  "themeTransitions",
+  "viewTransitions",
   "cursor",
 ] as const
 
@@ -31,7 +31,7 @@ export const DEFAULT_MOTION_FEATURES: MotionFeatures = {
   layout: true,
   skeletons: true,
   scroll: true,
-  themeTransitions: true,
+  viewTransitions: true,
   cursor: true,
 }
 
@@ -40,11 +40,11 @@ const FEATURE_ATTRS: Record<MotionFeature, string> = {
   layout: "data-motion-layout",
   skeletons: "data-motion-skeletons",
   scroll: "data-motion-scroll",
-  themeTransitions: "data-motion-theme",
+  viewTransitions: "data-motion-theme",
   cursor: "data-fluid-cursor",
 }
 
-type LegacyMotionFeatures = Partial<MotionFeatures> & { viewTransitions?: boolean }
+type LegacyMotionFeatures = Partial<MotionFeatures> & { themeTransitions?: boolean }
 
 type MotionCtx = {
   /** true => animations are minimised */
@@ -98,12 +98,12 @@ function autoReduceMotion(): boolean {
 function normalizeMotionFeatures(parsed: LegacyMotionFeatures): MotionFeatures {
   return MOTION_FEATURE_KEYS.reduce<MotionFeatures>(
     (acc, key) => {
-      if (key === "themeTransitions") {
+      if (key === "viewTransitions") {
         acc[key] =
-          typeof parsed.themeTransitions === "boolean"
-            ? parsed.themeTransitions
-            : typeof parsed.viewTransitions === "boolean"
-              ? parsed.viewTransitions
+          typeof parsed.viewTransitions === "boolean"
+            ? parsed.viewTransitions
+            : typeof parsed.themeTransitions === "boolean"
+              ? parsed.themeTransitions
               : DEFAULT_MOTION_FEATURES[key]
         return acc
       }
