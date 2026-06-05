@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import * as React from "react"
 import { iconForDevice } from "../icons"
+import { LibraryListControls } from "../library-list-controls"
 import {
   LIBRARY_LIST_UI,
   compareLibraryInserts,
@@ -160,6 +161,8 @@ export function LibrarySection() {
           ))}
         </FilterRow>
       </div>
+
+      <LibraryListControls variant="toolbar" />
 
       <div className="flex min-w-0 flex-col gap-2 border-b border-panel-border pb-2 sm:flex-row sm:items-center sm:justify-between">
         <span className="font-mono text-xs lowercase text-text-muted">
