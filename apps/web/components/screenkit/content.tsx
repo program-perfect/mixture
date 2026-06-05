@@ -2,10 +2,12 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import * as React from "react"
+import { cn } from "@/lib/utils"
 import { CategoryChips, CategoryPanel } from "./category-panel"
 import { useReveal } from "./motion"
 import { AboutSection } from "./sections/about"
 import { LibrarySection } from "./sections/library"
+import { NotFoundSection } from "./sections/not-found"
 import { OverviewSection } from "./sections/overview"
 import { PreviewSection } from "./sections/preview"
 import { PromptsSection } from "./sections/prompts"
@@ -20,7 +22,7 @@ import {
   StyleSkeleton,
   TimelineSkeleton,
 } from "./skeletons"
-import { useScreenkit, type Section } from "./store"
+import { useScreenkit, type ContentWidth, type Section } from "./store"
 
 const SECTION_CONTENT: Record<Section, React.ReactNode> = {
   overview: <OverviewSection />,
@@ -42,8 +44,14 @@ const SECTION_SKELETON: Record<Section, React.ReactNode> = {
   about: <AboutSkeleton />,
 }
 
-export function Content() {
-  const { section } = useScreenkit()
+const CONTENT_WIDTH_CLASS: Record<ContentWidth, string> = {
+  narrow: "md:mx-auto md:max-w-4xl",
+  default: "md:mx-auto md:max-w-6xl 2xl:max-w-7xl",
+  wide: "md:max-w-none",
+}
+
+export function Content({ notFound = false }: { notFound?: boolean }) {
+  const { section, contentWidth } = useScreenkit()
 
   return (
     <div className="flex h-full min-h-0 min-w-0 overflow-hidden">
@@ -59,7 +67,14 @@ export function Content() {
           <CategoryChips className="mb-5 border-b border-panel-border/40 bg-background/95 py-3 backdrop-blur sm:mb-6 xl:hidden" />
 
           <div className="w-full min-w-0 overflow-x-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(1.25rem,3vw,3.5rem)]">
-            <SectionView key={section} section={section} />
+            <div
+              className={cn(
+                "w-full min-w-0 overflow-x-hidden transition-[max-width] duration-200",
+                CONTENT_WIDTH_CLASS[contentWidth],
+              )}
+            >
+              {notFound ? <NotFoundSection /> : <SectionView key={section} section={section} />}
+            </div>
           </div>
         </div>
       </ScrollArea>
