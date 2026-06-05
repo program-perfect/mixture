@@ -5,8 +5,8 @@ import {
   useTheme as useNextTheme,
 } from "next-themes"
 import * as React from "react"
-import { FluidCursor } from "./fluid-cursor"
 import { MotionProvider, useMotion } from "./motion"
+import { StickyCursor } from "./sticky-cursor"
 
 export const PALETTES = ["cobalt", "sunset", "forest", "mono"] as const
 export type Palette = (typeof PALETTES)[number]
@@ -124,7 +124,7 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
       }
       if (
         reduceMotion ||
-        !features.themeTransitions ||
+        !features.viewTransitions ||
         typeof document === "undefined" ||
         !doc.startViewTransition
       ) {
@@ -133,7 +133,7 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
       }
       doc.startViewTransition(fn)
     },
-    [reduceMotion, features.themeTransitions],
+    [reduceMotion, features.viewTransitions],
   )
 
   const setPalette = React.useCallback(
@@ -266,7 +266,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       <MotionProvider>
         <PaletteProvider>
           {children}
-          <FluidCursor />
+          <StickyCursor />
         </PaletteProvider>
       </MotionProvider>
     </NextThemesProvider>
