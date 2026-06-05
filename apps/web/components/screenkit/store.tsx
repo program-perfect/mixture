@@ -46,7 +46,7 @@ export const SECTION_SLUGS: Record<Section, string> = {
   overview: "overview",
   library: "library",
   preview: "preview",
-  timeline: "timeline",
+  timeline: "changelog",
   prompts: "metadata",
   style: "appearance",
   about: "info",
@@ -54,6 +54,7 @@ export const SECTION_SLUGS: Record<Section, string> = {
 
 export function sectionFromSlug(slug?: string | null): Section | null {
   if (!slug) return null
+  if (slug === "timeline") return "timeline"
   const entry = (Object.entries(SECTION_SLUGS) as [Section, string][]).find(
     ([, s]) => s === slug,
   )
@@ -257,8 +258,17 @@ export function ScreenkitProvider({
   // is addressable by its own slug (no cyrillic transliteration involved).
   React.useEffect(() => {
     if (typeof window === "undefined") return
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(window.location.search)
     params.set("view", SECTION_SLUGS[section])
+    if (section !== "timeline") {
+      params.delete("log")
+      params.delete("sort")
+      params.delete("page")
+      params.delete("per")
+      params.delete("branch")
+      params.delete("author")
+      params.delete("q")
+    }
     if (section === "library" && filters.category !== "all") {
       params.set("cat", String(filters.category))
     }
@@ -268,7 +278,7 @@ export function ScreenkitProvider({
     window.history.replaceState(
       null,
       "",
-      `${window.location.pathname}?${params.toString()}`,
+      `${window.location.pathname}?${params.toString()}${window.location.hash}`,
     )
   }, [section, filters.category, selectedId])
 
