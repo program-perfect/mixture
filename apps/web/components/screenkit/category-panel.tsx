@@ -12,39 +12,30 @@ import { IconTile, Pill } from "./primitives"
 import { useScreenkit } from "./store"
 import { useGradients } from "./theme"
 
-/* ------------------------------------------------------------------ *
- * category navigation lives inside the main area.
- *
- *   • phone / tablet / pre-desktop (< xl) -> horizontal chip strip
- *   • wide desktop (xl+)                 -> resizable vertical panel
- *
- * resize rules:
- *   • max width = 1/3 of the main content area, excluding the left rail
- *   • if text no longer fits comfortably, panel magnet-collapses to icon-only
- *   • icon-only mode keeps only icon margins/padding, no labels/counters
- * ------------------------------------------------------------------ */
-
 const CATEGORY_PANEL_WIDTH_KEY = "screenkit-category-panel-width"
 const ICON_ONLY_WIDTH = 68
 const DEFAULT_WIDTH = 236
 const MIN_READABLE_WIDTH_FALLBACK = 196
 const MAX_WIDTH_FALLBACK = 360
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value))
+}
+
 function useCategoryNav(onNavigate?: () => void) {
   const { section, setSection, filters, setFilters } = useScreenkit()
 
   const inLibraryAll = section === "library" && filters.category === "all"
-  const isActive = (id: CategoryId) =>
-    section === "library" && filters.category === id
+  const isActive = (id: CategoryId) => section === "library" && filters.category === id
 
   const goAll = () => {
-    setFilters((f) => ({ ...f, category: "all" }))
+    setFilters((current) => ({ ...current, category: "all" }))
     setSection("library")
     onNavigate?.()
   }
 
   const goCategory = (id: CategoryId) => {
-    setFilters((f) => ({ ...f, category: id }))
+    setFilters((current) => ({ ...current, category: id }))
     setSection("library")
     onNavigate?.()
   }
@@ -58,7 +49,6 @@ function useMediaQuery(query: string) {
   React.useEffect(() => {
     const media = window.matchMedia(query)
     const update = () => setMatches(media.matches)
-
     update()
     media.addEventListener("change", update)
     return () => media.removeEventListener("change", update)
@@ -70,22 +60,16 @@ function useMediaQuery(query: string) {
 function useCategoryPanelSize(labels: string[]) {
   const panelRef = React.useRef<HTMLElement | null>(null)
   const measureRef = React.useRef<HTMLDivElement | null>(null)
-
-  // Match the CSS visibility breakpoint in Content: CategoryPanel is xl:flex.
   const isDesktopPanel = useMediaQuery("(min-width: 1280px)")
   const [rawWidth, setRawWidth] = React.useState(DEFAULT_WIDTH)
   const [mainWidth, setMainWidth] = React.useState(0)
-  const [readableMinWidth, setReadableMinWidth] = React.useState(
-    MIN_READABLE_WIDTH_FALLBACK,
-  )
+  const [readableMinWidth, setReadableMinWidth] = React.useState(MIN_READABLE_WIDTH_FALLBACK)
   const [isDragging, setIsDragging] = React.useState(false)
 
   React.useEffect(() => {
     try {
       const stored = window.localStorage.getItem(CATEGORY_PANEL_WIDTH_KEY)
-      if (!stored) return
-
-      const value = Number(stored)
+      const value = stored ? Number(stored) : Number.NaN
       if (Number.isFinite(value)) setRawWidth(value)
     } catch {
       // ignore
@@ -94,18 +78,13 @@ function useCategoryPanelSize(labels: string[]) {
 
   React.useLayoutEffect(() => {
     if (!isDesktopPanel) return
-
     const panel = panelRef.current
     const container = panel?.parentElement
     if (!container) return
 
-    const observer = new ResizeObserver(([entry]) => {
-      setMainWidth(entry.contentRect.width)
-    })
-
+    const observer = new ResizeObserver(([entry]) => setMainWidth(entry.contentRect.width))
     observer.observe(container)
     setMainWidth(container.getBoundingClientRect().width)
-
     return () => observer.disconnect()
   }, [isDesktopPanel])
 
@@ -113,40 +92,23 @@ function useCategoryPanelSize(labels: string[]) {
     const node = measureRef.current
     if (!node) return
 
-    const labelWidths = Array.from(
-      node.querySelectorAll<HTMLElement>("[data-label]"),
-    ).map((el) => Math.ceil(el.getBoundingClientRect().width))
-
-    const widestLabel = Math.max(0, ...labelWidths)
-
-    // row math: icon 40 + gap 12 + label + counter 28 + horizontal padding 20
-    // plus a little breathing room so the label does not sit tight against count.
-    const next = Math.max(
-      MIN_READABLE_WIDTH_FALLBACK,
-      Math.ceil(widestLabel + 112),
+    const labelWidths = Array.from(node.querySelectorAll<HTMLElement>("[data-label]")).map((element) =>
+      Math.ceil(element.getBoundingClientRect().width),
     )
-
-    setReadableMinWidth(next)
+    const widestLabel = Math.max(0, ...labelWidths)
+    setReadableMinWidth(Math.max(MIN_READABLE_WIDTH_FALLBACK, Math.ceil(widestLabel + 112)))
   }, [labels])
 
   const maxWidth = React.useMemo(() => {
     if (!isDesktopPanel) return DEFAULT_WIDTH
     if (mainWidth <= 0) return MAX_WIDTH_FALLBACK
-
-    // Content already excludes the left rail, so this is 1/3 of the remaining
-    // main area. It is intentionally capped by the current viewport/container.
     return Math.max(ICON_ONLY_WIDTH, Math.floor(mainWidth / 3))
   }, [isDesktopPanel, mainWidth])
 
-  const shouldCollapse =
-    isDesktopPanel &&
-    (rawWidth < readableMinWidth || maxWidth < readableMinWidth)
-
+  const shouldCollapse = isDesktopPanel && (rawWidth < readableMinWidth || maxWidth < readableMinWidth)
   const width = React.useMemo(() => {
     if (!isDesktopPanel) return undefined
-    if (shouldCollapse) return ICON_ONLY_WIDTH
-
-    return clamp(rawWidth, readableMinWidth, maxWidth)
+    return shouldCollapse ? ICON_ONLY_WIDTH : clamp(rawWidth, readableMinWidth, maxWidth)
   }, [isDesktopPanel, maxWidth, rawWidth, readableMinWidth, shouldCollapse])
 
   const persistWidth = React.useCallback((value: number) => {
@@ -159,11 +121,7 @@ function useCategoryPanelSize(labels: string[]) {
 
   const setMagneticWidth = React.useCallback(
     (value: number) => {
-      const next =
-        value < readableMinWidth
-          ? ICON_ONLY_WIDTH
-          : clamp(value, readableMinWidth, maxWidth)
-
+      const next = value < readableMinWidth ? ICON_ONLY_WIDTH : clamp(value, readableMinWidth, maxWidth)
       setRawWidth(next)
       persistWidth(next)
     },
@@ -173,20 +131,14 @@ function useCategoryPanelSize(labels: string[]) {
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLButtonElement>) => {
       if (!isDesktopPanel) return
-
       event.preventDefault()
       event.currentTarget.setPointerCapture(event.pointerId)
 
       const startX = event.clientX
       const startWidth = width ?? rawWidth
-
       setIsDragging(true)
 
-      const onPointerMove = (moveEvent: PointerEvent) => {
-        const delta = moveEvent.clientX - startX
-        setMagneticWidth(startWidth + delta)
-      }
-
+      const onPointerMove = (moveEvent: PointerEvent) => setMagneticWidth(startWidth + moveEvent.clientX - startX)
       const onPointerUp = () => {
         setIsDragging(false)
         window.removeEventListener("pointermove", onPointerMove)
@@ -202,22 +154,18 @@ function useCategoryPanelSize(labels: string[]) {
   const onResizeKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       if (!isDesktopPanel) return
-
       if (event.key === "ArrowLeft") {
         event.preventDefault()
         setMagneticWidth((width ?? rawWidth) - 16)
       }
-
       if (event.key === "ArrowRight") {
         event.preventDefault()
         setMagneticWidth((width ?? rawWidth) + 16)
       }
-
       if (event.key === "Home") {
         event.preventDefault()
         setMagneticWidth(ICON_ONLY_WIDTH)
       }
-
       if (event.key === "End") {
         event.preventDefault()
         setMagneticWidth(maxWidth)
@@ -228,7 +176,6 @@ function useCategoryPanelSize(labels: string[]) {
 
   const onResizeDoubleClick = React.useCallback(() => {
     if (!isDesktopPanel) return
-
     setMagneticWidth(shouldCollapse ? DEFAULT_WIDTH : ICON_ONLY_WIDTH)
   }, [isDesktopPanel, setMagneticWidth, shouldCollapse])
 
@@ -247,8 +194,6 @@ function useCategoryPanelSize(labels: string[]) {
   }
 }
 
-/* --------------------------- desktop list panel --------------------------- */
-
 export function CategoryPanel({
   className,
   onNavigate,
@@ -259,12 +204,10 @@ export function CategoryPanel({
   const { t, inserts, categories, catLabel } = useScreenkit()
   const gradients = useGradients()
   const { inLibraryAll, isActive, goAll, goCategory } = useCategoryNav(onNavigate)
-
   const labels = React.useMemo(
-    () => [t("nav.allInserts"), ...categories.map((cat) => catLabel(cat.id))],
+    () => [t("nav.allInserts"), ...categories.map((category) => catLabel(category.id))],
     [catLabel, categories, t],
   )
-
   const {
     panelRef,
     measureRef,
@@ -283,7 +226,7 @@ export function CategoryPanel({
     <aside
       ref={panelRef}
       className={cn(
-        "sk-resize relative flex h-full w-full min-w-0 flex-col overflow-hidden border-r border-panel-border bg-background xl:shrink-0",
+        "sk-resize relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden border-r border-panel-border bg-background xl:shrink-0",
         isCollapsed && "items-center",
         className,
       )}
@@ -294,11 +237,7 @@ export function CategoryPanel({
         transition: isDragging ? "none" : undefined,
       }}
     >
-      <div
-        ref={measureRef}
-        aria-hidden="true"
-        className="pointer-events-none fixed -left-[9999px] top-0 flex flex-col font-mono text-sm lowercase opacity-0"
-      >
+      <div ref={measureRef} aria-hidden="true" className="pointer-events-none fixed -left-[9999px] top-0 flex flex-col font-mono text-sm lowercase opacity-0">
         {labels.map((label) => (
           <span key={label} data-label>
             {label}
@@ -306,37 +245,19 @@ export function CategoryPanel({
         ))}
       </div>
 
-      <div
-        className={cn(
-          "flex items-center justify-between px-4 pt-5",
-          isCollapsed && "justify-center px-2",
-        )}
-      >
+      <div className={cn("flex shrink-0 items-center justify-between px-4 pt-5", isCollapsed && "justify-center px-2")}>
         {isCollapsed ? (
-          <span
-            className="size-1.5 rounded-full"
-            style={{ background: "var(--accent-grey)" }}
-            title={t("nav.categories")}
-          />
+          <span className="size-1.5 rounded-full" style={{ background: "var(--accent-grey)" }} title={t("nav.categories")} />
         ) : (
           <>
-            <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-text-faint">
-              {t("nav.categories")}
-            </h2>
-            <span className="font-mono text-[10px] lowercase text-text-faint">
-              {PROJECT_VERSION}
-            </span>
+            <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-text-faint">{t("nav.categories")}</h2>
+            <span className="font-mono text-[10px] lowercase text-text-faint">{PROJECT_VERSION}</span>
           </>
         )}
       </div>
 
-      <ScrollArea className="mt-3 flex-1 sk-scroll">
-        <div
-          className={cn(
-            "flex flex-col gap-1 px-3 pb-8",
-            isCollapsed && "items-center px-2",
-          )}
-        >
+      <ScrollArea className="mt-3 min-h-0 flex-1 sk-scroll">
+        <div className={cn("flex min-h-full flex-col gap-1 px-3 pb-8", isCollapsed && "items-center px-2")}>
           <button
             type="button"
             onClick={goAll}
@@ -351,58 +272,37 @@ export function CategoryPanel({
               </span>
             ) : (
               <>
-                <span
-                  className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs"
-                  style={{ color: "var(--text-secondary)" }}
-                >
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-panel-border font-mono text-xs" style={{ color: "var(--text-secondary)" }}>
                   <MotionNumber value={inserts.length} />
                 </span>
-                <span className="min-w-0 truncate font-mono text-sm lowercase">
-                  {t("nav.allInserts")}
-                </span>
+                <span className="min-w-0 truncate font-mono text-sm lowercase">{t("nav.allInserts")}</span>
               </>
             )}
           </button>
 
-          <div
-            className={cn(
-              "my-2 h-px bg-panel-border/70",
-              isCollapsed ? "w-9" : "w-full",
-            )}
-          />
+          <div className={cn("my-2 h-px bg-panel-border/70", isCollapsed ? "w-9" : "w-full")} />
 
-          {categories.map((cat) => {
-            const Icon = categoryIconFor(cat)
-            const active = isActive(cat.id)
-            const count = inserts.filter((i) => i.category === cat.id).length
-            const label = catLabel(cat.id)
+          {categories.map((category) => {
+            const Icon = categoryIconFor(category)
+            const active = isActive(category.id)
+            const count = inserts.filter((insert) => insert.category === category.id).length
+            const label = catLabel(category.id)
 
             return (
               <button
                 type="button"
-                key={cat.id}
-                onClick={() => goCategory(cat.id)}
+                key={category.id}
+                onClick={() => goCategory(category.id)}
                 className={rowCls(active, isCollapsed)}
-                style={activeRowStyle(active, cat.accent, gradients)}
+                style={activeRowStyle(active, category.accent, gradients)}
                 title={isCollapsed ? label : undefined}
                 aria-label={label}
               >
-                <IconTile
-                  icon={Icon}
-                  accent={cat.accent}
-                  tint={cat.tint}
-                  active={active}
-                />
-
+                <IconTile icon={Icon} accent={category.accent} tint={category.tint} active={active} />
                 {!isCollapsed && (
                   <>
-                    <span className="min-w-0 flex-1 truncate text-left font-mono text-sm lowercase">
-                      {label}
-                    </span>
-                    <MotionNumber
-                      value={count}
-                      className="font-mono text-xs text-text-faint"
-                    />
+                    <span className="min-w-0 flex-1 truncate text-left font-mono text-sm lowercase">{label}</span>
+                    <MotionNumber value={count} className="font-mono text-xs text-text-faint" />
                   </>
                 )}
               </button>
@@ -426,7 +326,7 @@ export function CategoryPanel({
           onDoubleClick={onResizeDoubleClick}
           title={`drag: ${ICON_ONLY_WIDTH}–${maxWidth}px, text min: ${readableMinWidth}px`}
         >
-          <span className="flex h-12 w-3 items-center justify-center rounded-full border border-panel-border bg-panel-soft text-text-faint opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="flex h-12 w-3 items-center justify-center rounded-full border border-panel-border bg-panel-soft text-text-faint opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
             <GripVertical className="size-3" />
           </span>
         </button>
@@ -434,8 +334,6 @@ export function CategoryPanel({
     </aside>
   )
 }
-
-/* --------------------------- mobile chip strip --------------------------- */
 
 export function CategoryChips({ className }: { className?: string }) {
   const { t, inserts, categories, catLabel } = useScreenkit()
@@ -446,32 +344,22 @@ export function CategoryChips({ className }: { className?: string }) {
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[clamp(1.25rem,5vw,3rem)] bg-gradient-to-r from-background via-background/80 to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[clamp(1.25rem,5vw,3rem)] bg-gradient-to-l from-background via-background/80 to-transparent" />
 
-      <nav
-        aria-label={t("nav.categories")}
-        className="min-w-0 snap-x snap-mandatory overflow-x-auto overscroll-x-contain px-4 pb-1 [scroll-padding-inline:1rem] [scrollbar-width:none] [-webkit-overflow-scrolling:touch] sm:px-6 md:px-8 [&::-webkit-scrollbar]:hidden"
-      >
+      <nav aria-label={t("nav.categories")} className="min-w-0 snap-x snap-mandatory overflow-x-auto overscroll-x-contain px-4 pb-1 [scroll-padding-inline:1rem] [scrollbar-width:none] [-webkit-overflow-scrolling:touch] sm:px-6 md:px-8 [&::-webkit-scrollbar]:hidden">
         <div className="mx-auto flex w-max max-w-full items-center gap-2">
-          <Pill
-            active={inLibraryAll}
-            onClick={goAll}
-            className="shrink-0 snap-center whitespace-nowrap"
-          >
+          <Pill active={inLibraryAll} onClick={goAll} className="shrink-0 snap-center whitespace-nowrap">
             {t("nav.allInserts")}
           </Pill>
 
-          {categories.map((cat) => (
+          {categories.map((category) => (
             <Pill
-              key={cat.id}
-              accent={cat.accent}
-              active={isActive(cat.id)}
-              onClick={() => goCategory(cat.id)}
+              key={category.id}
+              accent={category.accent}
+              active={isActive(category.id)}
+              onClick={() => goCategory(category.id)}
               className="shrink-0 snap-center whitespace-nowrap"
             >
-              {catLabel(cat.id)}
-              <MotionNumber
-                value={inserts.filter((i) => i.category === cat.id).length}
-                className="text-text-faint"
-              />
+              {catLabel(category.id)}
+              <MotionNumber value={inserts.filter((insert) => insert.category === category.id).length} className="text-text-faint" />
             </Pill>
           ))}
         </div>
@@ -479,8 +367,6 @@ export function CategoryChips({ className }: { className?: string }) {
     </div>
   )
 }
-
-/* ------------------------------- helpers ------------------------------- */
 
 function rowCls(active: boolean, collapsed: boolean) {
   return cn(
@@ -490,11 +376,6 @@ function rowCls(active: boolean, collapsed: boolean) {
   )
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value))
-}
-
-/* selected rows get a subtle single-hue accent wash (gradient when enabled) */
 function activeRowStyle(
   active: boolean,
   accent: string,
