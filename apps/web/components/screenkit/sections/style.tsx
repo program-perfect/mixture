@@ -23,37 +23,16 @@ type Mode = "light" | "dark" | "system"
 // fixed swatches per palette (mirrors [data-palette="…"] in globals.css) so each
 // preview card always shows ITS OWN colors, not the currently active palette.
 const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
-  {
-    id: "cobalt",
-    tokens: ["#2f80ed", "#4cc9f0", "#22c55e", "#ff9f1c"],
-  },
-  {
-    id: "sunset",
-    tokens: ["#fb8500", "#e5383b", "#f72585", "#ffb703"],
-  },
-  {
-    id: "forest",
-    tokens: ["#2d6a4f", "#43cea2", "#2a9d8f", "#e9c46a"],
-  },
-  {
-    id: "mono",
-    tokens: ["#777777", "#8b8f99", "#a7abb4", "#b06a6a"],
-  },
+  { id: "cobalt", tokens: ["#2f80ed", "#4cc9f0", "#22c55e", "#ff9f1c"] },
+  { id: "sunset", tokens: ["#fb8500", "#e5383b", "#f72585", "#ffb703"] },
+  { id: "forest", tokens: ["#2d6a4f", "#43cea2", "#2a9d8f", "#e9c46a"] },
+  { id: "mono", tokens: ["#777777", "#8b8f99", "#a7abb4", "#b06a6a"] },
 ]
 
 function ThemeControls() {
   const { t } = useScreenkit()
   const { theme, setTheme } = useThemeMode()
-  const {
-    palette,
-    setPalette,
-    gradients,
-    setGradients,
-    scale,
-    setScale,
-    glow,
-    setGlow,
-  } = usePalette()
+  const { palette, setPalette, gradients, setGradients, scale, setScale, glow, setGlow } = usePalette()
   const transition = useThemeTransition()
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
@@ -117,27 +96,17 @@ function ThemeControls() {
                 onClick={() => setPalette(p.id)}
                 aria-pressed={active}
                 className={`flex flex-col gap-3 rounded-2xl border p-3 text-left transition-colors ${
-                  active
-                    ? "border-ring bg-panel-hover"
-                    : "border-panel-border bg-control hover:bg-panel-hover"
+                  active ? "border-ring bg-panel-hover" : "border-panel-border bg-control hover:bg-panel-hover"
                 }`}
               >
                 <span className="flex items-center gap-1.5">
                   {p.tokens.map((tk, i) => (
-                    <span
-                      key={i}
-                      className="size-5 rounded-full border border-panel-border"
-                      style={{ background: tk }}
-                    />
+                    <span key={i} className="size-5 rounded-full border border-panel-border" style={{ background: tk }} />
                   ))}
                 </span>
                 <span className="flex items-center justify-between">
-                  <span className="font-mono text-[12px] lowercase text-text-secondary">
-                    {t(`palette.${p.id}`)}
-                  </span>
-                  {active ? (
-                    <Check className="size-3.5 text-foreground" />
-                  ) : null}
+                  <span className="font-mono text-[12px] lowercase text-text-secondary">{t(`palette.${p.id}`)}</span>
+                  {active ? <Check className="size-3.5 text-foreground" /> : null}
                 </span>
               </button>
             )
@@ -148,22 +117,21 @@ function ThemeControls() {
 
       <div className="flex flex-col gap-3">
         <SectionHeading title={t("theme.gradients")} />
-        <SegmentedControl<GradientLevel>
-          options={gradientOptions}
-          value={gradients}
-          onChange={setGradients}
-        />
+        <SegmentedControl<GradientLevel> options={gradientOptions} value={gradients} onChange={setGradients} />
         {/* live preview of the gradient choice on accent tiles */}
         <div className="flex items-center gap-2">
-          {["var(--accent-blue)", "var(--accent-green)", "var(--accent-orange)", "var(--accent-purple)"].map(
-            (accent, i) => (
-              <span
-                key={i}
-                className="size-10 rounded-[10px] border border-panel-border"
-                style={{ background: accentSurface(accent, gradients, true) }}
-              />
-            ),
-          )}
+          {[
+            "var(--accent-blue)",
+            "var(--accent-green)",
+            "var(--accent-orange)",
+            "var(--accent-purple)",
+          ].map((accent, i) => (
+            <span
+              key={i}
+              className="size-10 rounded-[10px] border border-panel-border"
+              style={{ background: accentSurface(accent, gradients, true) }}
+            />
+          ))}
         </div>
         <Explain>{t("theme.gradientsDesc")}</Explain>
       </div>
@@ -178,18 +146,12 @@ function ThemeControls() {
           value={glow ? "on" : "off"}
           onChange={(value) => setGlow(value === "on")}
         />
-        <Explain>
-          добавляет raycast-like внутреннюю окантовку и мягкое свечение к основным поверхностям интерфейса.
-        </Explain>
+        <Explain>добавляет raycast-like внутреннюю окантовку и мягкое свечение к основным поверхностям интерфейса.</Explain>
       </div>
 
       <div className="flex flex-col gap-3">
         <SectionHeading title={t("scale.title")} />
-        <SegmentedControl<ScaleLevel>
-          options={scaleOptions}
-          value={scale}
-          onChange={setScale}
-        />
+        <SegmentedControl<ScaleLevel> options={scaleOptions} value={scale} onChange={setScale} />
         <Explain>{t("scale.desc")}</Explain>
       </div>
     </>
@@ -199,43 +161,20 @@ function ThemeControls() {
 type MotionChoice = "auto" | "full" | "reduced"
 
 const MOTION_FEATURE_LABELS: Record<MotionFeature, { title: string; desc: string }> = {
-  sections: {
-    title: "появление секций",
-    desc: "fade/slide-анимации при переключении разделов и блоков.",
-  },
-  layout: {
-    title: "изменение размеров",
-    desc: "плавная перестройка ширины, карточек и layout-контейнеров.",
-  },
-  skeletons: {
-    title: "скелетоны",
-    desc: "анимированная загрузка и shimmer перед показом контента.",
-  },
-  scroll: {
-    title: "плавный скролл",
-    desc: "smooth scroll для внутренних областей и переходов.",
-  },
+  sections: { title: "появление секций", desc: "fade/slide-анимации при переключении разделов и блоков." },
+  layout: { title: "изменение размеров", desc: "плавная перестройка ширины, карточек и layout-контейнеров." },
+  skeletons: { title: "скелетоны", desc: "анимированная загрузка и shimmer перед показом контента." },
+  scroll: { title: "плавный скролл", desc: "smooth scroll для внутренних областей и переходов." },
   viewTransitions: {
-    title: "перекраска темы",
-    desc: "crossfade при смене темы, палитры, масштаба и glow.",
+    title: "переключения тем",
+    desc: "плавный crossfade и цветовые переходы при смене светлой/тёмной темы, палитры, масштаба и glow.",
   },
-  cursor: {
-    title: "fluid-курсор",
-    desc: "плавающий курсор-шарик, который принимает форму элементов.",
-  },
+  cursor: { title: "fluid-курсор", desc: "плавающий курсор-шарик, который принимает форму элементов." },
 }
 
 function MotionControls() {
   const { t } = useScreenkit()
-  const {
-    reduceMotion,
-    isAuto,
-    features,
-    setReduceMotion,
-    resetToAuto,
-    setMotionFeature,
-    resetMotionFeatures,
-  } = useMotion()
+  const { reduceMotion, isAuto, features, setReduceMotion, resetToAuto, setMotionFeature, resetMotionFeatures } = useMotion()
 
   const value: MotionChoice = isAuto ? "auto" : reduceMotion ? "reduced" : "full"
 
@@ -245,13 +184,7 @@ function MotionControls() {
     else setReduceMotion(true)
   }
 
-  const note = isAuto
-    ? reduceMotion
-      ? t("motion.autoNoteOn")
-      : t("motion.autoNoteOff")
-    : reduceMotion
-      ? t("motion.manualOn")
-      : t("motion.manualOff")
+  const note = isAuto ? (reduceMotion ? t("motion.autoNoteOn") : t("motion.autoNoteOff")) : reduceMotion ? t("motion.manualOn") : t("motion.manualOff")
 
   return (
     <div className="flex flex-col gap-4 rounded-3xl border border-panel-border bg-panel-soft p-4">
@@ -267,9 +200,7 @@ function MotionControls() {
           onChange={onChange}
         />
         <Explain>{t("motion.desc")}</Explain>
-        <span className="font-mono text-[12px] lowercase text-text-faint">
-          {note}
-        </span>
+        <span className="font-mono text-[12px] lowercase text-text-faint">{note}</span>
       </div>
 
       <div className="flex flex-col gap-3 border-t border-panel-border/60 pt-4">
@@ -283,9 +214,7 @@ function MotionControls() {
             сбросить
           </button>
         </div>
-        <Explain>
-          можно отключить конкретные семейства анимаций. fluid-курсор остаётся анимированным даже при reduce motion, пока его отдельный переключатель включён.
-        </Explain>
+        <Explain>можно отключить конкретные семейства анимаций. fluid-курсор остаётся анимированным даже при reduce motion, пока его отдельный переключатель включён.</Explain>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
           {(Object.keys(DEFAULT_MOTION_FEATURES) as MotionFeature[]).map((feature) => {
             const meta = MOTION_FEATURE_LABELS[feature]
@@ -303,16 +232,10 @@ function MotionControls() {
                 }`}
               >
                 <span className="flex items-center justify-between gap-3">
-                  <span className="font-mono text-[12px] font-bold lowercase">
-                    {meta.title}
-                  </span>
-                  <span className="shrink-0 font-mono text-[10px] lowercase opacity-75">
-                    {enabled ? "on" : "off"}
-                  </span>
+                  <span className="font-mono text-[12px] font-bold lowercase">{meta.title}</span>
+                  <span className="shrink-0 font-mono text-[10px] lowercase opacity-75">{enabled ? "on" : "off"}</span>
                 </span>
-                <span className="mt-2 block font-mono text-[11px] lowercase leading-relaxed opacity-75">
-                  {meta.desc}
-                </span>
+                <span className="mt-2 block font-mono text-[11px] lowercase leading-relaxed opacity-75">{meta.desc}</span>
               </button>
             )
           })}
@@ -337,9 +260,7 @@ function LayoutWidthControls() {
         value={contentWidth}
         onChange={setContentWidth}
       />
-      <Explain>
-        работает только на экранах, где есть левая панель. на узких версиях с верхним меню содержимое всегда занимает всю доступную ширину.
-      </Explain>
+      <Explain>работает только на экранах, где есть левая панель. на узких версиях с верхним меню содержимое всегда занимает всю доступную ширину.</Explain>
     </div>
   )
 }
@@ -353,13 +274,7 @@ const SWATCHES: { key: string; token: string }[] = [
   { key: "style.sw.accentBlue", token: "var(--accent-blue)" },
 ]
 
-const RULE_KEYS = [
-  "style.rule.1",
-  "style.rule.2",
-  "style.rule.3",
-  "style.rule.4",
-  "style.rule.5",
-]
+const RULE_KEYS = ["style.rule.1", "style.rule.2", "style.rule.3", "style.rule.4", "style.rule.5"]
 
 export function StyleSection() {
   const { locale, setLocale, t } = useScreenkit()
@@ -383,28 +298,17 @@ export function StyleSection() {
       </div>
 
       <MotionControls />
-
       <LayoutWidthControls />
-
       <LibraryListControls variant="settings" />
-
       <ThemeControls />
 
       <div className="flex flex-col gap-4">
         <SectionHeading title={t("style.palette")} />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {SWATCHES.map((s) => (
-            <div
-              key={s.key}
-              className="flex flex-col gap-2 rounded-2xl border border-panel-border bg-control p-3"
-            >
-              <span
-                className="h-14 w-full rounded-xl border border-panel-border"
-                style={{ background: s.token }}
-              />
-              <span className="font-mono text-[12px] lowercase text-text-secondary">
-                {t(s.key)}
-              </span>
+            <div key={s.key} className="flex flex-col gap-2 rounded-2xl border border-panel-border bg-control p-3">
+              <span className="h-14 w-full rounded-xl border border-panel-border" style={{ background: s.token }} />
+              <span className="font-mono text-[12px] lowercase text-text-secondary">{t(s.key)}</span>
             </div>
           ))}
         </div>
@@ -413,15 +317,9 @@ export function StyleSection() {
       <div className="flex flex-col gap-4">
         <SectionHeading title={t("style.typography")} />
         <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-control px-5 py-5">
-          <span className="font-mono text-2xl font-bold lowercase text-foreground">
-            {t("style.typeSample")}
-          </span>
-          <span className="font-mono text-base text-text-secondary">
-            {t("style.typeMono")}
-          </span>
-          <span className="font-mono text-[13px] text-text-muted">
-            {t("style.typeBody")}
-          </span>
+          <span className="font-mono text-2xl font-bold lowercase text-foreground">{t("style.typeSample")}</span>
+          <span className="font-mono text-base text-text-secondary">{t("style.typeMono")}</span>
+          <span className="font-mono text-[13px] text-text-muted">{t("style.typeBody")}</span>
         </div>
       </div>
 
@@ -429,17 +327,9 @@ export function StyleSection() {
         <SectionHeading title={t("style.principles")} />
         <ul className="flex flex-col gap-2">
           {RULE_KEYS.map((r) => (
-            <li
-              key={r}
-              className="flex items-start gap-3 rounded-xl border border-panel-border bg-control px-4 py-3"
-            >
-              <span
-                className="mt-1.5 size-1.5 shrink-0 rounded-full"
-                style={{ background: "var(--accent-orange)" }}
-              />
-              <span className="font-mono text-[13px] lowercase text-text-secondary">
-                {t(r)}
-              </span>
+            <li key={r} className="flex items-start gap-3 rounded-xl border border-panel-border bg-control px-4 py-3">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-orange)" }} />
+              <span className="font-mono text-[13px] lowercase text-text-secondary">{t(r)}</span>
             </li>
           ))}
         </ul>
