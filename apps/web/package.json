@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "sync-inserts": "node scripts/sync-inserts.mjs",
     "licenses": "node scripts/collect-licenses.mjs",
-    "predev": "node scripts/collect-licenses.mjs",
+    "predev": "pnpm sync-inserts && node scripts/collect-licenses.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/collect-licenses.mjs",
+    "prebuild": "pnpm sync-inserts && node scripts/collect-licenses.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
