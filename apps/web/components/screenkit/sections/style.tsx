@@ -5,7 +5,7 @@ import type { Locale } from "@/lib/screenkit/types"
 import { Check, Monitor, Moon, Sun } from "lucide-react"
 import * as React from "react"
 import { LibraryListControls } from "../library-list-controls"
-import { useMotion } from "../motion"
+import { DEFAULT_MOTION_FEATURES, useMotion, type MotionFeature } from "../motion"
 import { Explain, SectionHeading, SegmentedControl } from "../primitives"
 import { useScreenkit, type ContentWidth } from "../store"
 import {
@@ -198,9 +198,44 @@ function ThemeControls() {
 
 type MotionChoice = "auto" | "full" | "reduced"
 
+const MOTION_FEATURE_LABELS: Record<MotionFeature, { title: string; desc: string }> = {
+  sections: {
+    title: "появление секций",
+    desc: "fade/slide-анимации при переключении разделов и блоков.",
+  },
+  layout: {
+    title: "изменение размеров",
+    desc: "плавная перестройка ширины, карточек и layout-контейнеров.",
+  },
+  skeletons: {
+    title: "скелетоны",
+    desc: "анимированная загрузка и shimmer перед показом контента.",
+  },
+  scroll: {
+    title: "плавный скролл",
+    desc: "smooth scroll для внутренних областей и переходов.",
+  },
+  viewTransitions: {
+    title: "перекраска темы",
+    desc: "crossfade при смене темы, палитры, масштаба и glow.",
+  },
+  cursor: {
+    title: "fluid-курсор",
+    desc: "плавающий курсор-шарик, который принимает форму элементов.",
+  },
+}
+
 function MotionControls() {
   const { t } = useScreenkit()
-  const { reduceMotion, isAuto, setReduceMotion, resetToAuto } = useMotion()
+  const {
+    reduceMotion,
+    isAuto,
+    features,
+    setReduceMotion,
+    resetToAuto,
+    setMotionFeature,
+    resetMotionFeatures,
+  } = useMotion()
 
   const value: MotionChoice = isAuto ? "auto" : reduceMotion ? "reduced" : "full"
 
@@ -219,21 +254,70 @@ function MotionControls() {
       : t("motion.manualOff")
 
   return (
-    <div className="flex flex-col gap-3">
-      <SectionHeading title={t("motion.title")} />
-      <SegmentedControl<MotionChoice>
-        options={[
-          { value: "auto", label: t("motion.auto") },
-          { value: "full", label: t("motion.full") },
-          { value: "reduced", label: t("motion.reduced") },
-        ]}
-        value={value}
-        onChange={onChange}
-      />
-      <Explain>{t("motion.desc")}</Explain>
-      <span className="font-mono text-[12px] lowercase text-text-faint">
-        {note}
-      </span>
+    <div className="flex flex-col gap-4 rounded-3xl border border-panel-border bg-panel-soft p-4">
+      <div className="flex flex-col gap-3">
+        <SectionHeading title={t("motion.title")} />
+        <SegmentedControl<MotionChoice>
+          options={[
+            { value: "auto", label: t("motion.auto") },
+            { value: "full", label: t("motion.full") },
+            { value: "reduced", label: t("motion.reduced") },
+          ]}
+          value={value}
+          onChange={onChange}
+        />
+        <Explain>{t("motion.desc")}</Explain>
+        <span className="font-mono text-[12px] lowercase text-text-faint">
+          {note}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-panel-border/60 pt-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <SectionHeading title="продвинутые настройки анимаций" />
+          <button
+            type="button"
+            onClick={resetMotionFeatures}
+            className="w-fit rounded-xl border border-panel-border bg-control px-3 py-1.5 font-mono text-[11px] lowercase text-text-secondary transition-colors hover:bg-panel-hover hover:text-foreground"
+          >
+            сбросить
+          </button>
+        </div>
+        <Explain>
+          можно отключить конкретные семейства анимаций. fluid-курсор остаётся анимированным даже при reduce motion, пока его отдельный переключатель включён.
+        </Explain>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+          {(Object.keys(DEFAULT_MOTION_FEATURES) as MotionFeature[]).map((feature) => {
+            const meta = MOTION_FEATURE_LABELS[feature]
+            const enabled = features[feature]
+            return (
+              <button
+                key={feature}
+                type="button"
+                onClick={() => setMotionFeature(feature, !enabled)}
+                aria-pressed={enabled}
+                className={`min-w-0 rounded-2xl border p-3 text-left transition-colors ${
+                  enabled
+                    ? "border-ring bg-control-active text-control-active-foreground"
+                    : "border-panel-border bg-control text-text-secondary hover:bg-panel-hover hover:text-foreground"
+                }`}
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="font-mono text-[12px] font-bold lowercase">
+                    {meta.title}
+                  </span>
+                  <span className="shrink-0 font-mono text-[10px] lowercase opacity-75">
+                    {enabled ? "on" : "off"}
+                  </span>
+                </span>
+                <span className="mt-2 block font-mono text-[11px] lowercase leading-relaxed opacity-75">
+                  {meta.desc}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
