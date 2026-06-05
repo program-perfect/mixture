@@ -1,0 +1,37 @@
+html[data-motion="full"][data-motion-theme="on"] body,
+html[data-motion="full"][data-motion-theme="on"] :where(
+  main,
+  nav,
+  header,
+  section,
+  article,
+  aside,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [data-slot="select-trigger"],
+  .bg-background,
+  .bg-sidebar,
+  .bg-panel,
+  .bg-panel-soft,
+  .bg-panel-hover,
+  .bg-control,
+  .bg-control-active,
+  .text-foreground,
+  .text-text-secondary,
+  .text-text-muted,
+  .text-text-faint,
+  .border-panel-border,
+  .border-sidebar-border
+) {
+  transition-property: background-color, color, border-color, outline-color, box-shadow, fill, stroke;
+  transition-duration: 0.34s;
+  transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+html[data-motion-theme="off"]::view-transition-old(root),
+html[data-motion-theme="off"]::view-transition-new(root) {
+  animation: none !important;
+}
