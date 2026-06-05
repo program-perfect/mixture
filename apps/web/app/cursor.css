@@ -4,29 +4,34 @@
 @media (hover: hover) and (pointer: fine) {
   html.sk-fluid-cursor-active,
   html.sk-fluid-cursor-active body,
-  html.sk-fluid-cursor-active :where(
-    button,
-    [role="button"],
-    [role="tab"],
-    [role="switch"],
-    [role="radio"],
-    [role="menuitem"],
-    [role="option"],
-    a[href],
-    summary,
-    label[for],
-    select,
-    input,
-    textarea,
-    [contenteditable="true"],
-    [data-slot="select-trigger"],
-    [data-slot="trigger"]
-  ) {
+  html.sk-fluid-cursor-active *,
+  html.sk-fluid-cursor-active *::before,
+  html.sk-fluid-cursor-active *::after {
     cursor: none !important;
   }
+}
 
-  html.sk-fluid-cursor-active :where(iframe) {
-    cursor: none;
+.sk-fluid-cursor,
+.sk-fluid-cursor-svg {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.sk-fluid-cursor-active .sk-fluid-cursor {
+    display: block;
+  }
+
+  html.sk-fluid-cursor-active .sk-fluid-cursor-svg {
+    display: block;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .sk-fluid-cursor,
+  .sk-fluid-cursor-svg {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
 }
 
@@ -112,4 +117,5 @@
   height: 0;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
 }
