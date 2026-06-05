@@ -5,6 +5,7 @@ import {
   useTheme as useNextTheme,
 } from "next-themes"
 import * as React from "react"
+import { FluidCursor } from "./fluid-cursor"
 import { MotionProvider, useMotion } from "./motion"
 
 export const PALETTES = ["cobalt", "sunset", "forest", "mono"] as const
@@ -50,11 +51,6 @@ const PaletteContext = React.createContext<PaletteCtx | null>(null)
 
 /* ------------------------------------------------------------------ *
  * accent surface helper
- *
- * turns an accent color into either a flat fill/tint (gradients off) or a
- * subtle, single-hue gradient (analogous light->dark of the SAME accent, so it
- * stays minimal and never introduces a new color). used by icon tiles and
- * active category rows.
  * ------------------------------------------------------------------ */
 export function accentSurface(
   accent: string,
@@ -75,7 +71,7 @@ export function accentSurface(
 }
 
 function PaletteProvider({ children }: { children: React.ReactNode }) {
-  const { reduceMotion } = useMotion()
+  const { reduceMotion, features } = useMotion()
   const [palette, setPaletteState] = React.useState<Palette>("cobalt")
   const [gradients, setGradientsState] = React.useState<GradientLevel>("soft")
   const [scale, setScaleState] = React.useState<ScaleLevel>(DEFAULT_SCALE)
@@ -126,13 +122,18 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
       const doc = document as Document & {
         startViewTransition?: (cb: () => void) => unknown
       }
-      if (reduceMotion || typeof document === "undefined" || !doc.startViewTransition) {
+      if (
+        reduceMotion ||
+        !features.viewTransitions ||
+        typeof document === "undefined" ||
+        !doc.startViewTransition
+      ) {
         fn()
         return
       }
       doc.startViewTransition(fn)
     },
-    [reduceMotion],
+    [reduceMotion, features.viewTransitions],
   )
 
   const setPalette = React.useCallback(
@@ -263,7 +264,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <MotionProvider>
-        <PaletteProvider>{children}</PaletteProvider>
+        <PaletteProvider>
+          {children}
+          <FluidCursor />
+        </PaletteProvider>
       </MotionProvider>
     </NextThemesProvider>
   )
