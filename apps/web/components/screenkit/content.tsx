@@ -47,7 +47,9 @@ const SECTION_SKELETON: Record<Section, React.ReactNode> = {
 const CONTENT_WIDTH_CLASS: Record<ContentWidth, string> = {
   narrow: "md:mx-auto md:max-w-4xl",
   default: "md:mx-auto md:max-w-6xl 2xl:max-w-7xl",
-  wide: "md:max-w-none",
+  // Keep wide as an animatable max-width value. `max-w-none` snaps because
+  // CSS cannot interpolate from a length to `none`.
+  wide: "md:mx-auto md:max-w-full 2xl:max-w-full",
 }
 
 export function Content({ notFound = false }: { notFound?: boolean }) {
@@ -69,7 +71,7 @@ export function Content({ notFound = false }: { notFound?: boolean }) {
           <div className="w-full min-w-0 overflow-x-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(1.25rem,3vw,3.5rem)]">
             <div
               className={cn(
-                "w-full min-w-0 overflow-x-hidden transition-[max-width] duration-200",
+                "sk-resize w-full min-w-0 overflow-x-hidden",
                 CONTENT_WIDTH_CLASS[contentWidth],
               )}
             >
