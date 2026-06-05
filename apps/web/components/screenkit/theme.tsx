@@ -26,10 +26,12 @@ export const SCALE_VALUE: Record<ScaleLevel, number> = {
   huge: 1.2,
 }
 const DEFAULT_SCALE: ScaleLevel = "large"
+const DEFAULT_GLOW = true
 
 const PALETTE_KEY = "screenkit-palette"
 const GRADIENT_KEY = "screenkit-gradients"
 const SCALE_KEY = "screenkit-scale"
+const GLOW_KEY = "screenkit-glow"
 
 type PaletteCtx = {
   palette: Palette
@@ -38,6 +40,8 @@ type PaletteCtx = {
   setGradients: (g: GradientLevel) => void
   scale: ScaleLevel
   setScale: (s: ScaleLevel) => void
+  glow: boolean
+  setGlow: (enabled: boolean) => void
   /** run a dom mutation inside a crossfade view-transition (respects reduce-motion) */
   transition: (fn: () => void) => void
 }
@@ -75,12 +79,14 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
   const [palette, setPaletteState] = React.useState<Palette>("cobalt")
   const [gradients, setGradientsState] = React.useState<GradientLevel>("soft")
   const [scale, setScaleState] = React.useState<ScaleLevel>(DEFAULT_SCALE)
+  const [glow, setGlowState] = React.useState(DEFAULT_GLOW)
 
-  // hydrate from storage + apply to <html data-palette / data-gradients / scale>
+  // hydrate from storage + apply to <html data-palette / data-gradients / data-glow / scale>
   React.useEffect(() => {
     let initialPalette: Palette = "cobalt"
     let initialGradients: GradientLevel = "soft"
     let initialScale: ScaleLevel = DEFAULT_SCALE
+    let initialGlow = DEFAULT_GLOW
     try {
       const sp = window.localStorage.getItem(PALETTE_KEY)
       if (sp && (PALETTES as readonly string[]).includes(sp)) {
@@ -94,14 +100,20 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
       if (ss && (SCALE_LEVELS as readonly string[]).includes(ss)) {
         initialScale = ss as ScaleLevel
       }
+      const glowSetting = window.localStorage.getItem(GLOW_KEY)
+      if (glowSetting === "on" || glowSetting === "off") {
+        initialGlow = glowSetting === "on"
+      }
     } catch {
       // ignore
     }
     setPaletteState(initialPalette)
     setGradientsState(initialGradients)
     setScaleState(initialScale)
+    setGlowState(initialGlow)
     document.documentElement.setAttribute("data-palette", initialPalette)
     document.documentElement.setAttribute("data-gradients", initialGradients)
+    document.documentElement.setAttribute("data-glow", initialGlow ? "on" : "off")
     document.documentElement.style.setProperty(
       "--app-scale",
       String(SCALE_VALUE[initialScale]),
@@ -172,6 +184,22 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
     [transition],
   )
 
+  const setGlow = React.useCallback(
+    (enabled: boolean) => {
+      transition(() => {
+        setGlowState(enabled)
+        document.documentElement.setAttribute("data-glow", enabled ? "on" : "off")
+      })
+
+      try {
+        window.localStorage.setItem(GLOW_KEY, enabled ? "on" : "off")
+      } catch {
+        // ignore
+      }
+    },
+    [transition],
+  )
+
   const value = React.useMemo(
     () => ({
       palette,
@@ -180,9 +208,21 @@ function PaletteProvider({ children }: { children: React.ReactNode }) {
       setGradients,
       scale,
       setScale,
+      glow,
+      setGlow,
       transition,
     }),
-    [palette, setPalette, gradients, setGradients, scale, setScale, transition],
+    [
+      palette,
+      setPalette,
+      gradients,
+      setGradients,
+      scale,
+      setScale,
+      glow,
+      setGlow,
+      transition,
+    ],
   )
 
   return (
