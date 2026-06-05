@@ -6,7 +6,7 @@ import type { Locale } from "@/lib/screenkit/types"
 import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
 import { LibraryListControls } from "../library-list-controls"
 import { SectionHeading, Explain, SegmentedControl } from "../primitives"
-import { useScreenkit } from "../store"
+import { useScreenkit, type ContentWidth } from "../store"
 import {
   accentSurface,
   usePalette,
@@ -215,6 +215,28 @@ function MotionControls() {
   )
 }
 
+function LayoutWidthControls() {
+  const { contentWidth, setContentWidth } = useScreenkit()
+
+  return (
+    <div className="hidden flex-col gap-3 md:flex">
+      <SectionHeading title="ширина основной части" />
+      <SegmentedControl<ContentWidth>
+        options={[
+          { value: "narrow", label: "узкая" },
+          { value: "default", label: "обычная" },
+          { value: "wide", label: "wide" },
+        ]}
+        value={contentWidth}
+        onChange={setContentWidth}
+      />
+      <Explain>
+        работает только на экранах, где есть левая панель. на узких версиях с верхним меню содержимое всегда занимает всю доступную ширину.
+      </Explain>
+    </div>
+  )
+}
+
 const SWATCHES: { key: string; token: string }[] = [
   { key: "style.sw.background", token: "var(--background)" },
   { key: "style.sw.panel", token: "var(--panel-soft)" },
@@ -254,6 +276,8 @@ export function StyleSection() {
       </div>
 
       <MotionControls />
+
+      <LayoutWidthControls />
 
       <LibraryListControls variant="settings" />
 
