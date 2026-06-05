@@ -12,12 +12,12 @@ import {
 } from "lucide-react"
 import { useScreenkit, type Section } from "./store"
 
-type RailItem = { id: Section; icon: LucideIcon; label?: string }
+type RailItem = { id: Section; icon: LucideIcon }
 
 const RAIL_ITEMS: RailItem[] = [
   { id: "library", icon: Library },
   { id: "preview", icon: Eye },
-  { id: "timeline", icon: GitBranch, label: "changelog" },
+  { id: "timeline", icon: GitBranch },
   { id: "prompts", icon: FileText },
   { id: "style", icon: Palette },
 ]
@@ -67,7 +67,7 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
             >
               <Icon className="size-5" strokeWidth={1.6} />
               <span className="font-mono text-[10px] lowercase">
-                {item.label ?? t(`section.${item.id}`)}
+                {t(`section.${item.id}`)}
               </span>
             </button>
           )
