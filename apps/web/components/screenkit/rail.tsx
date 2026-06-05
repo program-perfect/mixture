@@ -1,15 +1,15 @@
 "use client"
 
-import {
-  Library,
-  Eye,
-  GanttChartSquare,
-  FileText,
-  Palette,
-  Info,
-  type LucideIcon,
-} from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+    Eye,
+    FileText,
+    GanttChartSquare,
+    Info,
+    Library,
+    Palette,
+    type LucideIcon,
+} from "lucide-react"
 import { useScreenkit, type Section } from "./store"
 
 type RailItem = { id: Section; icon: LucideIcon }

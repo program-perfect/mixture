@@ -1,8 +1,8 @@
 "use client"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
-import * as React from "react"
 import { cn } from "@/lib/utils"
+import * as React from "react"
 import { CategoryChips, CategoryPanel } from "./category-panel"
 import { useReveal } from "./motion"
 import { AboutSection } from "./sections/about"

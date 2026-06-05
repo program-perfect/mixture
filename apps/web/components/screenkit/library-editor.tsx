@@ -1,16 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { Plus, RotateCcw, Loader2 } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +11,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -32,7 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { DEVICES, STATUSES, ASPECTS } from "@/lib/screenkit/data"
+import { Textarea } from "@/components/ui/textarea"
+import { ASPECTS, DEVICES, STATUSES } from "@/lib/screenkit/data"
 import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
 import type {
   AspectRatio,
@@ -40,6 +38,8 @@ import type {
   InsertStatus,
 } from "@/lib/screenkit/types"
 import { cn } from "@/lib/utils"
+import { Loader2, Plus, RotateCcw } from "lucide-react"
+import * as React from "react"
 import { ICON_LIBRARY, ICON_NAMES } from "./icons"
 import { useScreenkit } from "./store"
 

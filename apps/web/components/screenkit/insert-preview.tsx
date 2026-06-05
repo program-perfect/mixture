@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
 import type { ResolvedInsert } from "@/lib/screenkit/types"
-import type { PreviewSettings } from "./store"
+import { cn } from "@/lib/utils"
 import { DeviceFrame } from "./device-frame"
 import { InsertCanvas } from "./insert-canvas"
+import type { PreviewSettings } from "./store"
 
 export function InsertPreview({
   insert,

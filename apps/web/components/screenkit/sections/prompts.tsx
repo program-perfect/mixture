@@ -1,9 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { Copy, Check } from "lucide-react"
-import { resolveInsert } from "@/lib/screenkit/data"
-import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
 import {
   Select,
   SelectContent,
@@ -11,8 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { SectionHeading, Explain, StatusBadge, KeyVal } from "../primitives"
+import { resolveInsert } from "@/lib/screenkit/data"
+import { deviceLabel, statusLabel } from "@/lib/screenkit/i18n"
+import { Check, Copy } from "lucide-react"
+import * as React from "react"
 import { InsertLanguageToggle } from "../insert-language-toggle"
+import { Explain, KeyVal, SectionHeading, StatusBadge } from "../primitives"
 import { useScreenkit } from "../store"
 
 function CopyBlock({

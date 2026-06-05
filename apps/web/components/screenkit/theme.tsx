@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from "react"
 import {
   ThemeProvider as NextThemesProvider,
   useTheme as useNextTheme,
 } from "next-themes"
+import * as React from "react"
 import { MotionProvider, useMotion } from "./motion"
 
 export const PALETTES = ["cobalt", "sunset", "forest", "mono"] as const

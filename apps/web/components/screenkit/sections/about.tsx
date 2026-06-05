@@ -1,14 +1,14 @@
 "use client"
 
 import {
+  CATEGORIES,
+  INSERTS,
   PROJECT_SUBTITLE,
   PROJECT_VERSION,
-  INSERTS,
-  CATEGORIES,
 } from "@/lib/screenkit/data"
 import { categoryLabel } from "@/lib/screenkit/i18n"
-import { SectionHeading, Explain, KeyVal } from "../primitives"
 import { LicensesList } from "../licenses-list"
+import { Explain, KeyVal, SectionHeading } from "../primitives"
 import { useScreenkit } from "../store"
 
 export function AboutSection() {

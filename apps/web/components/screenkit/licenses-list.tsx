@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
-import { ChevronDown, ExternalLink, ScrollText } from "lucide-react"
 import manifest from "@/lib/screenkit/licenses.generated.json"
-import { SectionHeading, Explain } from "./primitives"
+import { ChevronDown, ExternalLink, ScrollText } from "lucide-react"
+import * as React from "react"
+import { Explain, SectionHeading } from "./primitives"
 import { useScreenkit } from "./store"
 
 type Pkg = {

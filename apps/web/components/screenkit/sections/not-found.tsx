@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import { ArrowLeft, SearchX } from "lucide-react"
+import Link from "next/link"
 import { Explain, SectionHeading } from "../primitives"
 
 export function NotFoundSection() {

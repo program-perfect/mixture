@@ -1,7 +1,7 @@
 "use client"
 
-import type { ResolvedInsert } from "@/lib/screenkit/types"
 import { resolveScene } from "@/lib/screenkit/insert-registry"
+import type { ResolvedInsert } from "@/lib/screenkit/types"
 import type { PreviewSettings } from "./store"
 
 /**

@@ -1,19 +1,19 @@
 "use client"
 
-import * as React from "react"
-import { ArrowRight } from "lucide-react"
 import {
   PROJECT_SUBTITLE,
   PROJECT_VERSION,
   resolveInsert,
 } from "@/lib/screenkit/data"
 import type { AspectRatio } from "@/lib/screenkit/types"
-import { Pill } from "../primitives"
-import { MotionNumber } from "../motion-number"
+import { ArrowRight } from "lucide-react"
+import * as React from "react"
 import { InsertPreview } from "../insert-preview"
-import { useScreenkit } from "../store"
-import { useReveal, staggerDelay } from "../motion"
+import { staggerDelay, useReveal } from "../motion"
+import { MotionNumber } from "../motion-number"
+import { Pill } from "../primitives"
 import { PreviewTileSkeleton } from "../skeletons"
+import { useScreenkit } from "../store"
 
 const ASPECT_RATIO: Record<AspectRatio, string> = {
   "9:16": "9/16",

@@ -1,9 +1,9 @@
 "use client"
 
-import { Languages } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { LOCALES, LANG_TAG } from "@/lib/screenkit/i18n"
+import { LANG_TAG, LOCALES } from "@/lib/screenkit/i18n"
 import type { Locale } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
+import { Languages } from "lucide-react"
 import { useScreenkit } from "./store"
 
 /*

@@ -1,21 +1,21 @@
 "use client"
 
-import * as React from "react"
-import { Languages } from "lucide-react"
-import type { Insert, Locale, PlaybackMode } from "@/lib/screenkit/types"
 import { resolveInsert } from "@/lib/screenkit/data"
 import {
   DEFAULT_LOCALE,
+  LANG_TAG,
   LOCALE_STORAGE_KEY,
   LOCALES,
-  LANG_TAG,
   modeLabel,
   translate,
 } from "@/lib/screenkit/i18n"
-import type { PreviewSettings } from "./store"
+import type { Insert, Locale, PlaybackMode } from "@/lib/screenkit/types"
+import { Languages } from "lucide-react"
+import * as React from "react"
 import { aspectValue } from "./device-frame"
-import { InsertPreview } from "./insert-preview"
 import { FloatingMenu, type Orientation, type RevealMode } from "./floating-menu"
+import { InsertPreview } from "./insert-preview"
+import type { PreviewSettings } from "./store"
 
 const REVEAL_MODE_KEY = "screenkit.reveal-mode"
 const REVEAL_HOTKEY = "m" // press to toggle chrome while in hotkey mode

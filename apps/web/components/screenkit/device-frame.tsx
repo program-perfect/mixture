@@ -1,8 +1,8 @@
 "use client"
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
 import type { AspectRatio, DeviceType } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
+import * as React from "react"
 
 export const aspectValue: Record<AspectRatio, number> = {
   "9:16": 9 / 16,

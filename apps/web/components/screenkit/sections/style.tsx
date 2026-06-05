@@ -1,11 +1,12 @@
 "use client"
 
-import * as React from "react"
-import { Check, Monitor, Moon, Sun } from "lucide-react"
+import { LANG_LABEL, LOCALES } from "@/lib/screenkit/i18n"
 import type { Locale } from "@/lib/screenkit/types"
-import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
+import { Check, Monitor, Moon, Sun } from "lucide-react"
+import * as React from "react"
 import { LibraryListControls } from "../library-list-controls"
-import { SectionHeading, Explain, SegmentedControl } from "../primitives"
+import { useMotion } from "../motion"
+import { Explain, SectionHeading, SegmentedControl } from "../primitives"
 import { useScreenkit, type ContentWidth } from "../store"
 import {
   accentSurface,
@@ -16,7 +17,6 @@ import {
   type Palette,
   type ScaleLevel,
 } from "../theme"
-import { useMotion } from "../motion"
 
 type Mode = "light" | "dark" | "system"
 
@@ -225,7 +225,7 @@ function LayoutWidthControls() {
         options={[
           { value: "narrow", label: "узкая" },
           { value: "default", label: "обычная" },
-          { value: "wide", label: "wide" },
+          { value: "wide", label: "широкая" },
         ]}
         value={contentWidth}
         onChange={setContentWidth}

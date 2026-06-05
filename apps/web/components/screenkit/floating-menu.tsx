@@ -1,20 +1,20 @@
 "use client"
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
+import { DEFAULT_LOCALE, translate } from "@/lib/screenkit/i18n"
+import type { Locale } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
 import {
   ArrowLeft,
-  Maximize,
-  Minimize,
-  RotateCw,
   Eye,
   Keyboard,
+  Maximize,
   Menu,
+  Minimize,
+  RotateCw,
   X,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { Locale } from "@/lib/screenkit/types"
-import { DEFAULT_LOCALE, translate } from "@/lib/screenkit/i18n"
+import { useRouter } from "next/navigation"
+import * as React from "react"
 
 export type Orientation = "landscape" | "portrait"
 export type RevealMode = "exit" | "hotkey"

@@ -1,8 +1,8 @@
+import { ThemeProvider } from '@/components/screenkit/theme'
+import { Toaster } from '@/components/ui/sonner'
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { Toaster } from '@/components/ui/sonner'
-import { ThemeProvider } from '@/components/screenkit/theme'
 import './globals.css'
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })

@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { Link2 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { InsertStatus } from "@/lib/screenkit/types"
 import { statusAccent } from "@/lib/screenkit/data"
+import type { InsertStatus } from "@/lib/screenkit/types"
+import { cn } from "@/lib/utils"
+import { Link2 } from "lucide-react"
+import * as React from "react"
 import { accentSurface, useGradients } from "./theme"
 
 /* ----------------------------- icon tile ----------------------------- */
