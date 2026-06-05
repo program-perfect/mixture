@@ -47,10 +47,13 @@
   mix-blend-mode: difference;
   isolation: isolate;
   filter: url("#sk-fluid-cursor-goo");
+  box-shadow: none;
   will-change: transform, width, height, border-radius, opacity;
   transition:
     border-radius 0.42s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    filter 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .sk-fluid-cursor::before,
@@ -109,6 +112,19 @@
 .sk-fluid-cursor[data-mode="text"]::after {
   transform: scaleX(0.7) scaleY(1.05);
   filter: blur(9px);
+}
+
+.sk-fluid-cursor[data-tone="color"] {
+  background: transparent;
+  mix-blend-mode: normal;
+  outline: 1.5px solid var(--fluid-cursor-ink, #ffffff);
+  outline-offset: -1.5px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--background) 55%, transparent);
+}
+
+.sk-fluid-cursor[data-tone="color"]::before,
+.sk-fluid-cursor[data-tone="color"]::after {
+  opacity: 0;
 }
 
 .sk-fluid-cursor-svg {
