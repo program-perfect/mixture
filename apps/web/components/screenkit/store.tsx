@@ -62,14 +62,10 @@ export function sectionFromSlug(slug?: string | null): Section | null {
 
 /* ------------------------------------------------------------------ *
  * client-side library cache (stale-while-revalidate)
- *
- * the server already streams the library on first paint, but we mirror it into
- * sessionStorage so that any client-side path that has to (re)load the library
- * can paint instantly from cache and then revalidate in the background. this is
- * what makes already-loaded data reappear immediately yet stay fresh.
  * ------------------------------------------------------------------ */
 
 const LIBRARY_CACHE_KEY = "screenkit-library-cache-v1"
+const CONTENT_WIDTH_STORAGE_KEY = "screenkit-content-width-v1"
 
 function readLibraryCache(): LibraryData | null {
   if (typeof window === "undefined") return null
@@ -101,6 +97,7 @@ function writeLibraryCache(data: LibraryData) {
 
 export type MessengerTheme = "dark" | "light"
 export type MessengerVideoFormat = "mixed" | "vertical" | "horizontal" | "square"
+export type ContentWidth = "narrow" | "default" | "wide"
 
 export type PreviewSettings = {
   device: DeviceType
@@ -141,6 +138,9 @@ type Ctx = {
 
   libraryListSettings: LibraryListSettings
   setLibraryListSettings: React.Dispatch<React.SetStateAction<LibraryListSettings>>
+
+  contentWidth: ContentWidth
+  setContentWidth: (width: ContentWidth) => void
 
   preview: PreviewSettings
   setPreview: React.Dispatch<React.SetStateAction<PreviewSettings>>
@@ -220,6 +220,7 @@ export function ScreenkitProvider({
   )
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false)
   const [locale, setLocaleState] = React.useState<Locale>(DEFAULT_LOCALE)
+  const [contentWidth, setContentWidthState] = React.useState<ContentWidth>("default")
   const [insertLocaleOverrides, setInsertLocaleOverrides] = React.useState<
     Record<string, Locale>
   >({})
@@ -271,11 +272,15 @@ export function ScreenkitProvider({
     )
   }, [section, filters.category, selectedId])
 
-  // hydrate site locale from storage
+  // hydrate site locale and layout width from storage
   React.useEffect(() => {
     try {
       const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY)
       if (stored === "ru" || stored === "en") setLocaleState(stored)
+      const width = window.localStorage.getItem(CONTENT_WIDTH_STORAGE_KEY)
+      if (width === "narrow" || width === "default" || width === "wide") {
+        setContentWidthState(width)
+      }
     } catch {
       // ignore
     }
@@ -285,6 +290,15 @@ export function ScreenkitProvider({
     setLocaleState(l)
     try {
       window.localStorage.setItem(LOCALE_STORAGE_KEY, l)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const setContentWidth = React.useCallback((width: ContentWidth) => {
+    setContentWidthState(width)
+    try {
+      window.localStorage.setItem(CONTENT_WIDTH_STORAGE_KEY, width)
     } catch {
       // ignore
     }
@@ -412,6 +426,8 @@ export function ScreenkitProvider({
     setFilters,
     libraryListSettings,
     setLibraryListSettings,
+    contentWidth,
+    setContentWidth,
     preview,
     setPreview,
     mobileNavOpen,
