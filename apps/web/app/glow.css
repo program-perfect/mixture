@@ -38,10 +38,14 @@ html[data-glow="off"] {
     .bg-popover,
     .bg-muted,
     [data-radix-scroll-area-viewport]
-  ) {
+  ):not(body) {
     box-shadow:
       inset 0 1px 0 var(--sk-inner-stroke),
       inset 0 -1px 0 color-mix(in srgb, #000000 10%, transparent);
+  }
+
+  html[data-glow="on"] body {
+    box-shadow: none;
   }
 
   html[data-glow="on"] :where(
