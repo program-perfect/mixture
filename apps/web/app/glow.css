@@ -1,0 +1,115 @@
+/* Raycast-like surface polish. Controlled by <html data-glow="on|off">. */
+:root,
+html[data-glow="on"] {
+  --sk-inner-stroke: color-mix(in srgb, var(--foreground) 8%, transparent);
+  --sk-inner-stroke-strong: color-mix(in srgb, var(--foreground) 13%, transparent);
+  --sk-glow-blue: color-mix(in srgb, var(--accent-blue) 18%, transparent);
+  --sk-glow-cyan: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  --sk-glow-warm: color-mix(in srgb, var(--accent-orange) 10%, transparent);
+}
+
+.light,
+.light[data-glow="on"] {
+  --sk-inner-stroke: color-mix(in srgb, #ffffff 72%, transparent);
+  --sk-inner-stroke-strong: color-mix(in srgb, #ffffff 86%, transparent);
+  --sk-glow-blue: color-mix(in srgb, var(--accent-blue) 11%, transparent);
+  --sk-glow-cyan: color-mix(in srgb, var(--accent-cyan) 8%, transparent);
+  --sk-glow-warm: color-mix(in srgb, var(--accent-orange) 7%, transparent);
+}
+
+html[data-glow="off"] {
+  --sk-inner-stroke: transparent;
+  --sk-inner-stroke-strong: transparent;
+  --sk-glow-blue: transparent;
+  --sk-glow-cyan: transparent;
+  --sk-glow-warm: transparent;
+}
+
+@layer utilities {
+  html[data-glow="on"] :where(
+    .bg-background,
+    .bg-sidebar,
+    .bg-panel,
+    .bg-panel-soft,
+    .bg-panel-hover,
+    .bg-control,
+    .bg-control-hover,
+    .bg-card,
+    .bg-popover,
+    .bg-muted,
+    [data-radix-scroll-area-viewport]
+  ) {
+    box-shadow:
+      inset 0 1px 0 var(--sk-inner-stroke),
+      inset 0 -1px 0 color-mix(in srgb, #000000 10%, transparent);
+  }
+
+  html[data-glow="on"] :where(
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-3xl,
+    .rounded-\[1\.5rem\],
+    .rounded-\[2rem\],
+    .rounded-\[10px\]
+  ) {
+    box-shadow:
+      inset 0 1px 0 var(--sk-inner-stroke),
+      inset 0 0 0 1px color-mix(in srgb, var(--foreground) 3%, transparent);
+  }
+
+  html[data-glow="on"] :where(
+    .bg-panel-soft,
+    .bg-control,
+    .bg-popover,
+    .bg-card,
+    .bg-muted
+  ) {
+    box-shadow:
+      inset 0 1px 0 var(--sk-inner-stroke-strong),
+      inset 0 0 0 1px color-mix(in srgb, var(--foreground) 3%, transparent),
+      0 0 28px -22px var(--sk-glow-blue),
+      0 0 52px -42px var(--sk-glow-warm);
+  }
+
+  html[data-glow="on"] :where(
+    .bg-control-active,
+    [aria-selected="true"],
+    [aria-pressed="true"]
+  ) {
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #ffffff 42%, transparent),
+      inset 0 -1px 0 color-mix(in srgb, #000000 16%, transparent),
+      0 0 34px -20px var(--sk-glow-cyan),
+      0 0 52px -36px var(--sk-glow-blue);
+  }
+
+  html[data-glow="on"] :where(input, textarea, [data-slot="select-trigger"]) {
+    box-shadow:
+      inset 0 1px 0 var(--sk-inner-stroke),
+      inset 0 0 0 1px color-mix(in srgb, var(--foreground) 3%, transparent),
+      0 0 26px -22px var(--sk-glow-blue);
+  }
+
+  html[data-glow="off"] :where(
+    .bg-background,
+    .bg-sidebar,
+    .bg-panel,
+    .bg-panel-soft,
+    .bg-panel-hover,
+    .bg-control,
+    .bg-control-hover,
+    .bg-card,
+    .bg-popover,
+    .bg-muted,
+    .bg-control-active,
+    [aria-selected="true"],
+    [aria-pressed="true"],
+    input,
+    textarea,
+    [data-slot="select-trigger"],
+    [data-radix-scroll-area-viewport]
+  ) {
+    box-shadow: none;
+  }
+}
