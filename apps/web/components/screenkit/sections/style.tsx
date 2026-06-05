@@ -1,28 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Check, LayoutGrid, List, Monitor, Moon, Rows3, Sun } from "lucide-react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Check, Monitor, Moon, Sun } from "lucide-react"
 import type { Locale } from "@/lib/screenkit/types"
 import { LOCALES, LANG_LABEL } from "@/lib/screenkit/i18n"
-import { cn } from "@/lib/utils"
+import { LibraryListControls } from "../library-list-controls"
 import { SectionHeading, Explain, SegmentedControl } from "../primitives"
 import { useScreenkit } from "../store"
-import {
-  LIBRARY_LIST_UI,
-  LIBRARY_PAGE_SIZE_OPTIONS,
-  librarySortOptions,
-  libraryViewOptions,
-  type LibrarySortKey,
-  type LibraryViewMode,
-  type LibraryPageSize,
-} from "../library-list-settings"
 import {
   accentSurface,
   usePalette,
@@ -231,132 +215,6 @@ function MotionControls() {
   )
 }
 
-function LibraryListControls() {
-  const { locale, libraryListSettings, setLibraryListSettings } = useScreenkit()
-  const labels = LIBRARY_LIST_UI[locale]
-  const sortOptions = librarySortOptions(locale)
-  const viewOptions = libraryViewOptions(locale)
-
-  return (
-    <div className="flex flex-col gap-6 rounded-3xl border border-panel-border bg-panel-soft p-4 sm:p-5">
-      <div className="flex flex-col gap-3">
-        <SectionHeading title={labels.sortingTitle} />
-        <Select
-          value={libraryListSettings.sort}
-          onValueChange={(value) =>
-            setLibraryListSettings((settings) => ({
-              ...settings,
-              sort: value as LibrarySortKey,
-            }))
-          }
-        >
-          <SelectTrigger className="h-10 w-full rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground sm:w-[280px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map((option) => (
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className="font-mono text-xs lowercase"
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Explain>{labels.sortingDesc}</Explain>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <SectionHeading title={labels.displayTitle} />
-        <div className="flex flex-wrap gap-2">
-          {viewOptions.map((option) => (
-            <ViewButton
-              key={option.value}
-              active={libraryListSettings.view === option.value}
-              onClick={() =>
-                setLibraryListSettings((settings) => ({
-                  ...settings,
-                  view: option.value,
-                }))
-              }
-              icon={viewIcon(option.value)}
-            >
-              {option.label}
-            </ViewButton>
-          ))}
-        </div>
-        <Explain>{labels.displayDesc}</Explain>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <SectionHeading title={labels.paginationTitle} />
-        <Select
-          value={String(libraryListSettings.pageSize)}
-          onValueChange={(value) =>
-            setLibraryListSettings((settings) => ({
-              ...settings,
-              pageSize: Number(value) as LibraryPageSize,
-            }))
-          }
-        >
-          <SelectTrigger className="h-10 w-full rounded-xl border-panel-border bg-control font-mono text-xs lowercase text-foreground sm:w-[220px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {LIBRARY_PAGE_SIZE_OPTIONS.map((size) => (
-              <SelectItem
-                key={size}
-                value={String(size)}
-                className="font-mono text-xs lowercase"
-              >
-                {size} {labels.perPage}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Explain>{labels.paginationDesc}</Explain>
-      </div>
-    </div>
-  )
-}
-
-function ViewButton({
-  active,
-  icon,
-  children,
-  onClick,
-}: {
-  active: boolean
-  icon: React.ReactNode
-  children: React.ReactNode
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "flex h-10 items-center gap-2 rounded-full border px-4 font-mono text-xs lowercase transition-colors",
-        active
-          ? "border-transparent bg-control-active text-control-active-foreground"
-          : "border-panel-border bg-control text-text-secondary hover:bg-panel-hover hover:text-foreground",
-      )}
-    >
-      {icon}
-      {children}
-    </button>
-  )
-}
-
-function viewIcon(view: LibraryViewMode) {
-  if (view === "compact") return <List className="size-3.5" />
-  if (view === "grid") return <LayoutGrid className="size-3.5" />
-  return <Rows3 className="size-3.5" />
-}
-
 const SWATCHES: { key: string; token: string }[] = [
   { key: "style.sw.background", token: "var(--background)" },
   { key: "style.sw.panel", token: "var(--panel-soft)" },
@@ -397,7 +255,7 @@ export function StyleSection() {
 
       <MotionControls />
 
-      <LibraryListControls />
+      <LibraryListControls variant="settings" />
 
       <ThemeControls />
 
