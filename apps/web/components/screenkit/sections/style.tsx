@@ -44,8 +44,16 @@ const PALETTE_PREVIEW: { id: Palette; tokens: string[] }[] = [
 function ThemeControls() {
   const { t } = useScreenkit()
   const { theme, setTheme } = useThemeMode()
-  const { palette, setPalette, gradients, setGradients, scale, setScale } =
-    usePalette()
+  const {
+    palette,
+    setPalette,
+    gradients,
+    setGradients,
+    scale,
+    setScale,
+    glow,
+    setGlow,
+  } = usePalette()
   const transition = useThemeTransition()
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
@@ -158,6 +166,21 @@ function ThemeControls() {
           )}
         </div>
         <Explain>{t("theme.gradientsDesc")}</Explain>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <SectionHeading title="glow эффект" />
+        <SegmentedControl<"on" | "off">
+          options={[
+            { value: "on", label: "включён" },
+            { value: "off", label: "выключен" },
+          ]}
+          value={glow ? "on" : "off"}
+          onChange={(value) => setGlow(value === "on")}
+        />
+        <Explain>
+          добавляет raycast-like внутреннюю окантовку и мягкое свечение к основным поверхностям интерфейса.
+        </Explain>
       </div>
 
       <div className="flex flex-col gap-3">
