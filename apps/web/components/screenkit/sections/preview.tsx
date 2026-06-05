@@ -32,9 +32,16 @@ import {
   SegmentedControl,
   StatusBadge,
 } from "../primitives"
-import { useScreenkit } from "../store"
+import { useScreenkit, type MessengerTheme, type MessengerVideoFormat } from "../store"
 
 const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
+const MESSENGER_THEMES: MessengerTheme[] = ["dark", "light"]
+const MESSENGER_VIDEO_FORMATS: MessengerVideoFormat[] = [
+  "mixed",
+  "vertical",
+  "horizontal",
+  "square",
+]
 
 export function PreviewSection() {
   const {
@@ -52,6 +59,7 @@ export function PreviewSection() {
   // the device content uses the per-insert language; the chrome uses the site language
   const insertLocale = insertLocaleFor(raw.id)
   const insert = resolveInsert(raw, insertLocale)
+  const isMessenger = insert.id === "gs-009"
 
   return (
     <div className="flex flex-col gap-8">
@@ -136,6 +144,77 @@ export function PreviewSection() {
           />
         </Control>
 
+        {isMessenger && (
+          <div className="flex flex-col gap-5 rounded-3xl border border-panel-border bg-panel-soft p-4 sm:p-5">
+            <Control
+              title="настройки мессенджера"
+              desc="управляют только этой вставкой: задержкой входящего сообщения, темой, видео и плавностью анимаций."
+            >
+              <SegmentedControl<MessengerTheme>
+                options={MESSENGER_THEMES.map((theme) => ({
+                  value: theme,
+                  label: theme === "dark" ? "тёмная" : "светлая",
+                }))}
+                value={preview.messengerTheme}
+                onChange={(messengerTheme) =>
+                  setPreview((p) => ({ ...p, messengerTheme }))
+                }
+                size="sm"
+              />
+            </Control>
+
+            <SliderControl
+              title="задержка сообщения"
+              value={preview.messengerDelay}
+              min={0}
+              max={12}
+              suffix=" сек."
+              onChange={(messengerDelay) =>
+                setPreview((p) => ({ ...p, messengerDelay }))
+              }
+              desc="через сколько секунд неизвестный контакт отправит сообщение и пачку видео."
+            />
+
+            <Control title="формат видео" desc="влияет на карточки входящих видео и открытый видеоплеер.">
+              <SegmentedControl<MessengerVideoFormat>
+                options={MESSENGER_VIDEO_FORMATS.map((format) => ({
+                  value: format,
+                  label:
+                    format === "mixed"
+                      ? "разные"
+                      : format === "vertical"
+                        ? "9:16"
+                        : format === "horizontal"
+                          ? "16:9"
+                          : "1:1",
+                }))}
+                value={preview.messengerVideoFormat}
+                onChange={(messengerVideoFormat) =>
+                  setPreview((p) => ({ ...p, messengerVideoFormat }))
+                }
+                size="sm"
+              />
+            </Control>
+
+            <SwitchControl
+              title="плавные анимации"
+              desc="по умолчанию выключены; включает мягкое появление сообщений и переход в плеер."
+              checked={preview.messengerMotion}
+              onChange={(messengerMotion) =>
+                setPreview((p) => ({ ...p, messengerMotion }))
+              }
+            />
+            <SwitchControl
+              title="скрытый номер"
+              desc="маскирует номер неизвестного отправителя в шапке чата."
+              checked={preview.messengerHiddenNumber}
+              onChange={(messengerHiddenNumber) =>
+                setPreview((p) => ({ ...p, messengerHiddenNumber }))
+              }
+            />
+          </div>
+        )}
+
         <SliderControl
           title={t("preview.brightness")}
           value={preview.brightness}
@@ -195,22 +274,30 @@ function SliderControl({
   value,
   onChange,
   desc,
+  min = 0,
+  max = 100,
+  suffix = "",
 }: {
   title: string
   value: number
   onChange: (v: number) => void
   desc: string
+  min?: number
+  max?: number
+  suffix?: string
 }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <SectionHeading title={title} />
-        <MotionNumber value={value} className="font-mono text-xs text-text-secondary" />
+        <span className="font-mono text-xs text-text-secondary">
+          <MotionNumber value={value} />{suffix}
+        </span>
       </div>
       <Slider
         value={[value]}
-        min={0}
-        max={100}
+        min={min}
+        max={max}
         step={1}
         onValueChange={(v) => onChange(v[0])}
       />
