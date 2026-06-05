@@ -2,22 +2,22 @@
 
 import { cn } from "@/lib/utils"
 import {
-    Eye,
-    FileText,
-    GanttChartSquare,
-    Info,
-    Library,
-    Palette,
-    type LucideIcon,
+  Eye,
+  FileText,
+  GitBranch,
+  Info,
+  Library,
+  Palette,
+  type LucideIcon,
 } from "lucide-react"
 import { useScreenkit, type Section } from "./store"
 
-type RailItem = { id: Section; icon: LucideIcon }
+type RailItem = { id: Section; icon: LucideIcon; label?: string }
 
 const RAIL_ITEMS: RailItem[] = [
   { id: "library", icon: Library },
   { id: "preview", icon: Eye },
-  { id: "timeline", icon: GanttChartSquare },
+  { id: "timeline", icon: GitBranch, label: "changelog" },
   { id: "prompts", icon: FileText },
   { id: "style", icon: Palette },
 ]
@@ -67,7 +67,7 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
             >
               <Icon className="size-5" strokeWidth={1.6} />
               <span className="font-mono text-[10px] lowercase">
-                {t(`section.${item.id}`)}
+                {item.label ?? t(`section.${item.id}`)}
               </span>
             </button>
           )
