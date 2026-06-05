@@ -30,8 +30,13 @@ const RAIL_ICON_SIZE: Record<ScaleLevel, string> = {
   huge: "1.72rem",
 }
 
+function sectionLabel(id: Section, locale: string, t: (key: string) => string) {
+  if (id === "timeline") return locale === "en" ? "changelog" : "изменения"
+  return t(`section.${id}`)
+}
+
 export function Rail({ onNavigate }: { onNavigate?: () => void }) {
-  const { section, setSection, t } = useScreenkit()
+  const { section, setSection, t, locale } = useScreenkit()
   const { scale } = usePalette()
   const iconStyle = {
     width: RAIL_ICON_SIZE[scale],
@@ -80,7 +85,7 @@ export function Rail({ onNavigate }: { onNavigate?: () => void }) {
             >
               <Icon className="shrink-0" strokeWidth={1.7} style={iconStyle} />
               <span className="font-mono text-[10px] lowercase leading-tight">
-                {t(`section.${item.id}`)}
+                {sectionLabel(item.id, locale, t)}
               </span>
             </button>
           )
