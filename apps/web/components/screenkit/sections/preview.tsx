@@ -35,7 +35,6 @@ import {
 } from "../primitives"
 import { useScreenkit, type MessengerTheme, type MessengerVideoFormat } from "../store"
 
-const ASPECTS: AspectRatio[] = ["9:16", "16:9", "4:3", "16:10"]
 const MESSENGER_THEMES: MessengerTheme[] = ["dark", "light"]
 const MESSENGER_VIDEO_FORMATS: MessengerVideoFormat[] = [
   "mixed",
@@ -64,10 +63,9 @@ export function PreviewSection() {
   const previewForInsert = React.useMemo(
     () => ({
       ...preview,
-      device: insert.device,
       aspect: insert.aspect,
     }),
-    [insert.aspect, insert.device, preview],
+    [insert.aspect, preview],
   )
 
   const selectInsert = React.useCallback(
@@ -145,7 +143,7 @@ export function PreviewSection() {
         <Control title={t("preview.deviceFormat")} desc={t("preview.deviceFormatDesc")}>
           <SegmentedControl<DeviceType>
             options={DEVICES.map((d) => ({ value: d.id, label: deviceLabel(d.id, locale) }))}
-            value={previewForInsert.device}
+            value={preview.device}
             onChange={(device) => setPreview((p) => ({ ...p, device }))}
             size="sm"
           />
@@ -161,9 +159,9 @@ export function PreviewSection() {
 
         <Control title={t("preview.aspect")} desc={t("preview.aspectDesc")}>
           <SegmentedControl<AspectRatio>
-            options={ASPECTS.map((a) => ({ value: a, label: a }))}
+            options={[{ value: insert.aspect, label: insert.aspect }]}
             value={previewForInsert.aspect}
-            onChange={(aspect) => setPreview((p) => ({ ...p, aspect }))}
+            onChange={() => undefined}
             size="sm"
           />
         </Control>
