@@ -113,6 +113,10 @@ importers:
       '@screenkit/insert-cctv':
         specifier: workspace:*
         version: link:../../packages/inserts/cctv
+        version: link:../../packages/inserts/cctv/cctv
+      '@screenkit/insert-cctv-grid':
+        specifier: workspace:*
+        version: link:../../packages/inserts/cctv/cctv-grid
       '@screenkit/insert-countdown':
         specifier: workspace:*
         version: link:../../packages/inserts/countdown
