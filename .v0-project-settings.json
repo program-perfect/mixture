@@ -1,0 +1,1 @@
+{"rootDirectory":"apps/web","buildCommand":"pnpm --filter web build","devCommand":"pnpm --filter web start","framework":"nextjs"}
