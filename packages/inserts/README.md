@@ -2,12 +2,40 @@
 
 В эту папку можно добавлять экранные вставки. Перед `dev` и `build` web-приложение запускает `apps/web/scripts/sync-inserts.mjs` и обновляет `apps/web/lib/screenkit/generated-inserts.ts`.
 
+## Структура каталога
+
+Вставки сгруппированы по категориям. Каждая вставка — отдельная самодостаточная папка (полноценный стандалон-проект) внутри своей категории:
+
+```txt
+packages/inserts/
+  <категория>/
+    <вставка>/
+      package.json
+      src/index.tsx
+```
+
+Текущая раскладка:
+
+```txt
+packages/inserts/
+  bank/        bank/
+  cctv/        cctv/ · cctv-grid/
+  hq-monitors/ countdown/ · remote/ · situation/ · text-file/ · wanted/
+  phones/      call/ · dying-video/ · messenger/
+  trackers/    tracker/
+  tv-news/     tv-news/
+```
+
+Чтобы добавить вставку, создайте папку `packages/inserts/<категория>/<вставка>/` и запустите sync. `sync-inserts.mjs` сам обойдёт все категории и подключит каждую вставку. Имя категории-папки используется как категория по умолчанию, если она не указана явно в `screenkit.insert.json`.
+
+> Старая плоская раскладка `packages/inserts/<вставка>/` тоже поддерживается ради обратной совместимости, но новые вставки кладите в подпапку категории.
+
 ## 1. Нативная React-вставка
 
 Структура:
 
 ```txt
-packages/inserts/my-insert/
+packages/inserts/<категория>/my-insert/
   package.json
   src/index.tsx
 ```
@@ -47,10 +75,10 @@ export function Scene({ insert, settings }: SceneProps) {
 
 ## 2. Готовый Next.js-проект
 
-Можно положить отдельный Next.js-проект прямо в `packages/inserts`:
+Можно положить отдельный Next.js-проект в папку категории:
 
 ```txt
-packages/inserts/my-next-screen/
+packages/inserts/<категория>/my-next-screen/
   package.json
   next.config.mjs
   app/...

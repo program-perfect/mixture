@@ -106,40 +106,40 @@ importers:
         version: link:../../packages/screenkit-core
       '@screenkit/insert-bank':
         specifier: workspace:*
-        version: link:../../packages/inserts/bank
+        version: link:../../packages/inserts/bank/bank
       '@screenkit/insert-call':
         specifier: workspace:*
-        version: link:../../packages/inserts/call
+        version: link:../../packages/inserts/phones/call
       '@screenkit/insert-cctv':
         specifier: workspace:*
-        version: link:../../packages/inserts/cctv
+        version: link:../../packages/inserts/cctv/cctv
       '@screenkit/insert-countdown':
         specifier: workspace:*
-        version: link:../../packages/inserts/countdown
+        version: link:../../packages/inserts/hq-monitors/countdown
       '@screenkit/insert-dying-video':
         specifier: workspace:*
-        version: link:../../packages/inserts/dying-video
+        version: link:../../packages/inserts/phones/dying-video
       '@screenkit/insert-messenger':
         specifier: workspace:*
-        version: link:../../packages/inserts/messenger
+        version: link:../../packages/inserts/phones/messenger
       '@screenkit/insert-remote':
         specifier: workspace:*
-        version: link:../../packages/inserts/remote
+        version: link:../../packages/inserts/hq-monitors/remote
       '@screenkit/insert-situation':
         specifier: workspace:*
-        version: link:../../packages/inserts/situation
+        version: link:../../packages/inserts/hq-monitors/situation
       '@screenkit/insert-text-file':
         specifier: workspace:*
-        version: link:../../packages/inserts/text-file
+        version: link:../../packages/inserts/hq-monitors/text-file
       '@screenkit/insert-tracker':
         specifier: workspace:*
-        version: link:../../packages/inserts/tracker
+        version: link:../../packages/inserts/trackers/tracker
       '@screenkit/insert-tv-news':
         specifier: workspace:*
-        version: link:../../packages/inserts/tv-news
+        version: link:../../packages/inserts/tv-news/tv-news
       '@screenkit/insert-wanted':
         specifier: workspace:*
-        version: link:../../packages/inserts/wanted
+        version: link:../../packages/inserts/hq-monitors/wanted
       '@vercel/analytics':
         specifier: 1.6.1
         version: 1.6.1(next@16.2.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
@@ -241,11 +241,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/bank:
+  packages/inserts/bank/bank:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
@@ -257,11 +257,59 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/call:
+  packages/inserts/cctv/cctv:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
+      react:
+        specifier: ^19
+        version: 19.2.7
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.17
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+
+  packages/inserts/cctv/cctv-grid:
+    dependencies:
+      '@screenkit/core':
+        specifier: workspace:*
+        version: link:../../../screenkit-core
+      react:
+        specifier: ^19
+        version: 19.2.7
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.17
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+
+  packages/inserts/hq-monitors/countdown:
+    dependencies:
+      '@screenkit/core':
+        specifier: workspace:*
+        version: link:../../../screenkit-core
+      react:
+        specifier: ^19
+        version: 19.2.7
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.17
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+
+  packages/inserts/hq-monitors/remote:
+    dependencies:
+      '@screenkit/core':
+        specifier: workspace:*
+        version: link:../../../screenkit-core
       lucide-react:
         specifier: ^0.564.0
         version: 0.564.0(react@19.2.7)
@@ -276,11 +324,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/cctv:
+  packages/inserts/hq-monitors/situation:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
@@ -292,11 +340,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/cctv-grid:
+  packages/inserts/hq-monitors/text-file:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
@@ -308,11 +356,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/countdown:
+  packages/inserts/hq-monitors/wanted:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
@@ -324,11 +372,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/dying-video:
+  packages/inserts/phones/call:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       lucide-react:
         specifier: ^0.564.0
         version: 0.564.0(react@19.2.7)
@@ -343,27 +391,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/messenger:
+  packages/inserts/phones/dying-video:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
-      react:
-        specifier: ^19
-        version: 19.2.7
-    devDependencies:
-      '@types/react':
-        specifier: ^19
-        version: 19.2.17
-      typescript:
-        specifier: 5.7.3
-        version: 5.7.3
-
-  packages/inserts/remote:
-    dependencies:
-      '@screenkit/core':
-        specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       lucide-react:
         specifier: ^0.564.0
         version: 0.564.0(react@19.2.7)
@@ -378,11 +410,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/situation:
+  packages/inserts/phones/messenger:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
@@ -394,27 +426,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/text-file:
+  packages/inserts/trackers/tracker:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
-      react:
-        specifier: ^19
-        version: 19.2.7
-    devDependencies:
-      '@types/react':
-        specifier: ^19
-        version: 19.2.17
-      typescript:
-        specifier: 5.7.3
-        version: 5.7.3
-
-  packages/inserts/tracker:
-    dependencies:
-      '@screenkit/core':
-        specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       lucide-react:
         specifier: ^0.564.0
         version: 0.564.0(react@19.2.7)
@@ -429,27 +445,11 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  packages/inserts/tv-news:
+  packages/inserts/tv-news/tv-news:
     dependencies:
       '@screenkit/core':
         specifier: workspace:*
-        version: link:../../screenkit-core
-      react:
-        specifier: ^19
-        version: 19.2.7
-    devDependencies:
-      '@types/react':
-        specifier: ^19
-        version: 19.2.17
-      typescript:
-        specifier: 5.7.3
-        version: 5.7.3
-
-  packages/inserts/wanted:
-    dependencies:
-      '@screenkit/core':
-        specifier: workspace:*
-        version: link:../../screenkit-core
+        version: link:../../../screenkit-core
       react:
         specifier: ^19
         version: 19.2.7
