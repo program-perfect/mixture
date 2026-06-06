@@ -4,38 +4,38 @@
 
 ## Структура каталога
 
-Вставки сгруппированы по категориям. Каждая вставка — отдельная самодостаточная папка (полноценный стандалон-проект) внутри своей категории:
+Вставки сгруппированы по категориям. Каждая вставка — это отдельный полноценный stand-alone проект, лежащий внутри папки своей категории:
 
 ```txt
 packages/inserts/
-  <категория>/
-    <вставка>/
+  <category>/
+    <insert-slug>/
       package.json
       src/index.tsx
 ```
 
-Текущая раскладка:
+Например:
 
 ```txt
 packages/inserts/
-  bank/        bank/
-  cctv/        cctv/ · cctv-grid/
-  hq-monitors/ countdown/ · remote/ · situation/ · text-file/ · wanted/
-  phones/      call/ · dying-video/ · messenger/
-  trackers/    tracker/
-  tv-news/     tv-news/
+  phones/
+    call/
+    messenger/
+  cctv/
+    cctv/
+    cctv-grid/
+  bank/
+    bank/
 ```
 
-Чтобы добавить вставку, создайте папку `packages/inserts/<категория>/<вставка>/` и запустите sync. `sync-inserts.mjs` сам обойдёт все категории и подключит каждую вставку. Имя категории-папки используется как категория по умолчанию, если она не указана явно в `screenkit.insert.json`.
-
-> Старая плоская раскладка `packages/inserts/<вставка>/` тоже поддерживается ради обратной совместимости, но новые вставки кладите в подпапку категории.
+Категория — это просто имя папки первого уровня (`phones`, `cctv`, `trackers`, `tv-news`, `bank`, `hq-monitors`, …). `sync-inserts` обходит оба уровня (`packages/inserts/*/*`) и сам подключает каждую вставку. Слаги вставок должны быть уникальны в пределах одной категории.
 
 ## 1. Нативная React-вставка
 
 Структура:
 
 ```txt
-packages/inserts/<категория>/my-insert/
+packages/inserts/<category>/my-insert/
   package.json
   src/index.tsx
 ```
@@ -75,10 +75,10 @@ export function Scene({ insert, settings }: SceneProps) {
 
 ## 2. Готовый Next.js-проект
 
-Можно положить отдельный Next.js-проект в папку категории:
+Можно положить отдельный Next.js-проект прямо в папку категории:
 
 ```txt
-packages/inserts/<категория>/my-next-screen/
+packages/inserts/phones/my-next-screen/
   package.json
   next.config.mjs
   app/...
@@ -86,7 +86,7 @@ packages/inserts/<категория>/my-next-screen/
   out/index.html
 ```
 
-Screenkit не собирает чужой Next-проект сам, потому что у него могут быть свои зависимости и команды. Соберите его внутри папки проекта как статический export, чтобы появился `out/index.html`. После этого `sync-inserts` скопирует `out/` в `apps/web/public/screenkit-inserts/my-next-screen/` и подключит его в библиотеку через iframe.
+Screenkit не собирает чужой Next-проект сам, потому что у него могут быть свои зависимости и команды. Соберите его внутри папки проекта как статический export, чтобы появился `out/index.html`. После этого `sync-inserts` скопирует `out/` в `apps/web/public/screenkit-inserts/<category>-<slug>/` и подключит его в библиотеку через iframe.
 
 Минимальный `screenkit.insert.json`:
 

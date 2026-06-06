@@ -4,6 +4,8 @@ __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
 .snowflake/
 .v0-trash/
+.v0-project-settings.json
+.vercel-patch.json
 
 # Vercel
 .vercel/

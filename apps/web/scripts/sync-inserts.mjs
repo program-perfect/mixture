@@ -98,88 +98,31 @@ const categoryDefs = []
 const categoryDefIds = new Set()
 const insertDefs = []
 
-const pushCategoryDef = (auto) => {
-  if (!auto.categoryDef) return
-  const id = auto.categoryDef.id
-  if (id && categoryDefIds.has(id)) return
-  if (id) categoryDefIds.add(id)
-  categoryDefs.push(JSON.stringify(auto.categoryDef, null, 2))
+// inserts are organised as packages/inserts/<category>/<slug>
+const insertDirs = []
+for (const categoryDirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
+  if (!categoryDirent.isDirectory()) continue
+  const categoryDir = path.join(insertsRoot, categoryDirent.name)
+  for (const dirent of fs.readdirSync(categoryDir, { withFileTypes: true })) {
+    if (!dirent.isDirectory()) continue
+    insertDirs.push({ category: categoryDirent.name, slug: dirent.name })
+  }
 }
 
-const insertDefFrom = ({ auto, category, slug, publicSlug, isNext }) => {
-  const insertId = auto.id ?? `auto-${safeIdSlug(publicSlug)}`
-  const categoryId = auto.category ?? category ?? "phones"
-  const labelRu = auto.label?.ru ?? auto.title?.ru ?? title(slug)
-  const labelEn = auto.label?.en ?? auto.title?.en ?? title(slug)
-  const sourceDir = category ? `packages/inserts/${category}/${slug}` : `packages/inserts/${slug}`
-  const sourceLabelRu = category
-    ? `${category}/${slug}`
-    : slug
-  const sourceLabelEn = sourceLabelRu
-
-  return JSON.stringify({
-    id: insertId,
-    date: auto.date ?? "2026-01-01",
-    episode: auto.episode ?? "auto",
-    scene: auto.scene ?? publicSlug,
-    category: categoryId,
-    device: auto.device ?? "phone",
-    aspect: auto.aspect ?? "9:16",
-    status: auto.status ?? "draft",
-    title: { ru: labelRu, en: labelEn },
-    description: {
-      ru:
-        auto.description?.ru ??
-        `автоматически подключённая экранная вставка: ${sourceLabelRu}`,
-      en:
-        auto.description?.en ??
-        `auto-linked screen insert: ${sourceLabelEn}`,
-    },
-    prompt: {
-      ru: auto.prompt?.ru ?? `экранная вставка ${sourceLabelRu}`,
-      en: auto.prompt?.en ?? `screen insert ${sourceLabelEn}`,
-    },
-    shortPrompt: {
-      ru: auto.shortPrompt?.ru ?? labelRu,
-      en: auto.shortPrompt?.en ?? labelEn,
-    },
-    negativePrompt: {
-      ru: auto.negativePrompt?.ru ?? "",
-      en: auto.negativePrompt?.en ?? "",
-    },
-    technicalNotes: {
-      ru:
-        auto.technicalNotes?.ru ??
-        [
-          isNext
-            ? `Next.js-проект подключён автоматически из ${sourceDir}`
-            : `нативная вставка подключена автоматически из ${sourceDir}`,
-        ],
-      en:
-        auto.technicalNotes?.en ??
-        [
-          isNext
-            ? `Next.js project auto-linked from ${sourceDir}`
-            : `native insert auto-linked from ${sourceDir}`,
-        ],
-    },
-  }, null, 2)
-}
-
-for (const entry of collectInsertDirectories()) {
-  const { category, slug, dir } = entry
+for (const { category, slug } of insertDirs) {
+  // unique relative path under packages/inserts, e.g. "phones/call"
+  const relSlug = `${category}/${slug}`
+  const dir = path.join(insertsRoot, category, slug)
   const pkg = readJson(path.join(dir, "package.json"))
   const auto = readJson(path.join(dir, "screenkit.insert.json")) ?? {}
-  const native = isNativeInsert(dir)
-  const next = looksLikeNextProject(dir, pkg)
-  const publicSlug = publicSlugFor(category, slug)
-  const packageKey = packageKeyFor(category, slug)
+  const srcIndex = path.join(dir, "src", "index.tsx")
+  const srcIndexTs = path.join(dir, "src", "index.ts")
+  const isNativeInsert = fs.existsSync(srcIndex) || fs.existsSync(srcIndexTs)
 
-  pushCategoryDef(auto)
-
-  if (native && pkg?.name?.startsWith("@screenkit/insert-")) {
-    const id = toIdentifier(packageKey)
-    packageImports.push(`import * as ${id} from ${JSON.stringify(importPathFor(nativeEntryFile(dir)))}`)
+  if (isNativeInsert && pkg?.name?.startsWith("@screenkit/insert-")) {
+    const id = toIdentifier(`${category}-${slug}`)
+    const entry = fs.existsSync(srcIndex) ? "src/index" : "src/index"
+    packageImports.push(`import * as ${id} from "../../../../packages/inserts/${relSlug}/${entry}"`)
     packageRefs.push(id)
 
     // Native inserts can also describe their library card with
@@ -193,6 +136,7 @@ for (const entry of collectInsertDirectories()) {
 
   if (!next) continue
 
+  const publicSlug = `${category}-${slug}`
   const outDir = path.join(dir, "out")
   const publicDir = path.join(publicInsertsRoot, publicSlug)
   const hasStaticOutput = fs.existsSync(path.join(outDir, "index.html"))
@@ -202,7 +146,8 @@ for (const entry of collectInsertDirectories()) {
     fs.cpSync(outDir, publicDir, { recursive: true })
   }
 
-  const insertId = auto.id ?? `auto-${safeIdSlug(publicSlug)}`
+  const insertId = auto.id ?? `auto-${publicSlug}`
+  const categoryId = auto.category ?? category
   const labelRu = auto.label?.ru ?? auto.title?.ru ?? title(slug)
   const labelEn = auto.label?.en ?? auto.title?.en ?? title(slug)
   const manifestLabel = auto.manifestLabel ?? labelEn
@@ -210,10 +155,10 @@ for (const entry of collectInsertDirectories()) {
   nextProjects.push(`makeNextProjectInsertPackage({
     slug: ${JSON.stringify(publicSlug)},
     entry: ${JSON.stringify(`/screenkit-inserts/${publicSlug}/index.html`)},
-    sourceDir: ${JSON.stringify(sourceDirFor(dir))},
+    sourceDir: ${JSON.stringify(`packages/inserts/${relSlug}`)},
     hasStaticOutput: ${hasStaticOutput},
     manifest: {
-      key: ${JSON.stringify(`next-${safeIdSlug(publicSlug)}`)},
+      key: ${JSON.stringify(`next-${publicSlug}`)},
       label: ${JSON.stringify(manifestLabel)},
       inserts: [${JSON.stringify(insertId)}],
       priority: ${Number(auto.priority ?? 50)},
