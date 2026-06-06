@@ -23,6 +23,7 @@ import {
 import type { AspectRatio, DeviceType, PlaybackMode } from "@/lib/screenkit/types"
 import { Maximize2 } from "lucide-react"
 import Link from "next/link"
+import * as React from "react"
 import { InsertLanguageToggle } from "../insert-language-toggle"
 import { InsertPreview } from "../insert-preview"
 import { MotionNumber } from "../motion-number"
@@ -60,6 +61,29 @@ export function PreviewSection() {
   const insertLocale = insertLocaleFor(raw.id)
   const insert = resolveInsert(raw, insertLocale)
   const isMessenger = insert.id === "gs-009"
+  const previewForInsert = React.useMemo(
+    () => ({
+      ...preview,
+      device: insert.device,
+      aspect: insert.aspect,
+    }),
+    [insert.aspect, insert.device, preview],
+  )
+
+  const selectInsert = React.useCallback(
+    (id: string) => {
+      const next = getInsert(id)
+      setSelectedId(id)
+      if (next) {
+        setPreview((current) => ({
+          ...current,
+          device: next.device,
+          aspect: next.aspect,
+        }))
+      }
+    },
+    [getInsert, setPreview, setSelectedId],
+  )
 
   return (
     <div className="flex flex-col gap-8">
@@ -68,7 +92,7 @@ export function PreviewSection() {
         <Explain>{t("preview.desc")}</Explain>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Select value={selectedId} onValueChange={setSelectedId}>
+          <Select value={selectedId} onValueChange={selectInsert}>
             <SelectTrigger className="h-11 w-full max-w-xs rounded-2xl border-panel-border bg-control font-mono text-sm lowercase text-foreground sm:w-auto">
               <SelectValue />
             </SelectTrigger>
@@ -105,7 +129,7 @@ export function PreviewSection() {
 
       {/* preview stage */}
       <div className="flex min-w-0 items-center justify-center overflow-hidden rounded-3xl border border-panel-border bg-[radial-gradient(120%_120%_at_50%_0%,#0e0e10,#000)] px-3 py-6 sm:px-4 sm:py-8 lg:py-10">
-        <InsertPreview insert={insert} settings={preview} />
+        <InsertPreview insert={insert} settings={previewForInsert} />
       </div>
 
       {/* open as screen-state */}
@@ -121,7 +145,7 @@ export function PreviewSection() {
         <Control title={t("preview.deviceFormat")} desc={t("preview.deviceFormatDesc")}>
           <SegmentedControl<DeviceType>
             options={DEVICES.map((d) => ({ value: d.id, label: deviceLabel(d.id, locale) }))}
-            value={preview.device}
+            value={previewForInsert.device}
             onChange={(device) => setPreview((p) => ({ ...p, device }))}
             size="sm"
           />
@@ -138,7 +162,7 @@ export function PreviewSection() {
         <Control title={t("preview.aspect")} desc={t("preview.aspectDesc")}>
           <SegmentedControl<AspectRatio>
             options={ASPECTS.map((a) => ({ value: a, label: a }))}
-            value={preview.aspect}
+            value={previewForInsert.aspect}
             onChange={(aspect) => setPreview((p) => ({ ...p, aspect }))}
             size="sm"
           />
