@@ -70,6 +70,7 @@ coverage/
 .nyc_output/
 playwright-report/
 test-results/
+licenses.generated.json
 
 # OS files
 .DS_Store

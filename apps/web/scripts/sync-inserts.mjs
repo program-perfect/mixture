@@ -30,6 +30,62 @@ const readJson = (file) => {
 }
 
 const hasFile = (dir, name) => fs.existsSync(path.join(dir, name))
+const toPosix = (value) => value.split(path.sep).join(path.posix.sep)
+const sourceDirFor = (dir) => toPosix(path.relative(repoRoot, dir))
+const importPathFor = (file) => {
+  const relative = toPosix(path.relative(path.dirname(generatedFile), file))
+  return relative.startsWith(".") ? relative : `./${relative}`
+}
+const publicSlugFor = (category, slug) => (category ? `${category}/${slug}` : slug)
+const packageKeyFor = (category, slug) => (category ? `${category}-${slug}` : slug)
+const safeIdSlug = (value) => value.replaceAll("/", "-")
+
+const isNativeInsert = (dir) => hasFile(dir, "src/index.tsx") || hasFile(dir, "src/index.ts")
+const nativeEntryFile = (dir) => path.join(dir, hasFile(dir, "src/index.tsx") ? "src/index" : "src/index")
+const looksLikeNextProject = (dir, pkg) =>
+  hasFile(dir, "next.config.js") ||
+  hasFile(dir, "next.config.mjs") ||
+  Boolean(pkg?.dependencies?.next || pkg?.devDependencies?.next)
+
+const isInsertDirectory = (dir) => {
+  const pkg = readJson(path.join(dir, "package.json"))
+  return Boolean(
+    pkg ||
+      hasFile(dir, "screenkit.insert.json") ||
+      isNativeInsert(dir) ||
+      looksLikeNextProject(dir, pkg),
+  )
+}
+
+const collectInsertDirectories = () => {
+  const entries = []
+  if (!fs.existsSync(insertsRoot)) return entries
+
+  for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
+    if (!dirent.isDirectory()) continue
+
+    const topSlug = dirent.name
+    const topDir = path.join(insertsRoot, topSlug)
+
+    // Backward compatibility: the old flat layout still works:
+    // packages/inserts/<insert>/...
+    if (isInsertDirectory(topDir)) {
+      entries.push({ category: null, slug: topSlug, dir: topDir })
+    }
+
+    // New layout: packages/inserts/<category>/<insert>/...
+    for (const child of fs.readdirSync(topDir, { withFileTypes: true })) {
+      if (!child.isDirectory()) continue
+      const insertDir = path.join(topDir, child.name)
+      if (!isInsertDirectory(insertDir)) continue
+      entries.push({ category: topSlug, slug: child.name, dir: insertDir })
+    }
+  }
+
+  return entries.sort((a, b) =>
+    publicSlugFor(a.category, a.slug).localeCompare(publicSlugFor(b.category, b.slug)),
+  )
+}
 
 if (!fs.existsSync(insertsRoot)) fs.mkdirSync(insertsRoot, { recursive: true })
 fs.rmSync(publicInsertsRoot, { recursive: true, force: true })
@@ -39,6 +95,7 @@ const packageImports = []
 const packageRefs = []
 const nextProjects = []
 const categoryDefs = []
+const categoryDefIds = new Set()
 const insertDefs = []
 
 // inserts are organised as packages/inserts/<category>/<slug>
@@ -67,11 +124,17 @@ for (const { category, slug } of insertDirs) {
     const entry = fs.existsSync(srcIndex) ? "src/index" : "src/index"
     packageImports.push(`import * as ${id} from "../../../../packages/inserts/${relSlug}/${entry}"`)
     packageRefs.push(id)
+
+    // Native inserts can also describe their library card with
+    // screenkit.insert.json. Existing built-in cards remain in data.ts unless a
+    // package opts in by providing an id.
+    if (auto.id) {
+      insertDefs.push(insertDefFrom({ auto, category, slug, publicSlug, isNext: false }))
+    }
     continue
   }
 
-  const looksLikeNext = hasFile(dir, "next.config.js") || hasFile(dir, "next.config.mjs") || pkg?.dependencies?.next || pkg?.devDependencies?.next
-  if (!looksLikeNext) continue
+  if (!next) continue
 
   const publicSlug = `${category}-${slug}`
   const outDir = path.join(dir, "out")
@@ -79,6 +142,7 @@ for (const { category, slug } of insertDirs) {
   const hasStaticOutput = fs.existsSync(path.join(outDir, "index.html"))
 
   if (hasStaticOutput) {
+    fs.mkdirSync(path.dirname(publicDir), { recursive: true })
     fs.cpSync(outDir, publicDir, { recursive: true })
   }
 
@@ -101,41 +165,7 @@ for (const { category, slug } of insertDirs) {
     },
   })`)
 
-  if (auto.categoryDef) {
-    categoryDefs.push(JSON.stringify(auto.categoryDef, null, 2))
-  }
-
-  insertDefs.push(JSON.stringify({
-    id: insertId,
-    date: auto.date ?? "2026-01-01",
-    episode: auto.episode ?? "auto",
-    scene: auto.scene ?? slug,
-    category: categoryId,
-    device: auto.device ?? "phone",
-    aspect: auto.aspect ?? "9:16",
-    status: auto.status ?? "draft",
-    title: { ru: labelRu, en: labelEn },
-    description: {
-      ru: auto.description?.ru ?? `автоматически подключённый next.js-проект: ${slug}`,
-      en: auto.description?.en ?? `auto-linked Next.js insert project: ${slug}`,
-    },
-    prompt: {
-      ru: auto.prompt?.ru ?? `next.js экранная вставка ${slug}`,
-      en: auto.prompt?.en ?? `next.js screen insert ${slug}`,
-    },
-    shortPrompt: {
-      ru: auto.shortPrompt?.ru ?? labelRu,
-      en: auto.shortPrompt?.en ?? labelEn,
-    },
-    negativePrompt: {
-      ru: auto.negativePrompt?.ru ?? "",
-      en: auto.negativePrompt?.en ?? "",
-    },
-    technicalNotes: {
-      ru: auto.technicalNotes?.ru ?? ["подключено автоматически из packages/inserts"],
-      en: auto.technicalNotes?.en ?? ["auto-linked from packages/inserts"],
-    },
-  }, null, 2))
+  insertDefs.push(insertDefFrom({ auto, category, slug, publicSlug, isNext: true }))
 }
 
 const content = `import type { CategoryDef, Insert } from "./types"
@@ -145,8 +175,9 @@ import { makeNextProjectInsertPackage } from "./next-project-scene"
 ${packageImports.join("\n")}
 
 // AUTO-GENERATED BY apps/web/scripts/sync-inserts.mjs
-// Put native insert packages or exported Next.js projects into packages/inserts/*,
-// then run pnpm --filter web sync-inserts.
+// New layout: packages/inserts/<category>/<insert>/
+// Legacy layout packages/inserts/<insert>/ is still supported while old inserts are migrated.
+// Then run pnpm --filter web sync-inserts.
 
 export const GENERATED_NEXT_PROJECT_PACKAGES: InsertPackage[] = [
   ${nextProjects.join(",\n  ")}
