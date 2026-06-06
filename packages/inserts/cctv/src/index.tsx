@@ -1,7 +1,7 @@
 "use client"
 
-import { Grain } from "@screenkit/core/grain"
 import type { InsertSceneManifest, SceneProps } from "@screenkit/core"
+import { Grain } from "@screenkit/core/grain"
 
 export const manifest: InsertSceneManifest = {
   key: "cctv",

@@ -48,7 +48,7 @@ next-env.d.ts
 # Build outputs
 dist/
 build/
-.turbo/
+.turbo/*
 turbo.log
 
 # Logs

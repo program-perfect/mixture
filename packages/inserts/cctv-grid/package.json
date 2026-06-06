@@ -1,0 +1,17 @@
+{
+  "name": "@screenkit/insert-cctv-grid",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "dependencies": {
+    "react": "^19",
+    "@screenkit/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "5.7.3"
+  }
+}

@@ -397,7 +397,7 @@ function paginationWindow(page: number, pageCount: number): Array<number | "dots
 
 function listCls(viewMode: LibraryViewMode) {
   if (viewMode === "grid") {
-    return "grid min-w-0 gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]"
+    return "grid pt-1 min-w-0 gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]"
   }
 
   return "flex min-w-0 flex-col gap-2"

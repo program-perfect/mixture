@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T17:59:30.706Z",
+  "generatedAt": "2026-06-06T00:49:51.432Z",
   "count": 62,
   "packages": [
     {
@@ -334,7 +334,7 @@
     },
     {
       "name": "@types/node",
-      "version": "24.12.4",
+      "version": "24.13.1",
       "declared": "^24",
       "license": "MIT",
       "author": null,
@@ -356,7 +356,7 @@
     },
     {
       "name": "@types/react",
-      "version": "19.2.16",
+      "version": "19.2.17",
       "declared": "^19",
       "license": "MIT",
       "author": null,
