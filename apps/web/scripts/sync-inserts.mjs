@@ -41,10 +41,21 @@ const nextProjects = []
 const categoryDefs = []
 const insertDefs = []
 
-for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
-  if (!dirent.isDirectory()) continue
-  const slug = dirent.name
-  const dir = path.join(insertsRoot, slug)
+// inserts are organised as packages/inserts/<category>/<slug>
+const insertDirs = []
+for (const categoryDirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
+  if (!categoryDirent.isDirectory()) continue
+  const categoryDir = path.join(insertsRoot, categoryDirent.name)
+  for (const dirent of fs.readdirSync(categoryDir, { withFileTypes: true })) {
+    if (!dirent.isDirectory()) continue
+    insertDirs.push({ category: categoryDirent.name, slug: dirent.name })
+  }
+}
+
+for (const { category, slug } of insertDirs) {
+  // unique relative path under packages/inserts, e.g. "phones/call"
+  const relSlug = `${category}/${slug}`
+  const dir = path.join(insertsRoot, category, slug)
   const pkg = readJson(path.join(dir, "package.json"))
   const auto = readJson(path.join(dir, "screenkit.insert.json")) ?? {}
   const srcIndex = path.join(dir, "src", "index.tsx")
@@ -52,9 +63,9 @@ for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
   const isNativeInsert = fs.existsSync(srcIndex) || fs.existsSync(srcIndexTs)
 
   if (isNativeInsert && pkg?.name?.startsWith("@screenkit/insert-")) {
-    const id = toIdentifier(slug)
+    const id = toIdentifier(`${category}-${slug}`)
     const entry = fs.existsSync(srcIndex) ? "src/index" : "src/index"
-    packageImports.push(`import * as ${id} from "../../../../packages/inserts/${slug}/${entry}"`)
+    packageImports.push(`import * as ${id} from "../../../../packages/inserts/${relSlug}/${entry}"`)
     packageRefs.push(id)
     continue
   }
@@ -62,7 +73,7 @@ for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
   const looksLikeNext = hasFile(dir, "next.config.js") || hasFile(dir, "next.config.mjs") || pkg?.dependencies?.next || pkg?.devDependencies?.next
   if (!looksLikeNext) continue
 
-  const publicSlug = slug
+  const publicSlug = `${category}-${slug}`
   const outDir = path.join(dir, "out")
   const publicDir = path.join(publicInsertsRoot, publicSlug)
   const hasStaticOutput = fs.existsSync(path.join(outDir, "index.html"))
@@ -71,8 +82,8 @@ for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
     fs.cpSync(outDir, publicDir, { recursive: true })
   }
 
-  const insertId = auto.id ?? `auto-${slug}`
-  const categoryId = auto.category ?? "phones"
+  const insertId = auto.id ?? `auto-${publicSlug}`
+  const categoryId = auto.category ?? category
   const labelRu = auto.label?.ru ?? auto.title?.ru ?? title(slug)
   const labelEn = auto.label?.en ?? auto.title?.en ?? title(slug)
   const manifestLabel = auto.manifestLabel ?? labelEn
@@ -80,10 +91,10 @@ for (const dirent of fs.readdirSync(insertsRoot, { withFileTypes: true })) {
   nextProjects.push(`makeNextProjectInsertPackage({
     slug: ${JSON.stringify(publicSlug)},
     entry: ${JSON.stringify(`/screenkit-inserts/${publicSlug}/index.html`)},
-    sourceDir: ${JSON.stringify(`packages/inserts/${slug}`)},
+    sourceDir: ${JSON.stringify(`packages/inserts/${relSlug}`)},
     hasStaticOutput: ${hasStaticOutput},
     manifest: {
-      key: ${JSON.stringify(`next-${slug}`)},
+      key: ${JSON.stringify(`next-${publicSlug}`)},
       label: ${JSON.stringify(manifestLabel)},
       inserts: [${JSON.stringify(insertId)}],
       priority: ${Number(auto.priority ?? 50)},

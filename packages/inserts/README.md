@@ -2,12 +2,40 @@
 
 В эту папку можно добавлять экранные вставки. Перед `dev` и `build` web-приложение запускает `apps/web/scripts/sync-inserts.mjs` и обновляет `apps/web/lib/screenkit/generated-inserts.ts`.
 
+## Структура каталога
+
+Вставки сгруппированы по категориям. Каждая вставка — это отдельный полноценный stand-alone проект, лежащий внутри папки своей категории:
+
+```txt
+packages/inserts/
+  <category>/
+    <insert-slug>/
+      package.json
+      src/index.tsx
+```
+
+Например:
+
+```txt
+packages/inserts/
+  phones/
+    call/
+    messenger/
+  cctv/
+    cctv/
+    cctv-grid/
+  bank/
+    bank/
+```
+
+Категория — это просто имя папки первого уровня (`phones`, `cctv`, `trackers`, `tv-news`, `bank`, `hq-monitors`, …). `sync-inserts` обходит оба уровня (`packages/inserts/*/*`) и сам подключает каждую вставку. Слаги вставок должны быть уникальны в пределах одной категории.
+
 ## 1. Нативная React-вставка
 
 Структура:
 
 ```txt
-packages/inserts/my-insert/
+packages/inserts/<category>/my-insert/
   package.json
   src/index.tsx
 ```
@@ -47,10 +75,10 @@ export function Scene({ insert, settings }: SceneProps) {
 
 ## 2. Готовый Next.js-проект
 
-Можно положить отдельный Next.js-проект прямо в `packages/inserts`:
+Можно положить отдельный Next.js-проект прямо в папку категории:
 
 ```txt
-packages/inserts/my-next-screen/
+packages/inserts/phones/my-next-screen/
   package.json
   next.config.mjs
   app/...
@@ -58,7 +86,7 @@ packages/inserts/my-next-screen/
   out/index.html
 ```
 
-Screenkit не собирает чужой Next-проект сам, потому что у него могут быть свои зависимости и команды. Соберите его внутри папки проекта как статический export, чтобы появился `out/index.html`. После этого `sync-inserts` скопирует `out/` в `apps/web/public/screenkit-inserts/my-next-screen/` и подключит его в библиотеку через iframe.
+Screenkit не собирает чужой Next-проект сам, потому что у него могут быть свои зависимости и команды. Соберите его внутри папки проекта как статический export, чтобы появился `out/index.html`. После этого `sync-inserts` скопирует `out/` в `apps/web/public/screenkit-inserts/<category>-<slug>/` и подключит его в библиотеку через iframe.
 
 Минимальный `screenkit.insert.json`:
 
