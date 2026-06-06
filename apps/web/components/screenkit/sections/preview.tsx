@@ -68,6 +68,12 @@ export function PreviewSection() {
     [insert.aspect, preview],
   )
 
+  React.useEffect(() => {
+    if (preview.aspect !== insert.aspect) {
+      setPreview((current) => ({ ...current, aspect: insert.aspect }))
+    }
+  }, [insert.aspect, preview.aspect, setPreview])
+
   const selectInsert = React.useCallback(
     (id: string) => {
       const next = getInsert(id)
