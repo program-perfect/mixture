@@ -424,7 +424,7 @@ export const INSERTS: Insert[] = [
       en: "messenger thread, threatening texts, ticks, 9:16",
     },
     negativePrompt: {
-      ru: "точный брендинг whatsapp/telegram, эмодзи повсюду",
+      ru: "т��чный брендинг whatsapp/telegram, эмодзи повсюду",
       en: "whatsapp/telegram exact branding, emojis everywhere",
     },
     technicalNotes: {
@@ -825,7 +825,7 @@ export const INSERTS: Insert[] = [
       ru: "телефон-зеркало за углом, тусклый коридор, 9:16",
     },
     negativePrompt: {
-      ru: "бьюти-фильтр для селфи, яркий свет",
+      ru: "бьюти-фи��ьтр для селфи, яркий свет",
     },
     technicalNotes: {
       ru: ["сырой ui фронтальной камеры", "зеркальное кадрирование", "зерно при низком свете"],
@@ -964,7 +964,7 @@ export const INSERTS: Insert[] = [
       ru: "два телефона обмениваются живой локацией, пузырь чата с общей геопозицией, два сходящихся маркера.",
     },
     prompt: {
-      ru: "обмен живой геолокацией в телефонном мессенджере между двумя контактами (никольский и бондарев), маленький пузырь живой карты с двумя сходящимися маркерами, показание eta, обобщённый чат-ui, 9:16, реквизитная вставка криминального сериала",
+      ru: "обмен живой геолокацией в телефонном месс��нджере между двумя контактами (никольский и бондарев), маленький пузырь живой карты с двумя сходящимися маркерами, показание eta, обобщённый чат-ui, 9:16, реквизитная вставка криминального сериала",
     },
     shortPrompt: {
       ru: "обмен живой локацией, два сходящихся маркера, eta, 9:16",
@@ -1017,6 +1017,50 @@ export const INSERTS: Insert[] = [
         "palette: red, mustard, cream, dark brown",
         "map must be abstract, no real map provider",
         "designed for a 9:16 vertical phone screen",
+      ],
+    },
+  },
+  {
+    id: "gs-cctv-grid",
+    date: "2026-03-06",
+    episode: "ep.02",
+    scene: "cctv-grid",
+    category: "cctv",
+    device: "monitor",
+    aspect: "16:9",
+    status: "ready",
+    title: {
+      ru: "сетка камер видеонаблюдения",
+      en: "CCTV camera grid",
+    },
+    description: {
+      ru: "мультиэкран CCTV для просмотра сразу нескольких камер: прямые ссылки на видео, папка Яндекс.Диска, Google Drive или Dropbox, автораскладка 2x2/3x3/4x4, таймкоды и подписи камер.",
+      en: "CCTV multiplexer screen for several camera feeds: direct video URLs, Yandex Disk folder, Google Drive or Dropbox, automatic 2x2/3x3/4x4 layout, timestamps and camera labels.",
+    },
+    prompt: {
+      ru: "экран видеонаблюдения 16:9, сетка нескольких камер cctv, мрачный монитор охраны, зеленовато-серый сигнал, таймкоды, подписи CAM 01 CAM 02, шум, scanlines, низкий битрейт, no signal плитки, реалистичная реквизитная вставка для криминального сериала",
+      en: "16:9 CCTV surveillance screen, multi-camera grid, dark security monitor, green-grey signal, timestamps, CAM 01 CAM 02 labels, noise, scanlines, low bitrate, no-signal tiles, realistic crime series prop insert",
+    },
+    shortPrompt: {
+      ru: "мультиэкран CCTV 16:9, сетка камер, таймкоды, шум и no signal",
+      en: "16:9 CCTV multiplexer, camera grid, timestamps, noise and no signal",
+    },
+    negativePrompt: {
+      ru: "глянцевый современный интерфейс, яркий saas, чистый vector ui, рекламный ролик, водяной знак, логотип",
+      en: "glossy modern interface, bright SaaS, clean vector UI, commercial footage, watermark, logo",
+    },
+    technicalNotes: {
+      ru: [
+        "соотношение вставки 16:9 / устройство monitor",
+        "источники видео можно вставлять ссылками; пустой режим показывает NO SIGNAL",
+        "раскладка камер: auto, 2x2, 3x3 или 4x4",
+        "таймкод, подписи камер, scanlines и общий grain поверх сетки",
+      ],
+      en: [
+        "16:9 insert aspect / monitor device",
+        "video sources can be pasted as links; empty mode shows NO SIGNAL",
+        "camera layout: auto, 2x2, 3x3 or 4x4",
+        "timestamp, camera labels, scanlines and shared grain over the grid",
       ],
     },
   },

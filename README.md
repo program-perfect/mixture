@@ -61,7 +61,7 @@ prompt sheets, and a fully personalizable interface.
 │           └── screenkit/       # data, i18n, server fetchers, types
 └── packages/
     ├── screenkit-core/          # shared types (CategoryDef, Insert, …)
-    └── inserts/                 # one package per insert scene (live previews)
+    └── inserts/                 # insert scenes grouped by category: inserts/<category>/<slug>
 ```
 
 ---
