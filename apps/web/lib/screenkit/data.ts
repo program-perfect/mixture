@@ -1,4 +1,4 @@
-import { CATEGORY_LABELS } from "./i18n";
+import { CATEGORY_LABELS } from "./i18n"
 import type {
   AspectRatio,
   CategoryDef,
@@ -11,7 +11,7 @@ import type {
   LocalizedText,
   PlaybackMode,
   ResolvedInsert,
-} from "./types";
+} from "./types"
 
 export const PROJECT_VERSION = "v0.9-gs-screenkit";
 export const PROJECT_SUBTITLE = "гремучая смесь / prop playback system";

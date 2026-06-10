@@ -14,6 +14,7 @@ const nextConfig = {
     "@screenkit/insert-bank",
     "@screenkit/insert-call",
     "@screenkit/insert-cctv",
+    "@screenkit/insert-cctv-grid",
     "@screenkit/insert-countdown",
     "@screenkit/insert-dying-video",
     "@screenkit/insert-messenger",

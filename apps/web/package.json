@@ -5,9 +5,7 @@
   "scripts": {
     "sync-inserts": "node scripts/sync-inserts.mjs",
     "licenses": "node scripts/collect-licenses.mjs",
-    "predev": "pnpm sync-inserts && node scripts/collect-licenses.mjs",
     "dev": "next dev",
-    "prebuild": "pnpm sync-inserts && node scripts/collect-licenses.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
@@ -46,6 +44,7 @@
     "@screenkit/insert-bank": "workspace:*",
     "@screenkit/insert-call": "workspace:*",
     "@screenkit/insert-cctv": "workspace:*",
+    "@screenkit/insert-cctv-grid": "workspace:*",
     "@screenkit/insert-countdown": "workspace:*",
     "@screenkit/insert-dying-video": "workspace:*",
     "@screenkit/insert-messenger": "workspace:*",
